@@ -12,7 +12,7 @@ Standard development environment for Mac machines.
 
 Open Terminal and run these commands:
 
-### 1. Install Homebrew
+### 1. Install Homebrew (important)
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
