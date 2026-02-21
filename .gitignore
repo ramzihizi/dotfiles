@@ -1,0 +1,12 @@
+# Local overrides (never commit)
+*.local
+.zshrc.local
+.gitconfig.local
+
+# macOS
+.DS_Store
+
+# Secrets
+*.token
+*.key
+.env*

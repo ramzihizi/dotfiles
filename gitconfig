@@ -1,0 +1,30 @@
+[core]
+    excludesfile = ~/.gitignore_global
+
+[user]
+    # Set these in ~/.gitconfig.local
+    # name = Your Name
+    # email = your.email@cloudmotion.com
+
+[init]
+    defaultBranch = main
+
+[pull]
+    rebase = true
+
+[push]
+    autoSetupRemote = true
+
+[alias]
+    st = status
+    co = checkout
+    br = branch
+    ci = commit
+    lg = log --oneline --graph --decorate
+    unstage = reset HEAD --
+    last = log -1 HEAD
+    amend = commit --amend --no-edit
+
+[include]
+    # Include local overrides (name, email, signing keys)
+    path = ~/.gitconfig.local

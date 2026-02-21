@@ -1,0 +1,209 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Dependencies
+node_modules/
+vendor/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Build
+dist/
+build/
+.cache/
+
+# ========================================
+# AI and LLM Related Files
+# ========================================
+
+# Claude AI
+.claude/
+claude_cache/
+*.claude
+.claude-artifacts/
+claude-artifacts/
+CLAUDE.md
+claude.config.*
+
+# OpenAI / ChatGPT
+.openai/
+.gpt/
+*.gpt
+.chatgpt/
+openai-api-key*
+
+# GitHub Copilot
+.copilot/
+copilot-suggestions/
+*.copilot
+
+# Cursor AI
+.cursor/
+.cursorignore
+.cursorrules
+
+# Codeium
+.codeium/
+*.codeium
+
+# Tabnine
+.tabnine/
+tabnine.log
+
+# AI Model Files
+*.ckpt
+*.safetensors
+*.pkl
+*.pth
+*.pt
+*.onnx
+*.pb
+*.h5
+*.hdf5
+*.tflite
+*.mlmodel
+*.caffemodel
+*.bin
+*.gguf
+*.ggml
+*.q4_*
+*.q5_*
+*.q8_*
+
+# AI Training and Data
+checkpoints/
+models/
+weights/
+embeddings/
+vectors/
+*.vec
+*.embedding
+*.npy
+*.npz
+training_data/
+dataset/
+datasets/
+corpus/
+
+# AI Logs and Outputs
+*.tensorboard/
+tensorboard_logs/
+wandb/
+mlruns/
+runs/
+outputs/
+generations/
+completions/
+ai_outputs/
+ai_logs/
+
+# AI Configuration
+ai_config/
+ai_settings/
+*.aiconfig
+*.aiignore
+.ai/
+.llm/
+.model_cache/
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+*.ipynb_checkpoints/
+
+# Python Virtual Environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.conda/
+conda-meta/
+
+# API Keys and Secrets
+*api_key*
+*api_secret*
+*.key
+*.token
+.env.*
+secrets/
+credentials/
+
+# Ollama
+.ollama/
+ollama_models/
+
+# Hugging Face
+.huggingface/
+huggingface_hub/
+.cache/huggingface/
+
+# LangChain
+.langchain/
+langchain_cache/
+
+# Vector Databases
+*.faiss
+*.chroma
+*.pinecone
+*.weaviate
+*.qdrant
+*.milvus
+
+# AI IDEs and Tools
+.idea/sonarlint/
+.vscode/ai-settings.json
+.vscode/copilot/
+.nova/ai/
+
+# Misc AI Tools
+.aider*
+.mentat/
+.continue/
+.sourcegraph/
+.kite/
+.bito/
+
+# Large Language Model Files
+llm_cache/
+llm_models/
+*.llamafile
+*.alpaca
+*.vicuna
+*.mistral
+*.gemma
+
+# RAG
+rag_index/
+rag_data/
+document_store/
+vector_store/
+
+# Fine-tuning
+fine_tuning/
+lora_adapters/
+peft_models/
+
+# Temporary AI Files
+*.ai.tmp
+*.llm.tmp
+*_generated.txt
+*_completion.txt
+*_response.json
+
+# Development Artifacts
+.hypothesis/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/

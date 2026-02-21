@@ -1,0 +1,52 @@
+# CloudMotion - Standard Dev Machine Setup
+# Run: brew bundle install --file=Brewfile
+
+# Taps
+tap "dopplerhq/cli"
+tap "homebrew/cask-fonts"
+
+# ============ CLI Essentials ============
+brew "git"
+brew "gh"                          # GitHub CLI
+
+# ============ Languages & Runtimes ============
+brew "php"
+brew "composer"
+brew "uv"                          # Fast Python package manager
+
+# ============ DevOps ============
+brew "dopplerhq/cli/doppler"       # Secrets management
+
+# ============ Apps ============
+# Browsers
+cask "arc"
+cask "google-chrome"
+cask "brave-browser"
+
+# Communication
+cask "slack"
+cask "microsoft-teams"
+
+# Office
+cask "microsoft-office"
+cask "microsoft-auto-update"
+
+# Development
+cask "visual-studio-code"
+cask "ghostty"
+cask "orbstack"                    # Docker Desktop alternative
+
+# Design
+cask "figma"
+
+# Productivity
+cask "linear-linear"
+cask "miro"
+
+# Utilities
+cask "appcleaner"
+cask "caffeine"
+
+# Fonts
+cask "font-jetbrains-mono-nerd-font"
+
