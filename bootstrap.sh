@@ -10,40 +10,40 @@ echo ""
 
 # Check for macOS
 if [[ "$(uname)" != "Darwin" ]]; then
-    echo "Error: This script is for macOS only"
-    exit 1
+  echo "Error: This script is for macOS only"
+  exit 1
 fi
 
 # Verify we're in the dotfiles directory
 if [[ ! -f "$DOTFILES_DIR/bootstrap.sh" ]]; then
-    echo "Error: Dotfiles not found at ~/dotfiles"
-    echo "Run the initial setup first - see README.md"
-    exit 1
+  echo "Error: Dotfiles not found at ~/dotfiles"
+  echo "Run the initial setup first - see README.md"
+  exit 1
 fi
 
 cd "$DOTFILES_DIR"
 
 # Install Homebrew packages (unless skipped)
 if [[ "$SKIP_BREW" == "true" ]]; then
-    echo "==> Skipping Homebrew packages (SKIP_BREW is set)"
+  echo "==> Skipping Homebrew packages (SKIP_BREW is set)"
 else
-    # Install Homebrew if needed
+  # Install Homebrew if needed
+  if ! command -v brew &>/dev/null; then
+    echo "==> Installing Homebrew..."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+
+    # Verify brew is now available
     if ! command -v brew &>/dev/null; then
-        echo "==> Installing Homebrew..."
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-        eval "$(/opt/homebrew/bin/brew shellenv)"
-
-        # Verify brew is now available
-        if ! command -v brew &>/dev/null; then
-            echo "Warning: Homebrew installation failed. Skipping packages."
-            SKIP_BREW=true
-        fi
+      echo "Warning: Homebrew installation failed. Skipping packages."
+      SKIP_BREW=true
     fi
+  fi
 
-    if [[ "$SKIP_BREW" != "true" ]]; then
-        echo "==> Installing Homebrew packages (this may take a while)..."
-        brew bundle install --file="$DOTFILES_DIR/homebrew/Brewfile" --no-lock
-    fi
+  if [[ "$SKIP_BREW" != "true" ]]; then
+    echo "==> Installing Homebrew packages (this may take a while)..."
+    brew bundle install --file="$DOTFILES_DIR/homebrew/Brewfile" --no-lock
+  fi
 fi
 
 # Create config directory
@@ -61,8 +61,8 @@ ln -sf "$DOTFILES_DIR/zshrc" "$HOME/.zshrc"
 
 # Install NVM if not present
 if [[ ! -d "$HOME/.nvm" ]]; then
-    echo "==> Installing NVM..."
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+  echo "==> Installing NVM..."
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
 fi
 
 echo ""
