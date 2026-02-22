@@ -3,7 +3,6 @@
 
 # Taps
 tap "dopplerhq/cli"
-tap "homebrew/cask-fonts"
 
 # ============ CLI Essentials ============
 brew "git"
