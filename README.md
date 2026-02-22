@@ -181,3 +181,25 @@ exec zsh -l
 ```bash
 cd ~/dotfiles && ./bootstrap.sh
 ```
+
+### Symlinks not created
+
+If configs aren't linked after running bootstrap.sh, create them manually:
+
+```bash
+# Create .config directory
+mkdir -p ~/.config
+
+# Create symlinks
+ln -sf ~/dotfiles/config/starship/starship.toml ~/.config/starship.toml
+ln -sfn ~/dotfiles/config/kitty ~/.config/kitty
+ln -sfn ~/dotfiles/config/nvim ~/.config/nvim
+ln -sfn ~/dotfiles/config/karabiner ~/.config/karabiner
+ln -sf ~/dotfiles/config/tmux/tmux.conf ~/.tmux.conf
+ln -sf ~/dotfiles/zshrc ~/.zshrc
+ln -sf ~/dotfiles/gitconfig ~/.gitconfig
+ln -sf ~/dotfiles/gitignore_global ~/.gitignore_global
+
+# Reload shell
+exec zsh -l
+```
