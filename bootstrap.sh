@@ -59,10 +59,32 @@ ln -sf "$DOTFILES_DIR/gitignore_global" "$HOME/.gitignore_global"
 # Zshrc
 ln -sf "$DOTFILES_DIR/zshrc" "$HOME/.zshrc"
 
+# Starship prompt
+ln -sf "$DOTFILES_DIR/config/starship/starship.toml" "$HOME/.config/starship.toml"
+
+# Kitty
+ln -sfn "$DOTFILES_DIR/config/kitty" "$HOME/.config/kitty"
+
+# Neovim
+ln -sfn "$DOTFILES_DIR/config/nvim" "$HOME/.config/nvim"
+
+# Karabiner
+ln -sfn "$DOTFILES_DIR/config/karabiner" "$HOME/.config/karabiner"
+
+# Tmux
+ln -sf "$DOTFILES_DIR/config/tmux/tmux.conf" "$HOME/.tmux.conf"
+
 # Install NVM if not present
 if [[ ! -d "$HOME/.nvm" ]]; then
   echo "==> Installing NVM..."
   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+fi
+
+# Install TPM (Tmux Plugin Manager) if not present
+if [[ ! -d "$HOME/.tmux/plugins/tpm" ]]; then
+  echo "==> Installing TPM (Tmux Plugin Manager)..."
+  git clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
+  echo "    Run 'prefix + I' in tmux to install plugins"
 fi
 
 echo ""

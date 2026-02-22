@@ -1,12 +1,42 @@
-# CloudMotion - Standard Dev Machine Setup
+# CloudMotion + Personal Dev Machine Setup
 # Run: brew bundle install --file=Brewfile
 
 # Taps
 tap "dopplerhq/cli"
+tap "sst/tap"
 
 # ============ CLI Essentials ============
+brew "bash"                        # Updated bash
 brew "git"
 brew "gh"                          # GitHub CLI
+brew "bat"                         # Better cat with syntax highlighting
+brew "ripgrep"                     # Fast grep alternative
+brew "fd"                          # Fast find alternative
+brew "fzf"                         # Fuzzy finder
+brew "eza"                         # Modern ls replacement
+brew "jq"                          # JSON processor
+brew "tree"                        # Directory tree viewer
+brew "tldr"                        # Simplified man pages
+brew "zoxide"                      # Smarter cd command
+brew "neovim"                      # Modern Vim
+brew "tmux"                        # Terminal multiplexer
+brew "lazygit"                     # Git TUI
+brew "lazydocker"                  # Docker TUI
+brew "lazyjj"                      # Jujutsu TUI
+brew "starship"                    # Cross-shell prompt
+brew "difftastic"                  # Structural diff tool
+brew "carapace"                    # Multi-shell completion
+brew "wget"                        # File downloader
+brew "gnupg"                       # GPG encryption
+brew "pandoc"                      # Document converter
+brew "docker"                      # Container runtime
+brew "jj"                          # jujutsu DVCS
+
+# ============ Zsh Plugins ============
+brew "zsh-vi-mode"
+brew "zsh-autosuggestions"
+brew "zsh-completions"
+brew "zsh-syntax-highlighting"
 
 # ============ Languages & Runtimes ============
 brew "php"
@@ -16,15 +46,27 @@ brew "uv"                          # Fast Python package manager
 # ============ DevOps ============
 brew "dopplerhq/cli/doppler"       # Secrets management
 
+# ============ AI Tools ============
+brew "codex"                       # OpenAI Codex CLI
+brew "gemini-cli"                  # Google Gemini CLI
+brew "block-goose-cli"             # Block Goose AI
+brew "sst/tap/opencode"            # OpenCode CLI
+cask "claude"                      # Anthropic Claude desktop
+cask "claude-code"                 # Claude Code CLI
+cask "cursor"                      # AI-powered code editor
+
 # ============ Apps ============
 # Browsers
 cask "arc"
 cask "google-chrome"
 cask "brave-browser"
+cask "zen"                         # Zen browser
+cask "thebrowsercompany-dia"       # Dia browser
 
 # Communication
 cask "slack"
 cask "microsoft-teams"
+cask "zoom"
 
 # Office
 cask "microsoft-office"
@@ -32,8 +74,9 @@ cask "microsoft-auto-update"
 
 # Development
 cask "visual-studio-code"
-cask "ghostty"
+cask "kitty"                       # Fast terminal emulator
 cask "orbstack"                    # Docker Desktop alternative
+cask "postman"                     # API testing
 
 # Design
 cask "figma"
@@ -41,8 +84,14 @@ cask "figma"
 # Productivity
 cask "linear-linear"
 cask "miro"
+cask "obsidian"                    # Knowledge base / notes
+cask "raycast"                     # Spotlight replacement
 
 # Utilities
 cask "appcleaner"
 cask "caffeine"
+cask "karabiner-elements"          # Keyboard customization
+cask "vlc"                         # Media player
 
+# Fonts
+cask "font-jetbrains-mono-nerd-font"

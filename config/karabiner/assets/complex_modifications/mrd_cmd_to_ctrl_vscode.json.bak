@@ -1,0 +1,303 @@
+{
+  "title": "MRD: VS Code-friendly ⌘→Ctrl (only when RDP is frontmost)",
+  "rules": [
+    {
+      "description": "Map ⌘ to Ctrl for common VS Code shortcuts in Microsoft Remote Desktop / Windows App only",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "c",
+            "modifiers": { "mandatory": ["command"], "optional": ["any"] }
+          },
+          "to": [{ "key_code": "c", "modifiers": ["left_control"] }],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.microsoft\\.rdc\\.macos$",
+                "^com\\.microsoft\\.rdc\\.macos\\.beta$",
+                "^com\\.microsoft\\.windowsapp$"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "v",
+            "modifiers": { "mandatory": ["command"], "optional": ["any"] }
+          },
+          "to": [{ "key_code": "v", "modifiers": ["left_control"] }],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.microsoft\\.rdc\\.macos$",
+                "^com\\.microsoft\\.rdc\\.macos\\.beta$",
+                "^com\\.microsoft\\.windowsapp$"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "x",
+            "modifiers": { "mandatory": ["command"], "optional": ["any"] }
+          },
+          "to": [{ "key_code": "x", "modifiers": ["left_control"] }],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.microsoft\\.rdc\\.macos$",
+                "^com\\.microsoft\\.rdc\\.macos\\.beta$",
+                "^com\\.microsoft\\.windowsapp$"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "z",
+            "modifiers": { "mandatory": ["command"], "optional": ["any"] }
+          },
+          "to": [{ "key_code": "z", "modifiers": ["left_control"] }],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.microsoft\\.rdc\\.macos$",
+                "^com\\.microsoft\\.rdc\\.macos\\.beta$",
+                "^com\\.microsoft\\.windowsapp$"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "a",
+            "modifiers": { "mandatory": ["command"], "optional": ["any"] }
+          },
+          "to": [{ "key_code": "a", "modifiers": ["left_control"] }],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.microsoft\\.rdc\\.macos$",
+                "^com\\.microsoft\\.rdc\\.macos\\.beta$",
+                "^com\\.microsoft\\.windowsapp$"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "f",
+            "modifiers": { "mandatory": ["command"], "optional": ["any"] }
+          },
+          "to": [{ "key_code": "f", "modifiers": ["left_control"] }],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.microsoft\\.rdc\\.macos$",
+                "^com\\.microsoft\\.rdc\\.macos\\.beta$",
+                "^com\\.microsoft\\.windowsapp$"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "p",
+            "modifiers": { "mandatory": ["command"], "optional": ["any"] }
+          },
+          "to": [{ "key_code": "p", "modifiers": ["left_control"] }],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.microsoft\\.rdc\\.macos$",
+                "^com\\.microsoft\\.rdc\\.macos\\.beta$",
+                "^com\\.microsoft\\.windowsapp$"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "slash",
+            "modifiers": { "mandatory": ["command"], "optional": ["any"] }
+          },
+          "to": [{ "key_code": "slash", "modifiers": ["left_control"] }],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.microsoft\\.rdc\\.macos$",
+                "^com\\.microsoft\\.rdc\\.macos\\.beta$",
+                "^com\\.microsoft\\.windowsapp$"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "grave_accent_and_tilde",
+            "modifiers": { "mandatory": ["command"], "optional": ["any"] }
+          },
+          "to": [
+            {
+              "key_code": "grave_accent_and_tilde",
+              "modifiers": ["left_control"]
+            }
+          ],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.microsoft\\.rdc\\.macos$",
+                "^com\\.microsoft\\.rdc\\.macos\\.beta$",
+                "^com\\.microsoft\\.windowsapp$"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "backslash",
+            "modifiers": { "mandatory": ["command"], "optional": ["any"] }
+          },
+          "to": [{ "key_code": "backslash", "modifiers": ["left_control"] }],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.microsoft\\.rdc\\.macos$",
+                "^com\\.microsoft\\.rdc\\.macos\\.beta$",
+                "^com\\.microsoft\\.windowsapp$"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "equal_sign",
+            "modifiers": { "mandatory": ["command"], "optional": ["any"] }
+          },
+          "to": [{ "key_code": "equal_sign", "modifiers": ["left_control"] }],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.microsoft\\.rdc\\.macos$",
+                "^com\\.microsoft\\.rdc\\.macos\\.beta$",
+                "^com\\.microsoft\\.windowsapp$"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "hyphen",
+            "modifiers": { "mandatory": ["command"], "optional": ["any"] }
+          },
+          "to": [{ "key_code": "hyphen", "modifiers": ["left_control"] }],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.microsoft\\.rdc\\.macos$",
+                "^com\\.microsoft\\.rdc\\.macos\\.beta$",
+                "^com\\.microsoft\\.windowsapp$"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "b",
+            "modifiers": { "mandatory": ["command"], "optional": ["any"] }
+          },
+          "to": [{ "key_code": "b", "modifiers": ["left_control"] }],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.microsoft\\.rdc\\.macos$",
+                "^com\\.microsoft\\.rdc\\.macos\\.beta$",
+                "^com\\.microsoft\\.windowsapp$"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "j",
+            "modifiers": { "mandatory": ["command"], "optional": ["any"] }
+          },
+          "to": [{ "key_code": "j", "modifiers": ["left_control"] }],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.microsoft\\.rdc\\.macos$",
+                "^com\\.microsoft\\.rdc\\.macos\\.beta$",
+                "^com\\.microsoft\\.windowsapp$"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "d",
+            "modifiers": { "mandatory": ["command"], "optional": ["any"] }
+          },
+          "to": [{ "key_code": "d", "modifiers": ["left_control"] }],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.microsoft\\.rdc\\.macos$",
+                "^com\\.microsoft\\.rdc\\.macos\\.beta$",
+                "^com\\.microsoft\\.windowsapp$"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "s",
+            "modifiers": { "mandatory": ["command"], "optional": ["any"] }
+          },
+          "to": [{ "key_code": "s", "modifiers": ["left_control"] }],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.microsoft\\.rdc\\.macos$",
+                "^com\\.microsoft\\.rdc\\.macos\\.beta$",
+                "^com\\.microsoft\\.windowsapp$"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

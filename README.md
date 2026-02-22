@@ -1,81 +1,47 @@
-# CloudMotion - Mac Developer Setup
+# Mac Developer Setup
 
-Standard development environment for Mac machines.
+Personal development environment for Mac machines, based on CloudMotion dotfiles.
 
 ## Prerequisites
 
 - macOS (Apple Silicon)
 - Admin access to install software
-- GitHub account with access to this repo
+- GitHub account
 
-## Setup
-
-Open Terminal and run these commands:
-
-### 1. Install Homebrew (important)
+## Quick Setup
 
 ```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+# Clone the repo
+git clone git@github.com:ramzihizi/dotfiles.git ~/dotfiles
+
+# Run setup
+cd ~/dotfiles && ./bootstrap.sh
 ```
 
-After installation, run the `eval` command shown in the output to add Homebrew to your PATH.
+## After Setup
 
-### 2. Install GitHub CLI
-
-```bash
-brew install gh
-```
-
-### 3. Authenticate with GitHub
-
-```bash
-gh auth login
-```
-
-When prompted:
-
-- Select **GitHub.com**
-- Select **SSH** (recommended)
-- Select **Yes** to generate a new SSH key
-- Enter a passphrase (or leave blank)
-
-### 4. Run Setup
-
-```bash
-gh repo clone CloudMotion/dotfiles ~/dotfiles
-~/dotfiles/bootstrap-init.sh
-```
-
-This will:
-
-- Create your personal fork of the dotfiles repo
-- Install all apps and tools
-- Configure your shell and git
-
-### After Setup: Configure Git Identity
+### 1. Configure Git Identity
 
 Create `~/.gitconfig.local`:
-
-```bash
-nano ~/.gitconfig.local   # or: vi ~/.gitconfig.local
-```
-
-Add your details:
 
 ```ini
 [user]
     name = Your Name
-    email = your.email@tcwglobal.com
+    email = your.email@example.com
 ```
 
-**nano**: Save with `Ctrl+O`, `Enter`, then exit with `Ctrl+X`
-**vi**: Press `i` to edit, `Esc` when done, then `:wq` to save and exit
+### 2. Configure Secrets
 
-### Install Browser Extensions
+Create `~/.zshrc.local` for API keys and tokens:
 
-Install manually from Chrome Web Store:
+```bash
+# Doppler tokens, API keys, etc.
+export DOPPLER_TOKEN="..."
+```
 
-- [LastPass](https://chrome.google.com/webstore/detail/lastpass/hdokiejnpimakedhajhdlcegeplioahd)
+### 3. Install Tmux Plugins
+
+Open tmux and press `prefix + I` to install plugins via TPM.
 
 ---
 
@@ -83,114 +49,115 @@ Install manually from Chrome Web Store:
 
 ### CLI Tools
 
-| Tool    | Purpose            |
-| ------- | ------------------ |
-| git     | Version control    |
-| gh      | GitHub CLI         |
-| doppler | Secrets management |
+| Tool | Purpose |
+|------|---------|
+| git, gh | Version control & GitHub CLI |
+| bat, eza, fd, ripgrep | Modern CLI replacements |
+| fzf, zoxide | Fuzzy finder & smart cd |
+| jq, tree, tldr | JSON processor, dir tree, simplified man |
+| neovim, tmux | Editor & terminal multiplexer |
+| lazygit, lazydocker, lazyjj | TUI for git, docker, jujutsu |
+| starship | Cross-shell prompt |
+| difftastic | Structural diff tool |
+| carapace | Multi-shell completion |
+
+### Zsh Plugins
+
+- zsh-vi-mode
+- zsh-autosuggestions
+- zsh-completions
+- zsh-syntax-highlighting
 
 ### Languages & Runtimes
 
-| Tool           | Purpose                 |
-| -------------- | ----------------------- |
-| PHP + Composer | PHP development         |
-| uv             | Python package manager  |
-| NVM            | Node.js version manager |
+| Tool | Purpose |
+|------|---------|
+| PHP + Composer | PHP development |
+| uv | Python package manager |
+| NVM | Node.js version manager |
+| Bun | Fast JS runtime |
+| jj | Jujutsu version control |
+
+### AI Tools
+
+| Tool | Purpose |
+|------|---------|
+| claude, claude-code | Anthropic Claude |
+| cursor | AI-powered code editor |
+| codex | OpenAI Codex CLI |
+| gemini-cli | Google Gemini CLI |
+| opencode | SST OpenCode CLI |
+| block-goose-cli | Block Goose AI |
 
 ### Applications
 
-| Category      | Apps                 |
-| ------------- | -------------------- |
-| Browsers      | Arc, Chrome, Brave   |
-| Editors       | VS Code              |
-| Terminals     | Ghostty              |
-| Communication | Slack, Teams         |
-| Office        | Microsoft Office     |
-| DevOps        | Orbstack (Docker)    |
-| Design        | Figma                |
-| Productivity  | Linear, Miro         |
-| Utilities     | AppCleaner, Caffeine |
+| Category | Apps |
+|----------|------|
+| Browsers | Arc, Chrome, Brave, Zen, Dia |
+| Terminals | Kitty |
+| Editors | VS Code, Cursor |
+| Communication | Slack, Teams, Zoom |
+| Office | Microsoft Office |
+| DevOps | Orbstack (Docker) |
+| Design | Figma |
+| Productivity | Linear, Miro, Obsidian, Raycast |
+| Utilities | AppCleaner, Caffeine, Karabiner, VLC |
 
-## Updating
+### Config Files
 
-Pull latest company changes and re-run the setup:
-
-```bash
-cd ~/dotfiles
-git fetch upstream
-git merge upstream/main
-./bootstrap.sh
-```
-
-## Customization
-
-### Option 1: Local Overrides (Simple)
-
-For machine-specific settings, create `~/.zshrc.local`:
-
-```bash
-# Add your custom aliases, exports, tokens here
-export MY_API_KEY="..."
-```
-
-This file is not tracked by git.
-
-### Option 2: Customize Your Fork
-
-The setup automatically creates a personal fork for you. To customize:
-
-#### 1. Make your changes
-
-```bash
-cd ~/dotfiles
-```
-
-Edit any files you want:
-
-- `homebrew/Brewfile` - add your own apps
-- `zshrc` - add your own aliases
-- `gitconfig` - add your own git settings
-
-#### 2. Commit and push to your fork
-
-```bash
-git add -A
-git commit -m "My customizations"
-git push origin main
-```
-
-#### 3. Pull company updates
-
-When the company updates the base dotfiles:
-
-```bash
-cd ~/dotfiles
-git fetch upstream
-git merge upstream/main
-git push origin main
-```
-
-If there are conflicts, resolve them and commit.
-
-#### 4. Apply changes to your machine
-
-After any updates:
-
-```bash
-./bootstrap.sh
-```
+| Config | Location |
+|--------|----------|
+| Starship | `~/.config/starship.toml` |
+| Kitty | `~/.config/kitty/` |
+| Neovim | `~/.config/nvim/` |
+| Karabiner | `~/.config/karabiner/` |
+| Tmux | `~/.tmux.conf` |
 
 ## Repository Structure
 
 ```
 dotfiles/
-├── bootstrap-init.sh      # Initial setup (run once after cloning)
-├── bootstrap.sh           # Full setup script
+├── bootstrap.sh           # Setup script
 ├── homebrew/
 │   └── Brewfile           # All packages and apps
+├── config/
+│   ├── starship/          # Starship prompt config
+│   ├── kitty/             # Kitty terminal config
+│   ├── nvim/              # Neovim (LazyVim) config
+│   ├── karabiner/         # Karabiner keyboard config
+│   └── tmux/              # Tmux config
 ├── zshrc                  # Shell configuration
 ├── gitconfig              # Git settings
 └── gitignore_global       # Global ignore patterns
+```
+
+## Updating
+
+```bash
+cd ~/dotfiles
+git pull
+./bootstrap.sh
+```
+
+## Customization
+
+### Local Overrides
+
+For machine-specific settings, use local files (not tracked by git):
+
+- `~/.gitconfig.local` - Git identity, signing keys
+- `~/.zshrc.local` - API keys, tokens, machine-specific settings
+
+### Modify Dotfiles
+
+Edit files directly and push:
+
+```bash
+cd ~/dotfiles
+# Make changes...
+git add -A
+git commit -m "Update config"
+git push
 ```
 
 ## Troubleshooting
@@ -205,6 +172,8 @@ brew doctor
 
 ```bash
 source ~/.zshrc
+# or
+exec zsh -l
 ```
 
 ### Re-run setup
@@ -212,7 +181,3 @@ source ~/.zshrc
 ```bash
 cd ~/dotfiles && ./bootstrap.sh
 ```
-
-## Support
-
-Contact the engineering team for help with setup issues.
