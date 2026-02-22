@@ -46,6 +46,3 @@ cask "miro"
 cask "appcleaner"
 cask "caffeine"
 
-# Fonts
-cask "font-jetbrains-mono-nerd-font"
-
