@@ -42,7 +42,7 @@ else
 
   if [[ "$SKIP_BREW" != "true" ]]; then
     echo "==> Installing Homebrew packages (this may take a while)..."
-    brew bundle install --file="$DOTFILES_DIR/homebrew/Brewfile" --no-lock
+    brew bundle install --file="$DOTFILES_DIR/homebrew/Brewfile"
   fi
 fi
 
