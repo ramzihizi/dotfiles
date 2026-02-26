@@ -74,6 +74,13 @@ ln -sfn "$DOTFILES_DIR/config/karabiner" "$HOME/.config/karabiner"
 # Tmux
 ln -sf "$DOTFILES_DIR/config/tmux/tmux.conf" "$HOME/.tmux.conf"
 
+# Claude Code
+mkdir -p "$HOME/.claude"
+sed "s|__HOME__|$HOME|g" "$DOTFILES_DIR/claude/settings.json" > "$HOME/.claude/settings.json"
+ln -sf "$DOTFILES_DIR/claude/statusline-command.sh" "$HOME/.claude/statusline-command.sh"
+ln -sfn "$DOTFILES_DIR/claude/agents" "$HOME/.claude/agents"
+ln -sfn "$DOTFILES_DIR/claude/hooks" "$HOME/.claude/hooks"
+
 # Install NVM if not present
 if [[ ! -d "$HOME/.nvm" ]]; then
   echo "==> Installing NVM..."
