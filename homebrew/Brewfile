@@ -75,6 +75,8 @@ cask "microsoft-auto-update"
 # Development
 cask "visual-studio-code"
 cask "kitty"                       # Fast terminal emulator
+cask "ghostty"                     # GPU-accelerated terminal
+cask "cmux"                        # Terminal multiplexer app
 cask "orbstack"                    # Docker Desktop alternative
 cask "postman"                     # API testing
 

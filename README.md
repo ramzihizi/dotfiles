@@ -94,7 +94,7 @@ Open tmux and press `prefix + I` to install plugins via TPM.
 | Category | Apps |
 |----------|------|
 | Browsers | Arc, Chrome, Brave, Zen, Dia |
-| Terminals | Kitty |
+| Terminals | Ghostty, Kitty, cmux |
 | Editors | VS Code, Cursor |
 | Communication | Slack, Teams, Zoom |
 | Office | Microsoft Office |
@@ -108,6 +108,7 @@ Open tmux and press `prefix + I` to install plugins via TPM.
 | Config | Location |
 |--------|----------|
 | Starship | `~/.config/starship.toml` |
+| Ghostty | `~/.config/ghostty/` |
 | Kitty | `~/.config/kitty/` |
 | Neovim | `~/.config/nvim/` |
 | Karabiner | `~/.config/karabiner/` |
@@ -122,6 +123,7 @@ dotfiles/
 │   └── Brewfile           # All packages and apps
 ├── config/
 │   ├── starship/          # Starship prompt config
+│   ├── ghostty/           # Ghostty terminal config
 │   ├── kitty/             # Kitty terminal config
 │   ├── nvim/              # Neovim (LazyVim) config
 │   ├── karabiner/         # Karabiner keyboard config
@@ -160,6 +162,38 @@ git commit -m "Update config"
 git push
 ```
 
+## Safety & Rollback
+
+Bootstrap automatically backs up any existing files before replacing them with symlinks. Backups are saved to `~/.dotfiles-backup-<timestamp>/`.
+
+### Preview before applying
+
+```bash
+./bootstrap.sh --dry-run
+```
+
+### List available backups
+
+```bash
+./bootstrap.sh --list-backups
+```
+
+### Restore from a backup
+
+```bash
+# See what backups exist
+./bootstrap.sh --list-backups
+
+# Restore (replaces symlinks with your original files)
+./bootstrap.sh --restore ~/.dotfiles-backup-20260306-120000
+```
+
+### What gets backed up
+
+Everything that bootstrap replaces: `~/.zshrc`, `~/.gitconfig`, `~/.gitignore_global`, `~/.config/starship.toml`, `~/.config/kitty/`, `~/.config/ghostty/`, `~/.config/nvim/`, `~/.config/karabiner/`, `~/.tmux.conf`, and Claude Code configs.
+
+Local override files (`~/.gitconfig.local`, `~/.zshrc.local`) are **never touched** by bootstrap.
+
 ## Troubleshooting
 
 ### Homebrew issues
@@ -192,6 +226,7 @@ mkdir -p ~/.config
 
 # Create symlinks
 ln -sf ~/dotfiles/config/starship/starship.toml ~/.config/starship.toml
+ln -sfn ~/dotfiles/config/ghostty ~/.config/ghostty
 ln -sfn ~/dotfiles/config/kitty ~/.config/kitty
 ln -sfn ~/dotfiles/config/nvim ~/.config/nvim
 ln -sfn ~/dotfiles/config/karabiner ~/.config/karabiner
