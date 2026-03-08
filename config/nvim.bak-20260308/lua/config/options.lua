@@ -8,3 +8,6 @@ vim.opt.spell = false
 -- Enable external change detection and faster CursorHold
 vim.o.autoread = true
 vim.o.updatetime = 500
+
+-- TEST: This comment verifies live config edits.
+-- You can remove it after confirming Neovim reload behavior.
