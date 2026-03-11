@@ -147,6 +147,9 @@ fi
 # uv shell completion
 command -v uv &>/dev/null && eval "$(uv generate-shell-completion zsh)"
 
+# MySQL client (Homebrew)
+[ -d "/opt/homebrew/opt/mysql-client/bin" ] && export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"
+
 # Windsurf (if installed)
 [ -d "$HOME/.codeium/windsurf/bin" ] && export PATH="$HOME/.codeium/windsurf/bin:$PATH"
 
