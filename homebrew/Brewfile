@@ -22,6 +22,7 @@ brew "neovim"                      # Modern Vim
 brew "tmux"                        # Terminal multiplexer
 brew "lazygit"                     # Git TUI
 brew "lazydocker"                  # Docker TUI
+brew "lazysql"                     # Database TUI
 brew "lazyjj"                      # Jujutsu TUI
 brew "starship"                    # Cross-shell prompt
 brew "difftastic"                  # Structural diff tool
