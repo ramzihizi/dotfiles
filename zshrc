@@ -129,6 +129,12 @@ export NVM_DIR="$HOME/.nvm"
 [ -f /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ] && \
     source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
+# ============Android dev ================
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+
+
 # ============ Additional Tools ============
 # Bun
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
@@ -160,3 +166,6 @@ command -v uv &>/dev/null && eval "$(uv generate-shell-completion zsh)"
 # Source local config for machine-specific settings and secrets
 # (Doppler tokens, API keys, etc.)
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
+
+# bun completions
+[ -s "/Users/ramzi.hizi/.bun/_bun" ] && source "/Users/ramzi.hizi/.bun/_bun"
