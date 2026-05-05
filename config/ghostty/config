@@ -1,4 +1,5 @@
-font-family = Comic Code Ligatures
+font-family = JetBrainsMono Nerd Font Mono
+# font-family = Comic Code Ligatures   # kept for machines that have Comic Code installed
 font-size = 13
 
 theme = TokyoNight Night

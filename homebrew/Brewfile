@@ -74,3 +74,6 @@ cask "raycast"                     # Spotlight replacement
 cask "appcleaner"
 cask "caffeine"
 cask "karabiner-elements"          # Keyboard customization
+
+# Fonts
+cask "font-jetbrains-mono-nerd-font"  # JetBrains Mono with Nerd Font icons (terminal/editor)
