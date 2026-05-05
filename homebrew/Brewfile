@@ -45,33 +45,17 @@ brew "composer"
 brew "uv"                          # Fast Python package manager
 
 # ============ DevOps ============
-brew "dopplerhq/cli/doppler"       # Secrets management
 
 # ============ AI Tools ============
-brew "codex"                       # OpenAI Codex CLI
-brew "gemini-cli"                  # Google Gemini CLI
-brew "block-goose-cli"             # Block Goose AI
-brew "sst/tap/opencode"            # OpenCode CLI
-cask "claude"                      # Anthropic Claude desktop
-cask "claude-code"                 # Claude Code CLI
-cask "cursor"                      # AI-powered code editor
 
 # ============ Apps ============
 # Browsers
-cask "arc"
 cask "google-chrome"
 cask "brave-browser"
-cask "zen"                         # Zen browser
-cask "thebrowsercompany-dia"       # Dia browser
 
 # Communication
-cask "slack"
-cask "microsoft-teams"
-cask "zoom"
 
 # Office
-cask "microsoft-office"
-cask "microsoft-auto-update"
 
 # Development
 cask "visual-studio-code"
@@ -79,14 +63,10 @@ cask "kitty"                       # Fast terminal emulator
 cask "ghostty"                     # GPU-accelerated terminal
 cask "cmux"                        # Terminal multiplexer app
 cask "orbstack"                    # Docker Desktop alternative
-cask "postman"                     # API testing
 
 # Design
-cask "figma"
 
 # Productivity
-cask "linear-linear"
-cask "miro"
 cask "obsidian"                    # Knowledge base / notes
 cask "raycast"                     # Spotlight replacement
 
@@ -94,7 +74,3 @@ cask "raycast"                     # Spotlight replacement
 cask "appcleaner"
 cask "caffeine"
 cask "karabiner-elements"          # Keyboard customization
-cask "vlc"                         # Media player
-
-# Fonts
-cask "font-jetbrains-mono-nerd-font"

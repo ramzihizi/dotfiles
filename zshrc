@@ -169,3 +169,4 @@ command -v uv &>/dev/null && eval "$(uv generate-shell-completion zsh)"
 
 # bun completions
 [ -s "/Users/ramzi.hizi/.bun/_bun" ] && source "/Users/ramzi.hizi/.bun/_bun"
+export PATH="$HOME/.local/bin:$PATH"

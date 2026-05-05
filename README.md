@@ -4,19 +4,45 @@ Personal development environment for Mac machines, based on CloudMotion dotfiles
 
 ## Prerequisites
 
+Before running the bootstrap script, you must have these installed and configured:
+
 - macOS (Apple Silicon)
 - Admin access to install software
 - GitHub account
+- **Homebrew** — package manager (used to install everything in `homebrew/Brewfile`)
+- **GitHub CLI (`gh`)** — used by `bootstrap-init.sh` to fork the repo and configure remotes
+- An SSH key uploaded to GitHub (or be authenticated via `gh auth login`)
+
+### Install the prerequisites
+
+```bash
+# 1. Install Xcode Command Line Tools (provides git, compilers, etc.)
+xcode-select --install
+
+# 2. Install Homebrew
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Add Homebrew to your shell PATH (Apple Silicon)
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# 3. Install GitHub CLI and authenticate
+brew install gh
+gh auth login
+```
 
 ## Quick Setup
 
 ```bash
-# Clone the repo
-git clone git@github.com:ramzihizi/dotfiles.git ~/dotfiles
+# Clone the repo (use gh so auth is already handled)
+gh repo clone ramzihizi/dotfiles ~/dotfiles
+# or, with SSH:
+# git clone git@github.com:ramzihizi/dotfiles.git ~/dotfiles
 
 # Run setup
 cd ~/dotfiles && ./bootstrap.sh
 ```
+
+> If you are setting this up at CloudMotion and want a personal fork wired up automatically, run `./bootstrap-init.sh` instead — it forks the company repo, configures `origin`/`upstream`, then calls `bootstrap.sh`.
 
 ## After Setup
 
@@ -39,9 +65,9 @@ Create `~/.zshrc.local` for API keys and tokens:
 export DOPPLER_TOKEN="..."
 ```
 
-### 3. Install Tmux Plugins
+### 3. Tmux Plugins
 
-Open tmux and press `prefix + I` to install plugins via TPM.
+`bootstrap.sh` installs TPM and its plugins automatically. If you ever need to re-install or update plugins manually, open tmux and press `prefix + I` (install) or `prefix + U` (update).
 
 ---
 
@@ -215,6 +241,20 @@ exec zsh -l
 ```bash
 cd ~/dotfiles && ./bootstrap.sh
 ```
+
+### Tmux behaving weirdly after a fresh clone
+
+If detach/attach is broken or the status bar/theme isn't showing, the most common causes are:
+
+1. TPM plugins were never installed. `bootstrap.sh` now installs them automatically, but if you skipped that step, run:
+   ```bash
+   ~/.tmux/plugins/tpm/bin/install_plugins
+   ```
+   Or, inside a tmux session, press `prefix + I`.
+2. `tmux-continuum` is auto-restoring a stale session from another machine. Kill all sessions and start fresh:
+   ```bash
+   tmux kill-server
+   ```
 
 ### Symlinks not created
 

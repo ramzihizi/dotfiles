@@ -234,14 +234,35 @@ if [[ ! -d "$HOME/.nvm" ]]; then
   fi
 fi
 
-# Install TPM (Tmux Plugin Manager) if not present
+# Install Claude Code CLI if not present (installs to ~/.local/bin/claude)
+if ! command -v claude &>/dev/null && [[ ! -x "$HOME/.local/bin/claude" ]]; then
+  if $DRY_RUN; then
+    echo "==> Would install Claude Code CLI"
+  else
+    echo "==> Installing Claude Code CLI..."
+    curl -fsSL https://claude.ai/install.sh | bash || \
+      echo "    (Claude install failed; install manually from https://claude.ai/install.sh)"
+  fi
+fi
+
+# Install TPM (Tmux Plugin Manager) and its plugins if not present
 if [[ ! -d "$HOME/.tmux/plugins/tpm" ]]; then
   if $DRY_RUN; then
-    echo "==> Would install TPM (Tmux Plugin Manager)"
+    echo "==> Would install TPM (Tmux Plugin Manager) and plugins"
   else
     echo "==> Installing TPM (Tmux Plugin Manager)..."
     git clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
-    echo "    Run 'prefix + I' in tmux to install plugins"
+  fi
+fi
+
+# Auto-install tmux plugins so tmux works out of the box on a fresh clone
+if [[ -x "$HOME/.tmux/plugins/tpm/bin/install_plugins" ]]; then
+  if $DRY_RUN; then
+    echo "==> Would install/update tmux plugins via TPM"
+  else
+    echo "==> Installing tmux plugins via TPM..."
+    "$HOME/.tmux/plugins/tpm/bin/install_plugins" >/dev/null 2>&1 || \
+      echo "    (TPM install_plugins exited non-zero; run 'prefix + I' inside tmux to retry)"
   fi
 fi
 
