@@ -32,6 +32,7 @@ command -v antigravity &>/dev/null && alias 'ntg'='antigravity'
 alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
+# alias ls="eza --icons --grid --group-directories-first"
 
 # Git shortcuts
 alias gst="git status"
@@ -45,7 +46,7 @@ alias gb="git branch"
 alias glo="git log --oneline --graph"
 
 # Better defaults (only alias if command exists)
-command -v eza &>/dev/null && alias ll="eza -la --icons" && alias ls="eza --icons" && alias tree="eza --tree --icons"
+command -v eza &>/dev/null && alias ll="eza -la --icons" && alias ls="eza --icons --grid --group-directories-first" && alias tree="eza --tree --icons"
 command -v bat &>/dev/null && alias cat="bat"
 command -v fd &>/dev/null && alias find="fd"
 command -v rg &>/dev/null && alias grep="rg"

@@ -256,6 +256,37 @@ If detach/attach is broken or the status bar/theme isn't showing, the most commo
    tmux kill-server
    ```
 
+### Karabiner-Elements rules not applying
+
+If your Karabiner config is symlinked correctly but key remappings aren't taking effect, the cause is almost always macOS permissions, not the config. Karabiner ships several daemons; the one that actually intercepts keystrokes is `karabiner_grabber`, and it requires per-machine permissions that **do not transfer through dotfiles**.
+
+Diagnose:
+
+```bash
+# These three should all be running. If karabiner_grabber is missing, permissions are the issue.
+pgrep -lf karabiner
+```
+
+Fix:
+
+1. Open **System Settings → Privacy & Security → Input Monitoring** and enable:
+   - `karabiner_grabber`
+   - `karabiner_observer`
+   - `Karabiner-Elements`
+2. Open **System Settings → Privacy & Security → Accessibility** and enable `Karabiner-Elements`.
+3. Make sure the Virtual HID Device system extension is enabled (System Settings → Privacy & Security → "Allow system software from developer 'Fumihiko Takayama'" if prompted). Verify with:
+   ```bash
+   systemextensionsctl list | grep -i karabiner
+   # should show: [activated enabled]
+   ```
+4. Quit and relaunch Karabiner-Elements from Spotlight. `karabiner_grabber` should now start.
+
+Verify:
+
+```bash
+pgrep -lf karabiner_grabber   # should print a PID
+```
+
 ### Symlinks not created
 
 If configs aren't linked after running bootstrap.sh, create them manually:
