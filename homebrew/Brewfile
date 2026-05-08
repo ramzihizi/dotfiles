@@ -76,4 +76,5 @@ cask "caffeine"
 cask "karabiner-elements"          # Keyboard customization
 
 # Fonts
-cask "font-jetbrains-mono-nerd-font"  # JetBrains Mono with Nerd Font icons (terminal/editor)
+cask "font-blex-mono-nerd-font"        # IBM Plex Mono with Nerd Font icons (terminal/editor)
+# cask "font-jetbrains-mono-nerd-font"  # JetBrains Mono with Nerd Font icons (terminal/editor)

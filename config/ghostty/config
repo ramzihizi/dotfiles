@@ -1,4 +1,5 @@
-font-family = JetBrainsMono Nerd Font Mono
+font-family = BlexMono Nerd Font Mono
+# font-family = JetBrainsMono Nerd Font Mono
 # font-family = Comic Code Ligatures   # kept for machines that have Comic Code installed
 font-size = 13
 
