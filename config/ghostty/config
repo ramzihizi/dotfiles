@@ -5,6 +5,21 @@ font-size = 13
 
 theme = TokyoNight Night
 
+# Window background opacity. The command palette action
+# "Toggle Background Opacity" switches between this value and fully opaque.
+background-opacity = 0.75
+
+# Apply opacity even when terminal apps paint explicit background cells.
+# This makes opacity visible in tmux, Neovim, and similar full-screen apps.
+background-opacity-cells = true
+
+# Keep background windows sharp when multitasking.
+background-blur = false
+
+# Use a minimal macOS titlebar while keeping the traffic-light buttons.
+macos-titlebar-style = transparent
+# macos-titlebar-style = hidden
+
 # Opacity for unfocused splits (0.0 to 1.0)
 unfocused-split-opacity = 0.7
 

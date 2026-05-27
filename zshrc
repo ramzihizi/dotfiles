@@ -163,6 +163,13 @@ command -v uv &>/dev/null && eval "$(uv generate-shell-completion zsh)"
 # Antigravity (if installed)
 [ -d "$HOME/.antigravity/antigravity/bin" ] && export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
 
+# pnpm
+export PNPM_HOME="$HOME/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME/bin:"*) ;;
+  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
+esac
+
 # ============ Local Overrides ============
 # Source local config for machine-specific settings and secrets
 # (Doppler tokens, API keys, etc.)

@@ -1,0 +1,25 @@
+# markdownlint rules for nvim (used by markdownlint-cli2 via nvim-lint).
+# Goal: keep checks that catch real/broken markup, silence stylistic noise.
+# Full rule reference:
+# https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md
+#
+# Flip any of these back to `true` (or delete the line) to re-enable a rule.
+default: true
+
+# --- Disabled: pure style / too noisy for prose & note-taking ---
+MD013: false  # line-length             (long lines are fine)
+MD036: false  # emphasis-as-heading     (you use *bold* / **bold** as labels)
+MD010: false  # no-hard-tabs            (tab-indented nested lists are ok)
+MD007: false  # ul-indent               (don't police list indentation width)
+MD041: false  # first-line-heading      (file need not start with an H1)
+MD025: false  # single-h1               (allow multiple top-level headings)
+MD026: false  # heading trailing punctuation (e.g. "Heading:")
+MD024: false  # no-duplicate-heading    (repeated section names are fine)
+MD029: false  # ordered-list prefix     (don't enforce 1./2./3. numbering)
+MD033: false  # no-inline-html          (allow raw HTML)
+MD012: false  # multiple-blank-lines
+
+# Everything else stays on, e.g.:
+#   MD009 trailing whitespace, MD018/MD019 hashes & spacing in headings,
+#   MD040 fenced-code language, MD034 bare URLs, MD047 final newline,
+#   MD031/MD032 blank lines around code blocks & lists.

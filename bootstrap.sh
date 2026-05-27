@@ -234,6 +234,25 @@ if [[ ! -d "$HOME/.nvm" ]]; then
   fi
 fi
 
+# Install Node LTS via NVM if no Node version exists yet.
+# Required by Mason for npm-based LSP servers (jsonls, vtsls, tailwindcss, etc.)
+# and tools like markdownlint-cli2.
+if [[ ! -d "$HOME/.nvm/versions/node" ]] || [[ -z "$(ls -A "$HOME/.nvm/versions/node" 2>/dev/null)" ]]; then
+  if $DRY_RUN; then
+    echo "==> Would install Node LTS via NVM"
+  else
+    export NVM_DIR="$HOME/.nvm"
+    if [[ -s "$NVM_DIR/nvm.sh" ]]; then
+      echo "==> Installing Node LTS via NVM..."
+      # shellcheck disable=SC1091
+      . "$NVM_DIR/nvm.sh"
+      nvm install --lts
+    else
+      echo "    (nvm.sh not found; skipping Node — run 'nvm install --lts' manually)"
+    fi
+  fi
+fi
+
 # Install Claude Code CLI if not present (installs to ~/.local/bin/claude)
 if ! command -v claude &>/dev/null && [[ ! -x "$HOME/.local/bin/claude" ]]; then
   if $DRY_RUN; then
