@@ -30,6 +30,7 @@ brew "carapace"                    # Multi-shell completion
 brew "wget"                        # File downloader
 brew "gnupg"                       # GPG encryption
 brew "pandoc"                      # Document converter
+brew "dprint"                      # Fast Rust markdown/code formatter
 brew "docker"                      # Container runtime
 brew "jj"                          # jujutsu DVCS
 

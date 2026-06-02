@@ -9,6 +9,13 @@
 # Claude Code local settings
 claude/settings.local.json
 
+# This repo tracks its own Claude Code project config (.claude/ + CLAUDE.md),
+# overriding ~/.gitignore_global which ignores those in every repo. Keep
+# machine-local project settings out, though.
+!.claude/
+.claude/settings.local.json
+!CLAUDE.md
+
 # Secrets
 *.token
 *.key

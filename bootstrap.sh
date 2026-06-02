@@ -211,6 +211,9 @@ link_dir "$DOTFILES_DIR/config/ghostty" "$HOME/.config/ghostty"
 # Gitui
 link_dir "$DOTFILES_DIR/config/gitui" "$HOME/.config/gitui"
 
+# Dprint (markdown/code formatter; shared by nvim conform and Claude Code hook)
+link_dir "$DOTFILES_DIR/config/dprint" "$HOME/.config/dprint"
+
 # Tmux
 link_file "$DOTFILES_DIR/config/tmux/tmux.conf" "$HOME/.tmux.conf"
 
