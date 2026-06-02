@@ -208,6 +208,9 @@ link_dir "$DOTFILES_DIR/config/karabiner" "$HOME/.config/karabiner"
 # Ghostty
 link_dir "$DOTFILES_DIR/config/ghostty" "$HOME/.config/ghostty"
 
+# Gitui
+link_dir "$DOTFILES_DIR/config/gitui" "$HOME/.config/gitui"
+
 # Tmux
 link_file "$DOTFILES_DIR/config/tmux/tmux.conf" "$HOME/.tmux.conf"
 
