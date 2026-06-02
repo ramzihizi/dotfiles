@@ -178,9 +178,7 @@ esac
 # (Doppler tokens, API keys, etc.)
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
 
-# bun completions
-[ -s "/Users/ramzi.hizi/.bun/_bun" ] && source "/Users/ramzi.hizi/.bun/_bun"
 export PATH="$HOME/.local/bin:$PATH"
 
 # Added by MiniMax Code
-export PATH="/Users/rmh/.mavis/bin:$PATH"
+export PATH="$HOME/.mavis/bin:$PATH"
