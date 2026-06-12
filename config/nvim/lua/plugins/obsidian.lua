@@ -6,6 +6,7 @@ return {
     cmd = "Obsidian",
     keys = {
       { "<leader>on", "<cmd>Obsidian quick_switch<cr>", desc = "Obsidian Notes" },
+      { "<leader>od", "<cmd>Obsidian today<cr>", desc = "Obsidian Today" },
     },
     ---@module "obsidian"
     ---@type obsidian.config
@@ -20,6 +21,13 @@ return {
             notes_subdir = "wiki",
             attachments = {
               folder = "raw/assets",
+            },
+            daily_notes = {
+              enabled = true,
+              folder = "raw/journal/personal",
+              date_format = "YYYY/YYYY-MM-DD",
+              default_tags = {},
+              workdays_only = false,
             },
           },
         },
