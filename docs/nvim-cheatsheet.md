@@ -37,6 +37,8 @@ Leader key: `Space`
 |-----|--------|
 | `<leader>ff` | Find files (root dir) |
 | `<leader>fF` | Find files (cwd) |
+| `<leader>fa` | Find all files (root dir, hidden + gitignored) |
+| `<leader>fA` | Find all files (cwd, hidden + gitignored) |
 | `<leader>fr` | Recent files |
 | `<leader>fn` | New file |
 | `<leader>e` | Explorer (neo-tree) |
@@ -47,6 +49,8 @@ Leader key: `Space`
 |-----|--------|
 | `<leader>sg` | Live grep (root dir) |
 | `<leader>sG` | Live grep (cwd) |
+| `<leader>sA` | Live grep all files (root dir, hidden + gitignored) |
+| `<leader>sF` | Live grep all files (cwd, hidden + gitignored) |
 | `<leader>sw` | Search word under cursor |
 | `<leader>sb` | Search in current buffer |
 | `<leader>sh` | Help pages |
@@ -140,6 +144,9 @@ Inline blame is shown automatically on every line with author, date, summary, an
 | `Ctrl + j` / `Ctrl + k` | Navigate list up/down |
 | `Ctrl + u` / `Ctrl + d` | Scroll preview up/down |
 | `Alt + w` | Cycle focus: input -> list -> preview |
+| `Alt + h` | Toggle hidden files |
+| `Alt + i` | Toggle gitignored files |
+| `Alt + c` | Toggle root/cwd |
 | `Tab` | Multi-select item |
 | `Enter` | Confirm selection |
 | `Esc` | Cancel |
