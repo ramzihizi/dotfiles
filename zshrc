@@ -182,3 +182,4 @@ export PATH="$HOME/.local/bin:$PATH"
 
 # Added by MiniMax Code
 export PATH="$HOME/.mavis/bin:$PATH"
+export PATH="/Users/rmh/.local/bin:$PATH"
