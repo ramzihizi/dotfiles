@@ -220,6 +220,11 @@ link_dir "$DOTFILES_DIR/config/dprint" "$HOME/.config/dprint"
 # Tmux
 link_file "$DOTFILES_DIR/config/tmux/tmux.conf" "$HOME/.tmux.conf"
 
+# Herdr (AI-agent terminal multiplexer; link only config.toml since herdr keeps
+# sockets, logs, and session state alongside it in ~/.config/herdr).
+mkdir -p "$HOME/.config/herdr"
+link_file "$DOTFILES_DIR/config/herdr/config.toml" "$HOME/.config/herdr/config.toml"
+
 # Claude Code
 mkdir -p "$HOME/.claude"
 if $DRY_RUN; then
