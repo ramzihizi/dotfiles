@@ -199,6 +199,9 @@ link_file "$DOTFILES_DIR/config/starship/starship.toml" "$HOME/.config/starship.
 # Kitty
 link_dir "$DOTFILES_DIR/config/kitty" "$HOME/.config/kitty"
 
+# WezTerm
+link_dir "$DOTFILES_DIR/config/wezterm" "$HOME/.config/wezterm"
+
 # Neovim
 link_dir "$DOTFILES_DIR/config/nvim" "$HOME/.config/nvim"
 

@@ -75,17 +75,17 @@ export DOPPLER_TOKEN="..."
 
 ### CLI Tools
 
-| Tool | Purpose |
-|------|---------|
-| git, gh | Version control & GitHub CLI |
-| bat, eza, fd, ripgrep | Modern CLI replacements |
-| fzf, zoxide | Fuzzy finder & smart cd |
-| jq, tree, tldr | JSON processor, dir tree, simplified man |
-| neovim, tmux | Editor & terminal multiplexer |
-| lazygit, lazydocker, lazyjj | TUI for git, docker, jujutsu |
-| starship | Cross-shell prompt |
-| difftastic | Structural diff tool |
-| carapace | Multi-shell completion |
+| Tool                        | Purpose                                  |
+| --------------------------- | ---------------------------------------- |
+| git, gh                     | Version control & GitHub CLI             |
+| bat, eza, fd, ripgrep       | Modern CLI replacements                  |
+| fzf, zoxide                 | Fuzzy finder & smart cd                  |
+| jq, tree, tldr              | JSON processor, dir tree, simplified man |
+| neovim, tmux                | Editor & terminal multiplexer            |
+| lazygit, lazydocker, lazyjj | TUI for git, docker, jujutsu             |
+| starship                    | Cross-shell prompt                       |
+| difftastic                  | Structural diff tool                     |
+| carapace                    | Multi-shell completion                   |
 
 ### Zsh Plugins
 
@@ -96,49 +96,50 @@ export DOPPLER_TOKEN="..."
 
 ### Languages & Runtimes
 
-| Tool | Purpose |
-|------|---------|
-| PHP + Composer | PHP development |
-| uv | Python package manager |
-| NVM | Node.js version manager |
-| Bun | Fast JS runtime |
-| jj | Jujutsu version control |
+| Tool           | Purpose                 |
+| -------------- | ----------------------- |
+| PHP + Composer | PHP development         |
+| uv             | Python package manager  |
+| NVM            | Node.js version manager |
+| Bun            | Fast JS runtime         |
+| jj             | Jujutsu version control |
 
 ### AI Tools
 
-| Tool | Purpose |
-|------|---------|
-| claude, claude-code | Anthropic Claude |
-| cursor | AI-powered code editor |
-| codex | OpenAI Codex CLI |
-| gemini-cli | Google Gemini CLI |
-| opencode | SST OpenCode CLI |
-| block-goose-cli | Block Goose AI |
+| Tool                | Purpose                |
+| ------------------- | ---------------------- |
+| claude, claude-code | Anthropic Claude       |
+| cursor              | AI-powered code editor |
+| codex               | OpenAI Codex CLI       |
+| gemini-cli          | Google Gemini CLI      |
+| opencode            | SST OpenCode CLI       |
+| block-goose-cli     | Block Goose AI         |
 
 ### Applications
 
-| Category | Apps |
-|----------|------|
-| Browsers | Arc, Chrome, Brave, Zen, Dia |
-| Terminals | Ghostty, Kitty, cmux |
-| Editors | VS Code, Cursor |
-| Communication | Slack, Teams, Zoom |
-| Office | Microsoft Office |
-| DevOps | Orbstack (Docker) |
-| Design | Figma |
-| Productivity | Linear, Miro, Obsidian, Raycast |
-| Utilities | AppCleaner, Caffeine, Karabiner, VLC |
+| Category      | Apps                                 |
+| ------------- | ------------------------------------ |
+| Browsers      | Arc, Chrome, Brave, Zen, Dia         |
+| Terminals     | Ghostty, Kitty, cmux                 |
+| Editors       | VS Code, Cursor                      |
+| Communication | Slack, Teams, Zoom                   |
+| Office        | Microsoft Office                     |
+| DevOps        | Orbstack (Docker)                    |
+| Design        | Figma                                |
+| Productivity  | Linear, Miro, Obsidian, Raycast      |
+| Utilities     | AppCleaner, Caffeine, Karabiner, VLC |
 
 ### Config Files
 
-| Config | Location |
-|--------|----------|
-| Starship | `~/.config/starship.toml` |
-| Ghostty | `~/.config/ghostty/` |
-| Kitty | `~/.config/kitty/` |
-| Neovim | `~/.config/nvim/` |
-| Karabiner | `~/.config/karabiner/` |
-| Tmux | `~/.tmux.conf` |
+| Config    | Location                  |
+| --------- | ------------------------- |
+| Starship  | `~/.config/starship.toml` |
+| Ghostty   | `~/.config/ghostty/`      |
+| Kitty     | `~/.config/kitty/`        |
+| WezTerm   | `~/.config/wezterm/`      |
+| Neovim    | `~/.config/nvim/`         |
+| Karabiner | `~/.config/karabiner/`    |
+| Tmux      | `~/.tmux.conf`            |
 
 ## Repository Structure
 
@@ -151,6 +152,7 @@ dotfiles/
 │   ├── starship/          # Starship prompt config
 │   ├── ghostty/           # Ghostty terminal config
 │   ├── kitty/             # Kitty terminal config
+│   ├── wezterm/           # WezTerm terminal + multiplexer config
 │   ├── nvim/              # Neovim (LazyVim) config
 │   ├── karabiner/         # Karabiner keyboard config
 │   └── tmux/              # Tmux config
@@ -216,7 +218,7 @@ Bootstrap automatically backs up any existing files before replacing them with s
 
 ### What gets backed up
 
-Everything that bootstrap replaces: `~/.zshrc`, `~/.gitconfig`, `~/.gitignore_global`, `~/.config/starship.toml`, `~/.config/kitty/`, `~/.config/ghostty/`, `~/.config/nvim/`, `~/.config/karabiner/`, `~/.tmux.conf`, and Claude Code configs.
+Everything that bootstrap replaces: `~/.zshrc`, `~/.gitconfig`, `~/.gitignore_global`, `~/.config/starship.toml`, `~/.config/kitty/`, `~/.config/wezterm/`, `~/.config/ghostty/`, `~/.config/nvim/`, `~/.config/karabiner/`, `~/.tmux.conf`, and Claude Code configs.
 
 Local override files (`~/.gitconfig.local`, `~/.zshrc.local`) are **never touched** by bootstrap.
 
@@ -299,6 +301,7 @@ mkdir -p ~/.config
 ln -sf ~/dotfiles/config/starship/starship.toml ~/.config/starship.toml
 ln -sfn ~/dotfiles/config/ghostty ~/.config/ghostty
 ln -sfn ~/dotfiles/config/kitty ~/.config/kitty
+ln -sfn ~/dotfiles/config/wezterm ~/.config/wezterm
 ln -sfn ~/dotfiles/config/nvim ~/.config/nvim
 ln -sfn ~/dotfiles/config/karabiner ~/.config/karabiner
 ln -sf ~/dotfiles/config/tmux/tmux.conf ~/.tmux.conf
