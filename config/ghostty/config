@@ -1,7 +1,14 @@
-font-family = BlexMono Nerd Font Mono
+font-family = Dank Mono
+# font-family = BlexMono Nerd Font Mono
 # font-family = JetBrainsMono Nerd Font Mono
 # font-family = Comic Code Ligatures   # kept for machines that have Comic Code installed
-font-size = 13
+font-size = 14
+
+# Cursor: teal #1abc9c, non-blinking (matches kitty/wezterm).
+cursor-color = #1abc9c
+cursor-text = #1a1b26
+cursor-style = block
+cursor-style-blink = false
 
 theme = TokyoNight Night
 
@@ -16,9 +23,16 @@ background-opacity-cells = true
 # Keep background windows sharp when multitasking.
 background-blur = false
 
-# Use a minimal macOS titlebar while keeping the traffic-light buttons.
-macos-titlebar-style = transparent
-# macos-titlebar-style = hidden
+# Rounded corners, no titlebar/buttons. Keeps the window frame (needed for the
+# rounded corners); the "white border" people see is actually the shadow rim,
+# killed below with macos-window-shadow = false.
+macos-titlebar-style = hidden
+# window-decoration = none           # fully borderless but squares the corners
+# macos-titlebar-style = transparent
+
+# Drop the macOS shadow — its bright rim shows as a thin light edge on a
+# borderless window.
+macos-window-shadow = false
 
 # Opacity for unfocused splits (0.0 to 1.0)
 unfocused-split-opacity = 0.7
