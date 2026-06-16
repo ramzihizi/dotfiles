@@ -138,7 +138,6 @@ export ANDROID_HOME=$HOME/Library/Android/sdk
 export PATH=$PATH:$ANDROID_HOME/emulator
 export PATH=$PATH:$ANDROID_HOME/platform-tools
 
-
 # ============ Additional Tools ============
 # Bun
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
@@ -178,8 +177,11 @@ esac
 # (Doppler tokens, API keys, etc.)
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
 
-export PATH="$HOME/.local/bin:$PATH"
-
 # Added by MiniMax Code
 export PATH="$HOME/.mavis/bin:$PATH"
 export PATH="/Users/rmh/.local/bin:$PATH"
+
+# Activate nvm's default Node in interactive shells so bare `node` is
+# nvm-managed (and `nvm use` / .nvmrc switching stays consistent) instead of
+# brew's node. Runs last so it wins the PATH race.
+nvm use default --silent 2>/dev/null
