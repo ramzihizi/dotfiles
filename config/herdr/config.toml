@@ -7,6 +7,14 @@ agent_panel_scope = "current"
 name = "tokyo-night"
 
 [keys]
+# --- Pane navigation (vim-style, no prefix) ---
+# Move focus between split panes with Ctrl+h/j/k/l, like vim window motions.
+# These are direct terminal-mode shortcuts (no prefix press first).
+focus_pane_left = "ctrl+h"
+focus_pane_down = "ctrl+j"
+focus_pane_up = "ctrl+k"
+focus_pane_right = "ctrl+l"
+
 # --- Agent sessions (the "agents" list: codex, claude, ...) ---
 # Cycle AI sessions; vim direction (j = next/down, k = previous/up).
 next_agent = "prefix+shift+j"
