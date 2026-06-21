@@ -225,6 +225,10 @@ link_file "$DOTFILES_DIR/config/tmux/tmux.conf" "$HOME/.tmux.conf"
 mkdir -p "$HOME/.config/herdr"
 link_file "$DOTFILES_DIR/config/herdr/config.toml" "$HOME/.config/herdr/config.toml"
 
+# Pi coding agent
+mkdir -p "$HOME/.pi/agent"
+link_file "$DOTFILES_DIR/config/pi/keybindings.json" "$HOME/.pi/agent/keybindings.json"
+
 # Claude Code
 mkdir -p "$HOME/.claude"
 if $DRY_RUN; then
