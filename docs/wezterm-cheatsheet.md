@@ -1,78 +1,19 @@
 # WezTerm Cheatsheet
 
-WezTerm replaces kitty as the terminal emulator and can also multiplex
-(panes/tabs/workspaces) for non-agent work. Config:
-`~/.config/wezterm/wezterm.lua` (auto-reloads on save).
+WezTerm is the terminal emulator (a kitty replacement) in a **wezterm + tmux**
+flow. It does **not** multiplex — tmux owns panes, windows, and sessions via
+its `Ctrl + b` prefix. So wezterm binds almost nothing and lets keys like
+`Ctrl + h/j/k/l` and `Ctrl + b` pass straight through to tmux.
 
-For AI-agent work the multiplexer is **herdr**, which runs inside wezterm
-and keeps tmux's `Ctrl + b` prefix. So wezterm's leader is **`Ctrl + a`** to
-stay out of herdr's way. Mapping of tmux concepts → WezTerm:
+`Ctrl + h/j/k/l` pane navigation depends on **Karabiner**: a global rule remaps
+`Ctrl+hjkl` to arrow keys, and wezterm must be in that rule's exclusion list
+(alongside kitty/ghostty) or the keys arrive as literal arrows and never reach
+tmux. `enable_kitty_keyboard = true` separately makes wezterm honor the kitty
+keyboard protocol like kitty, matching tmux's `extended-keys` handling (for pi).
 
-| tmux    | WezTerm   |
-| ------- | --------- |
-| session | workspace |
-| window  | tab       |
-| pane    | pane      |
+Config: `~/.config/wezterm/wezterm.lua` (auto-reloads on save — no reload key).
 
-## Workspaces (tmux sessions)
-
-| Key          | Action                                             |
-| ------------ | -------------------------------------------------- |
-| `leader + s` | List / switch workspaces (fuzzy launcher)          |
-| `leader + w` | Create + switch to a named workspace (tmux new -s) |
-| `leader + $` | Rename current workspace                           |
-| `leader + d` | Detach from the mux domain                         |
-| `wezterm ls` | List mux clients/workspaces (from shell)           |
-
-## Tabs (tmux windows)
-
-| Key            | Action                   |
-| -------------- | ------------------------ |
-| `leader + c`   | New tab                  |
-| `leader + ,`   | Rename tab               |
-| `leader + &`   | Close tab (with confirm) |
-| `leader + n`   | Next tab                 |
-| `leader + p`   | Previous tab             |
-| `leader + 1-9` | Switch to tab by number  |
-
-## Panes — Splitting
-
-| Key           | Action                            |
-| ------------- | --------------------------------- |
-| `leader + \|` | Split horizontally (side by side) |
-| `leader + -`  | Split vertically (top / bottom)   |
-| `leader + x`  | Close current pane (with confirm) |
-
-## Panes — Navigation
-
-| Key                | Action                                                               |
-| ------------------ | -------------------------------------------------------------------- |
-| `leader + h/j/k/l` | Move to pane left / down / up / right                                |
-| `Ctrl + h/j/k/l`   | Navigate panes seamlessly, hands off to Neovim splits (smart-splits) |
-
-## Panes — Resizing & Zoom
-
-| Key                         | Action                                                          |
-| --------------------------- | --------------------------------------------------------------- |
-| `leader + r` then `h/j/k/l` | Enter resize mode, resize 5 units (repeatable; `Esc`/`q` exits) |
-| `Alt + h/j/k/l`             | Resize pane directly (smart-splits)                             |
-| `leader + m` / `leader + z` | Toggle zoom (maximize / restore pane)                           |
-
-## Copy Mode (Vi Keys)
-
-Enter copy mode with `leader + [`
-
-| Key         | Action                  |
-| ----------- | ----------------------- |
-| `v`         | Start selection         |
-| `y`         | Copy selection and exit |
-| `q` / `Esc` | Exit copy mode          |
-| `h/j/k/l`   | Navigate                |
-| `/`         | Search forward          |
-| `?`         | Search backward         |
-| `n / N`     | Next / previous match   |
-
-Mouse selection copies automatically (no config needed).
+For multiplexing keys see [tmux-cheatsheet.md](tmux-cheatsheet.md).
 
 ## Opacity (ported from kitty)
 
@@ -86,49 +27,17 @@ Mouse selection copies automatically (no config needed).
 
 ## Misc
 
-| Key               | Action                                                   |
-| ----------------- | -------------------------------------------------------- |
-| `Cmd+Shift+r`     | Speak selected text via macOS `say`                      |
-| `leader + Ctrl+a` | Send a literal `Ctrl+a` to the shell (beginning-of-line) |
-| `Ctrl+Shift+l`    | Show debug overlay / Lua REPL                            |
-| `Ctrl+Shift+p`    | Command palette (search every action)                    |
+| Key            | Action                                |
+| -------------- | ------------------------------------- |
+| `Cmd+Shift+r`  | Speak selected text via macOS `say`   |
+| `Ctrl+Shift+l` | Show debug overlay / Lua REPL         |
+| `Ctrl+Shift+p` | Command palette (search every action) |
 
-Config reloads automatically on save — there is no reload keybinding to press.
-
-## Neovim integration
-
-`Ctrl + h/j/k/l` seamless navigation needs **smart-splits.nvim** in Neovim
-(it replaces `vim-tmux-navigator`, which only spoke tmux). Add to LazyVim:
-
-```lua
-return {
-  "mrjones2014/smart-splits.nvim",
-  lazy = false,
-  keys = {
-    { "<C-h>", function() require("smart-splits").move_cursor_left() end },
-    { "<C-j>", function() require("smart-splits").move_cursor_down() end },
-    { "<C-k>", function() require("smart-splits").move_cursor_up() end },
-    { "<C-l>", function() require("smart-splits").move_cursor_right() end },
-  },
-}
-```
-
-Until that's added, `Ctrl + h/j/k/l` still moves between WezTerm panes; it
-just won't hand off into Neovim splits.
-
-## Sessions across reboots
-
-WezTerm does not auto-save/restore sessions the way `tmux-resurrect` +
-`tmux-continuum` did. For that, add the [resurrect.wezterm](https://github.com/MLFlexer/resurrect.wezterm)
-plugin. The local mux server keeps sessions alive while WezTerm is open even
-if all windows are closed; a full quit / reboot loses them without the plugin.
+Mouse selection copies automatically (no config needed).
 
 ## CLI
 
-| Command                | Action                                 |
-| ---------------------- | -------------------------------------- |
-| `wezterm`              | Launch the GUI                         |
-| `wezterm ls`           | List mux clients                       |
-| `wezterm cli list`     | List tabs/panes (inside a session)     |
-| `wezterm connect unix` | Attach to the local mux server         |
-| `wezterm show-keys`    | Print the full active keybinding table |
+| Command             | Action                       |
+| ------------------- | ---------------------------- |
+| `wezterm`           | Launch the GUI               |
+| `wezterm show-keys` | Print the active keybindings |
