@@ -208,7 +208,8 @@
                                             "^org\\.tabby$",
                                             "^com\\.todesktop\\.230313mzl4w4u92$",
                                             "^com\\.exafunction\\.windsurf$",
-                                            "^com\\.mitchellh\\.ghostty$"
+                                            "^com\\.mitchellh\\.ghostty$",
+                                            "^com\\.github\\.wez\\.wezterm$"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -235,7 +236,8 @@
                                             "^org\\.tabby$",
                                             "^com\\.todesktop\\.230313mzl4w4u92$",
                                             "^com\\.exafunction\\.windsurf$",
-                                            "^com\\.mitchellh\\.ghostty$"
+                                            "^com\\.mitchellh\\.ghostty$",
+                                            "^com\\.github\\.wez\\.wezterm$"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -262,7 +264,8 @@
                                             "^org\\.tabby$",
                                             "^com\\.todesktop\\.230313mzl4w4u92$",
                                             "^com\\.exafunction\\.windsurf$",
-                                            "^com\\.mitchellh\\.ghostty$"
+                                            "^com\\.mitchellh\\.ghostty$",
+                                            "^com\\.github\\.wez\\.wezterm$"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
@@ -289,7 +292,8 @@
                                             "^org\\.tabby$",
                                             "^com\\.todesktop\\.230313mzl4w4u92$",
                                             "^com\\.exafunction\\.windsurf$",
-                                            "^com\\.mitchellh\\.ghostty$"
+                                            "^com\\.mitchellh\\.ghostty$",
+                                            "^com\\.github\\.wez\\.wezterm$"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
