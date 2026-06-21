@@ -15,12 +15,21 @@ local config = wezterm.config_builder()
 -- Theme: Tokyo Night (built-in scheme; matches kitty + tmux)
 config.color_scheme = "Tokyo Night"
 
--- Font: Dank Mono @ 13. Only Regular + (cursive) Italic faces are installed,
--- so bold is synthesized by wezterm. Operator Mono kept as fallback.
--- Italic auto-resolves to "Dank Mono Italic" — no font_rules needed.
+-- Font: Dank Mono. Only Regular + (cursive) Italic faces are installed, so bold
+-- is synthesized by wezterm; italic auto-resolves to "Dank Mono Italic".
+-- Fallbacks: Operator Mono for text, then BlexMono Nerd Font Mono for icon
+-- glyphs (tmux status bar, prompt icons). kitty auto-falls-back to the same
+-- Nerd Font; wezterm must name it explicitly or tokyo-night-tmux's Nerd Font v3
+-- glyphs render as tofu. The "Mono" variant forces icons to single-cell width.
 config.font = wezterm.font_with_fallback({
 	{ family = "Dank Mono", weight = "Regular" },
 	"Operator Mono",
+	"BlexMono Nerd Font Mono",
+	-- tokyo-night-tmux draws window numbers with U+1FBF0+ "segmented digits"
+	-- (its default `digital` id style), which Blex lacks — so they vanished in
+	-- wezterm while kitty fell back to a font that has them. Monaspace Nerd Font
+	-- covers that block; this makes the window-index numbers show like in kitty.
+	"MonaspiceNe Nerd Font Mono",
 })
 config.font_size = 14.0
 
