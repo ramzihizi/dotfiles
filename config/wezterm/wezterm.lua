@@ -46,7 +46,9 @@ config.cursor_blink_rate = 0
 config.window_background_opacity = 0.9
 -- No blur: keep what's behind wezterm sharp/readable, not frosted.
 config.macos_window_background_blur = 0
-config.window_decorations = "RESIZE"
+-- Keep the macOS window shadow off even at full opacity; WezTerm already
+-- disables it automatically below 1.0 opacity.
+config.window_decorations = "RESIZE | MACOS_FORCE_DISABLE_SHADOW"
 config.window_padding = { left = 6, right = 6, top = 6, bottom = 0 }
 
 -- Tab bar mirrors kitty's: a plain bar at the bottom, hidden while a single
