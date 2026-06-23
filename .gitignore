@@ -20,3 +20,18 @@ claude/settings.local.json
 *.token
 *.key
 .env*
+
+# Codex: track only stable hand-authored config (hooks.json, herdr-agent-state.sh).
+# Never the volatile/secret runtime state, even if copied into codex/ by mistake.
+codex/auth.json
+codex/history.jsonl
+codex/config.toml
+codex/*.sqlite*
+codex/sessions/
+codex/log/
+codex/cache/
+
+# OpenCode: only the config seed; never installed deps or auth.
+config/opencode/node_modules/
+config/opencode/package*.json
+config/opencode/auth.json

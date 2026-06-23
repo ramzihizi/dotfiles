@@ -241,6 +241,28 @@ link_file "$DOTFILES_DIR/claude/statusline-command.sh" "$HOME/.claude/statusline
 link_dir "$DOTFILES_DIR/claude/agents" "$HOME/.claude/agents"
 link_dir "$DOTFILES_DIR/claude/hooks" "$HOME/.claude/hooks"
 
+# Claude skills — link each dotfiles-owned skill into ~/.claude/skills, leaving
+# plugin-managed skills in place (per-item link, not a whole-dir link).
+mkdir -p "$HOME/.claude/skills"
+if [[ -d "$DOTFILES_DIR/claude/skills" ]]; then
+  for skill_dir in "$DOTFILES_DIR"/claude/skills/*/; do
+    [[ -d "$skill_dir" ]] || continue
+    link_dir "${skill_dir%/}" "$HOME/.claude/skills/$(basename "$skill_dir")"
+  done
+fi
+
+# Codex — link only the stable, hand-authored config (hooks + herdr state script).
+# NOT config.toml: Codex rewrites it every session (projects/hooks.state/plugin
+# install state), so it is machine-local runtime state, not a dotfile.
+if [[ -d "$HOME/.codex" ]]; then
+  link_file "$DOTFILES_DIR/codex/hooks.json" "$HOME/.codex/hooks.json"
+  link_file "$DOTFILES_DIR/codex/herdr-agent-state.sh" "$HOME/.codex/herdr-agent-state.sh"
+fi
+
+# OpenCode — config seed (auth lives elsewhere and is not tracked).
+mkdir -p "$HOME/.config/opencode"
+link_file "$DOTFILES_DIR/config/opencode/opencode.jsonc" "$HOME/.config/opencode/opencode.jsonc"
+
 # ============ Runtime Installers ============
 # Install NVM if not present
 if [[ ! -d "$HOME/.nvm" ]]; then
