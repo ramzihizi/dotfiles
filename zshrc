@@ -101,7 +101,12 @@ fi
 # Homebrew
 [[ -x "/opt/homebrew/bin/brew" ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
 
-# Starship prompt
+# Starship prompt — warm Gruvbox palette in the wezterm+tmux work env, cool
+# Tokyo Night (default starship.toml) everywhere else. Same per-environment
+# detection as the nvim colorscheme so prompt + editor + terminal all agree.
+if [ -n "$TMUX" ] || [ "$TERM_PROGRAM" = "WezTerm" ]; then
+    [ -f "$HOME/.config/starship-gruvbox.toml" ] && export STARSHIP_CONFIG="$HOME/.config/starship-gruvbox.toml"
+fi
 command -v starship &>/dev/null && eval "$(starship init zsh)"
 
 # FZF - Set up fzf key bindings and fuzzy completion
