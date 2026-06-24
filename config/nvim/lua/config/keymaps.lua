@@ -77,3 +77,26 @@ vim.keymap.set("x", "<leader>dr", function()
 end, { desc = "Read Selection" })
 
 vim.keymap.set("n", "<leader>ds", stop_speech, { desc = "Stop Reading" })
+
+local function mdview()
+  local file = vim.fn.expand("%:p")
+  if file == "" then
+    vim.notify("No file in buffer", vim.log.levels.WARN)
+    return
+  end
+
+  local bin = vim.fn.expand("~/.local/bin/mdview")
+  if vim.fn.executable(bin) == 0 then
+    vim.notify("mdview not found at " .. bin, vim.log.levels.ERROR)
+    return
+  end
+
+  if vim.bo.modified then
+    vim.cmd("write")
+  end
+
+  vim.fn.jobstart({ bin, file })
+end
+
+vim.api.nvim_create_user_command("MdView", mdview, { desc = "Render markdown + mermaid in browser" })
+vim.keymap.set("n", "<leader>mv", mdview, { desc = "Markdown+mermaid preview" })
