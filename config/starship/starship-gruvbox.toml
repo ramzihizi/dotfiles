@@ -21,14 +21,14 @@ $character"""
 [directory]
 truncation_length = 3
 truncate_to_repo = true
-style = "bold #fabd2f"
+style = "bold #d79921"
 
 [git_branch]
 symbol = " "
-style = "bold #fe8019"
+style = "bold #d65d0e"
 
 [git_status]
-style = "bold #fb4934"
+style = "bold #cc241d"
 ahead = "⇡${count}"
 diverged = "⇕⇡${ahead_count}⇣${behind_count}"
 behind = "⇣${count}"
@@ -39,25 +39,25 @@ staged = "+${count}"
 [nodejs]
 symbol = " "
 format = "[$symbol($version )]($style)"
-style = "bold #b8bb26"
+style = "bold #98971a"
 
 [php]
 symbol = " "
 format = "[$symbol($version )]($style)"
-style = "bold #83a598"
+style = "bold #458588"
 
 [python]
 symbol = " "
 format = "[$symbol($version )]($style)"
-style = "bold #fabd2f"
+style = "bold #d79921"
 
 [cmd_duration]
 min_time = 500
-format = "took [$duration](bold #fabd2f)"
+format = "took [$duration](bold #d79921)"
 
 [character]
-success_symbol = "[➜](bold #b8bb26)"
-error_symbol = "[➜](bold #fb4934)"
+success_symbol = "[➜](bold #98971a)"
+error_symbol = "[➜](bold #cc241d)"
 
 [aws]
 symbol = "  "
