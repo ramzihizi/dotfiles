@@ -265,6 +265,10 @@ fi
 mkdir -p "$HOME/.config/opencode"
 link_file "$DOTFILES_DIR/config/opencode/opencode.jsonc" "$HOME/.config/opencode/opencode.jsonc"
 
+# narrate (Kokoro read-aloud CLI; reuses Murmur's bundled mlx-audio runtime)
+mkdir -p "$HOME/.local/bin"
+link_file "$DOTFILES_DIR/config/bin/narrate" "$HOME/.local/bin/narrate"
+
 # ============ Runtime Installers ============
 # Install NVM if not present
 if [[ ! -d "$HOME/.nvm" ]]; then
