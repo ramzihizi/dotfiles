@@ -99,12 +99,16 @@ return {
   },
   {
     "LazyVim/LazyVim",
-    opts = { colorscheme = "tokyonight" },
-    -- opts = { colorscheme = "catppuccin" },
-    -- opts = { colorscheme = "catppuccin-mocha" },
-    -- opts = { colorscheme = "poimandres" },
-    -- opts = { colorscheme = "gruvbox" },
-    -- opts = { colorscheme = "github_dark_default" },
-    -- opts = { colorscheme = "github_dark" },
+    -- Per-environment colorscheme so the editor matches its terminal:
+    --   wezterm + tmux (serious-work env)  -> gruvbox   (warm/amber)
+    --   ghostty + herdr (everything else)  -> tokyonight (cool/blue)
+    -- Detected via $TMUX (set only inside tmux) or wezterm's $TERM_PROGRAM
+    -- (tmux rewrites TERM_PROGRAM to "tmux", so check both).
+    opts = function()
+      local in_wezterm = vim.env.TMUX ~= nil or vim.env.TERM_PROGRAM == "WezTerm"
+      return { colorscheme = in_wezterm and "gruvbox" or "tokyonight" }
+    end,
+    -- Manual alternates: "catppuccin", "catppuccin-mocha", "poimandres",
+    -- "github_dark_default", "github_dark".
   },
 }
