@@ -193,8 +193,9 @@ link_file "$DOTFILES_DIR/gitignore_global" "$HOME/.gitignore_global"
 # Zshrc
 link_file "$DOTFILES_DIR/zshrc" "$HOME/.zshrc"
 
-# Starship prompt
+# Starship prompt (default = cool Tokyo Night; gruvbox variant for wezterm+tmux)
 link_file "$DOTFILES_DIR/config/starship/starship.toml" "$HOME/.config/starship.toml"
+link_file "$DOTFILES_DIR/config/starship/starship-gruvbox.toml" "$HOME/.config/starship-gruvbox.toml"
 
 # Kitty
 link_dir "$DOTFILES_DIR/config/kitty" "$HOME/.config/kitty"
