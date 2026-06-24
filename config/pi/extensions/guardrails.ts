@@ -40,7 +40,7 @@ const bashRiskPatterns: Array<{ pattern: RegExp; title: string; blastRadius: str
 		blastRadius: "Can irreversibly erase or truncate file contents.",
 	},
 	{
-		pattern: /(^|[^0-9>])>\s*[^\s;&|]+/,
+		pattern: /(^|[^0-9>])>(?!>)\s*[^\s;&|]+/,
 		title: "Shell output overwrite",
 		blastRadius: "The > redirect truncates or overwrites the target file before writing output.",
 	},

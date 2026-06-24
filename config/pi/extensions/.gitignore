@@ -1,0 +1,4 @@
+# Auto-generated and rewritten per-machine by the herdr Pi integration
+# (reinstalling/updating herdr overwrites it). Tracking it causes churn and
+# cross-machine conflicts, so keep it out of the repo.
+herdr-agent-state.ts
