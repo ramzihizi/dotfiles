@@ -21,7 +21,7 @@ $character"""
 [directory]
 truncation_length = 3
 truncate_to_repo = true
-style = "bold #d79921"
+style = "bold #b57614"
 
 [git_branch]
 symbol = " "
@@ -49,11 +49,11 @@ style = "bold #458588"
 [python]
 symbol = " "
 format = "[$symbol($version )]($style)"
-style = "bold #d79921"
+style = "bold #b57614"
 
 [cmd_duration]
 min_time = 500
-format = "took [$duration](bold #d79921)"
+format = "took [$duration](bold #b57614)"
 
 [character]
 success_symbol = "[➜](bold #98971a)"

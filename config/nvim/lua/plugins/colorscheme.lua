@@ -5,6 +5,12 @@ return {
     opts = {
       transparent_mode = true,
       bold = false,
+      -- Warm down the bright yellow (#fabd2f reads as harsh/distracting) to
+      -- gruvbox's faded/ochre yellow — the same #b57614 used for the wezterm
+      -- cursor, starship prompt, and tmux active window, so all four match.
+      palette_overrides = {
+        bright_yellow = "#b57614",
+      },
       italic = {
         strings = true,
         emphasis = true,

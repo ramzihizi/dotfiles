@@ -36,14 +36,28 @@ config.font = wezterm.font_with_fallback({
 config.font_size = 14.0
 
 -- Cursor + selection: gruvbox yellow cursor, warm-grey selection (non-blinking).
--- Yellow #d79921 reads as gruvbox, not the old teal; selection uses bg2 #504945
+-- Yellow #b57614 reads as gruvbox, not the old teal; selection uses bg2 #504945
 -- so highlighted text stays on-theme instead of teal/blue.
 config.colors = {
-	cursor_bg = "#d79921",
-	cursor_border = "#d79921",
+	cursor_bg = "#b57614",
+	cursor_border = "#b57614",
 	cursor_fg = "#282828", -- text under cursor = background color (Gruvbox Dark bg)
 	selection_bg = "#504945", -- gruvbox bg2 (warm grey)
 	selection_fg = "#ebdbb2", -- gruvbox fg
+	-- Warm down the scheme's bright yellow: Gruvbox Dark's brights[4] is #fabd2f,
+	-- which reads as harsh in `ls`/terminal output. Drop it to the faded/ochre
+	-- yellow #b57614 (matches nvim, starship, tmux). All other brights are Gruvbox Dark's
+	-- defaults, restated here because wezterm needs the full 8-colour array.
+	brights = {
+		"#928374", -- black
+		"#fb4934", -- red
+		"#b8bb26", -- green
+		"#b57614", -- yellow (was #fabd2f)
+		"#83a598", -- blue
+		"#d3869b", -- magenta
+		"#8ec07c", -- cyan
+		"#ebdbb2", -- white
+	},
 }
 config.default_cursor_style = "SteadyBlock"
 config.cursor_blink_rate = 0
