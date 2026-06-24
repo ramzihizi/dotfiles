@@ -131,16 +131,16 @@ export DOPPLER_TOKEN="..."
 
 ### Config Files
 
-| Config    | Location                       |
-| --------- | ------------------------------ |
-| Starship  | `~/.config/starship.toml`      |
-| Ghostty   | `~/.config/ghostty/`           |
-| Kitty     | `~/.config/kitty/`             |
-| WezTerm   | `~/.config/wezterm/`           |
-| Neovim    | `~/.config/nvim/`              |
-| Karabiner | `~/.config/karabiner/`         |
-| Pi        | `~/.pi/agent/keybindings.json` |
-| Tmux      | `~/.tmux.conf`                 |
+| Config    | Location                                           |
+| --------- | -------------------------------------------------- |
+| Starship  | `~/.config/starship.toml`                          |
+| Ghostty   | `~/.config/ghostty/`                               |
+| Kitty     | `~/.config/kitty/`                                 |
+| WezTerm   | `~/.config/wezterm/`                               |
+| Neovim    | `~/.config/nvim/`                                  |
+| Karabiner | `~/.config/karabiner/`                             |
+| Pi        | `~/.pi/agent/keybindings.json`, extensions, themes |
+| Tmux      | `~/.tmux.conf`                                     |
 
 ## Repository Structure
 
@@ -156,7 +156,7 @@ dotfiles/
 │   ├── wezterm/           # WezTerm terminal config (multiplexing via tmux)
 │   ├── nvim/              # Neovim (LazyVim) config
 │   ├── karabiner/         # Karabiner keyboard config
-│   ├── pi/                # Pi coding agent keybindings
+│   ├── pi/                # Pi coding agent keybindings, extensions, and themes
 │   └── tmux/              # Tmux config
 ├── zshrc                  # Shell configuration
 ├── gitconfig              # Git settings
@@ -220,7 +220,7 @@ Bootstrap automatically backs up any existing files before replacing them with s
 
 ### What gets backed up
 
-Everything that bootstrap replaces: `~/.zshrc`, `~/.gitconfig`, `~/.gitignore_global`, `~/.config/starship.toml`, `~/.config/kitty/`, `~/.config/wezterm/`, `~/.config/ghostty/`, `~/.config/nvim/`, `~/.config/karabiner/`, `~/.pi/agent/keybindings.json`, `~/.tmux.conf`, and Claude Code configs.
+Everything that bootstrap replaces: `~/.zshrc`, `~/.gitconfig`, `~/.gitignore_global`, `~/.config/starship.toml`, `~/.config/kitty/`, `~/.config/wezterm/`, `~/.config/ghostty/`, `~/.config/nvim/`, `~/.config/karabiner/`, `~/.pi/agent/keybindings.json`, `~/.pi/agent/extensions/guardrails.ts`, `~/.pi/agent/themes/tokyo-night-darkest.json`, `~/.tmux.conf`, and Claude Code configs.
 
 Local override files (`~/.gitconfig.local`, `~/.zshrc.local`) are **never touched** by bootstrap.
 
@@ -306,6 +306,10 @@ ln -sfn ~/dotfiles/config/kitty ~/.config/kitty
 ln -sfn ~/dotfiles/config/wezterm ~/.config/wezterm
 ln -sfn ~/dotfiles/config/nvim ~/.config/nvim
 ln -sfn ~/dotfiles/config/karabiner ~/.config/karabiner
+mkdir -p ~/.pi/agent/extensions ~/.pi/agent/themes
+ln -sf ~/dotfiles/config/pi/keybindings.json ~/.pi/agent/keybindings.json
+ln -sf ~/dotfiles/config/pi/extensions/guardrails.ts ~/.pi/agent/extensions/guardrails.ts
+ln -sf ~/dotfiles/config/pi/themes/tokyo-night-darkest.json ~/.pi/agent/themes/tokyo-night-darkest.json
 ln -sf ~/dotfiles/config/tmux/tmux.conf ~/.tmux.conf
 ln -sf ~/dotfiles/zshrc ~/.zshrc
 ln -sf ~/dotfiles/gitconfig ~/.gitconfig

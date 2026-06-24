@@ -226,8 +226,10 @@ mkdir -p "$HOME/.config/herdr"
 link_file "$DOTFILES_DIR/config/herdr/config.toml" "$HOME/.config/herdr/config.toml"
 
 # Pi coding agent
-mkdir -p "$HOME/.pi/agent"
+mkdir -p "$HOME/.pi/agent/extensions" "$HOME/.pi/agent/themes"
 link_file "$DOTFILES_DIR/config/pi/keybindings.json" "$HOME/.pi/agent/keybindings.json"
+link_file "$DOTFILES_DIR/config/pi/extensions/guardrails.ts" "$HOME/.pi/agent/extensions/guardrails.ts"
+link_file "$DOTFILES_DIR/config/pi/themes/tokyo-night-darkest.json" "$HOME/.pi/agent/themes/tokyo-night-darkest.json"
 
 # Claude Code
 mkdir -p "$HOME/.claude"
