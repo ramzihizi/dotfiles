@@ -3,6 +3,7 @@ onboarding = false
 [ui]
 agent_panel_scope = "current"
 
+show_agent_labels_on_pane_borders = true
 [theme]
 name = "tokyo-night"
 
@@ -44,3 +45,6 @@ navigate_workspace_down = "j"
 navigate_workspace_up = "k"
 navigate_pane_down = "down"
 navigate_pane_up = "up"
+
+[ui.toast]
+delivery = "terminal"

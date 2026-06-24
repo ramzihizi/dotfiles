@@ -12,8 +12,10 @@ local config = wezterm.config_builder()
 
 -- ============ Appearance (ported from kitty) ============
 
--- Theme: Tokyo Night (built-in scheme; matches kitty + tmux)
-config.color_scheme = "Tokyo Night"
+-- Theme: Gruvbox Dark (built-in scheme; matches tmux + nvim in this env).
+-- Deliberately warm/amber here so wezterm+tmux is visually unmistakable from
+-- the ghostty+herdr environment, which stays Tokyo Night (cool/blue).
+config.color_scheme = "Gruvbox Dark"
 
 -- Font: Dank Mono. Only Regular + (cursive) Italic faces are installed, so bold
 -- is synthesized by wezterm; italic auto-resolves to "Dank Mono Italic".
@@ -37,7 +39,7 @@ config.font_size = 14.0
 config.colors = {
 	cursor_bg = "#1abc9c",
 	cursor_border = "#1abc9c",
-	cursor_fg = "#1a1b26", -- text under cursor = background color
+	cursor_fg = "#282828", -- text under cursor = background color (Gruvbox Dark bg)
 }
 config.default_cursor_style = "SteadyBlock"
 config.cursor_blink_rate = 0
