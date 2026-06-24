@@ -35,11 +35,15 @@ config.font = wezterm.font_with_fallback({
 })
 config.font_size = 14.0
 
--- Cursor: teal #1abc9c, non-blinking (kitty: cursor #1abc9c / blink_interval 0)
+-- Cursor + selection: gruvbox yellow cursor, warm-grey selection (non-blinking).
+-- Yellow #d79921 reads as gruvbox, not the old teal; selection uses bg2 #504945
+-- so highlighted text stays on-theme instead of teal/blue.
 config.colors = {
-	cursor_bg = "#1abc9c",
-	cursor_border = "#1abc9c",
+	cursor_bg = "#d79921",
+	cursor_border = "#d79921",
 	cursor_fg = "#282828", -- text under cursor = background color (Gruvbox Dark bg)
+	selection_bg = "#504945", -- gruvbox bg2 (warm grey)
+	selection_fg = "#ebdbb2", -- gruvbox fg
 }
 config.default_cursor_style = "SteadyBlock"
 config.cursor_blink_rate = 0

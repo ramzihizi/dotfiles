@@ -106,6 +106,11 @@ fi
 # detection as the nvim colorscheme so prompt + editor + terminal all agree.
 if [ -n "$TMUX" ] || [ "$TERM_PROGRAM" = "WezTerm" ]; then
     [ -f "$HOME/.config/starship-gruvbox.toml" ] && export STARSHIP_CONFIG="$HOME/.config/starship-gruvbox.toml"
+    # eza ships no gruvbox default, so its file colors land on the bright ANSI
+    # slots (neon in gruvbox). Pin them to neutral gruvbox tones in this env;
+    # ghostty+herdr leaves EZA_COLORS unset and keeps eza's Tokyo Night-adjacent
+    # defaults.
+    export EZA_COLORS="di=38;2;69;133;136:ex=38;2;152;151;26:ln=38;2;104;157;106:fi=38;2;235;219;178:or=38;2;204;36;29:mi=38;2;204;36;29:pi=38;2;214;93;14:so=38;2;214;93;14:bd=38;2;215;153;33:cd=38;2;215;153;33:su=38;2;204;36;29:sg=38;2;204;36;29:xx=38;2;146;131;116"
 fi
 command -v starship &>/dev/null && eval "$(starship init zsh)"
 
