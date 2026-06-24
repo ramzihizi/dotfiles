@@ -35,7 +35,7 @@ export HF_HOME="$BRIDGE/huggingface"
   --output_path "$workdir" \
   --file_prefix narrate \
   --audio_format wav \
-  --join_audio >/dev/null 2>&1
+  --join_audio >/dev/null 2>"$workdir/err.log"
 
 wav="$workdir/narrate.wav"
 if [[ ! -f "$wav" ]]; then
@@ -43,6 +43,10 @@ if [[ ! -f "$wav" ]]; then
   wav="$(/bin/ls "$workdir"/*.wav 2>/dev/null | head -n1 || true)"
 fi
 if [[ -z "${wav:-}" || ! -f "$wav" ]]; then
+  if [[ -s "$workdir/err.log" ]]; then
+    echo "narrate: mlx-audio error:" >&2
+    tail -n 5 "$workdir/err.log" >&2
+  fi
   echo "narrate: synthesis produced no audio" >&2
   exit 1
 fi
