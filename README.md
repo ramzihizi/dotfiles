@@ -220,7 +220,7 @@ Bootstrap automatically backs up any existing files before replacing them with s
 
 ### What gets backed up
 
-Everything that bootstrap replaces: `~/.zshrc`, `~/.gitconfig`, `~/.gitignore_global`, `~/.config/starship.toml`, `~/.config/kitty/`, `~/.config/wezterm/`, `~/.config/ghostty/`, `~/.config/nvim/`, `~/.config/karabiner/`, `~/.pi/agent/keybindings.json`, `~/.pi/agent/extensions/guardrails.ts`, `~/.pi/agent/themes/tokyo-night-darkest.json`, `~/.tmux.conf`, and Claude Code configs.
+Everything that bootstrap replaces: `~/.zshrc`, `~/.gitconfig`, `~/.gitignore_global`, `~/.config/starship.toml`, `~/.config/kitty/`, `~/.config/wezterm/`, `~/.config/ghostty/`, `~/.config/nvim/`, `~/.config/karabiner/`, `~/.pi/agent/keybindings.json`, `~/.pi/agent/extensions/`, `~/.pi/agent/themes/`, `~/.tmux.conf`, and Claude Code configs.
 
 Local override files (`~/.gitconfig.local`, `~/.zshrc.local`) are **never touched** by bootstrap.
 
@@ -306,10 +306,10 @@ ln -sfn ~/dotfiles/config/kitty ~/.config/kitty
 ln -sfn ~/dotfiles/config/wezterm ~/.config/wezterm
 ln -sfn ~/dotfiles/config/nvim ~/.config/nvim
 ln -sfn ~/dotfiles/config/karabiner ~/.config/karabiner
-mkdir -p ~/.pi/agent/extensions ~/.pi/agent/themes
+mkdir -p ~/.pi/agent
 ln -sf ~/dotfiles/config/pi/keybindings.json ~/.pi/agent/keybindings.json
-ln -sf ~/dotfiles/config/pi/extensions/guardrails.ts ~/.pi/agent/extensions/guardrails.ts
-ln -sf ~/dotfiles/config/pi/themes/tokyo-night-darkest.json ~/.pi/agent/themes/tokyo-night-darkest.json
+ln -sfn ~/dotfiles/config/pi/extensions ~/.pi/agent/extensions
+ln -sfn ~/dotfiles/config/pi/themes ~/.pi/agent/themes
 ln -sf ~/dotfiles/config/tmux/tmux.conf ~/.tmux.conf
 ln -sf ~/dotfiles/zshrc ~/.zshrc
 ln -sf ~/dotfiles/gitconfig ~/.gitconfig

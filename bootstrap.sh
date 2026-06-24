@@ -225,11 +225,11 @@ link_file "$DOTFILES_DIR/config/tmux/tmux.conf" "$HOME/.tmux.conf"
 mkdir -p "$HOME/.config/herdr"
 link_file "$DOTFILES_DIR/config/herdr/config.toml" "$HOME/.config/herdr/config.toml"
 
-# Pi coding agent
-mkdir -p "$HOME/.pi/agent/extensions" "$HOME/.pi/agent/themes"
+# Pi coding agent (link config-owned directories; pi keeps auth/sessions/settings in ~/.pi/agent)
+mkdir -p "$HOME/.pi/agent"
 link_file "$DOTFILES_DIR/config/pi/keybindings.json" "$HOME/.pi/agent/keybindings.json"
-link_file "$DOTFILES_DIR/config/pi/extensions/guardrails.ts" "$HOME/.pi/agent/extensions/guardrails.ts"
-link_file "$DOTFILES_DIR/config/pi/themes/tokyo-night-darkest.json" "$HOME/.pi/agent/themes/tokyo-night-darkest.json"
+link_dir "$DOTFILES_DIR/config/pi/extensions" "$HOME/.pi/agent/extensions"
+link_dir "$DOTFILES_DIR/config/pi/themes" "$HOME/.pi/agent/themes"
 
 # Claude Code
 mkdir -p "$HOME/.claude"
