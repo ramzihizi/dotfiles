@@ -27,6 +27,34 @@ return {
     },
   },
 
+  -- Rendering: tame render-markdown.nvim (pulled in by the LazyVim markdown
+  -- extra). Its defaults are busy — full-window-width heading bars, full-width
+  -- filled code-block slabs, and sign-column glyphs. Strip those back to a
+  -- minimal look while keeping gruvbox colors: both headings and code blocks
+  -- render as plain syntax-highlighted text — no background slabs, no border
+  -- rules, no gutter glyphs, no floating language-label bar. Foreground
+  -- highlights (RenderMarkdownH1..H6) are left alone, so heading colors still
+  -- track the colorscheme; the code language (e.g. "bash") shows as quiet text.
+  {
+    "MeanderingProgrammer/render-markdown.nvim",
+    optional = true,
+    opts = {
+      heading = {
+        sign = false, -- no gutter glyph
+        position = "inline", -- icon inlined on the left, not overlaying the '#'s
+        backgrounds = {}, -- drop the full-width colored bars; keep foregrounds
+      },
+      code = {
+        sign = false, -- no gutter glyph
+        disable_background = true, -- no filled slab behind code blocks
+        border = "none", -- no top/bottom rule lines
+        language_border = "", -- drop the block-char fill behind the language label
+        language_left = "", -- no left edge decoration on the label
+        language_right = "", -- no right edge decoration on the label
+      },
+    },
+  },
+
   -- Formatting: dprint only. Override the LazyVim markdown extra's default
   -- chain (prettier + markdownlint-cli2 + markdown-toc) so a single tool owns
   -- formatting. The opts function runs after the extra's table opts, so direct

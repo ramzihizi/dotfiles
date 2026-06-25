@@ -266,6 +266,16 @@ fi
 mkdir -p "$HOME/.config/opencode"
 link_file "$DOTFILES_DIR/config/opencode/opencode.jsonc" "$HOME/.config/opencode/opencode.jsonc"
 
+# narrate (Kokoro read-aloud CLI; reuses Murmur's bundled mlx-audio runtime).
+# Opt-in by detection: only wire it where that runtime actually exists, so the
+# script + nvim keymap stay dormant on machines without Murmur. The narrate
+# script checks for this same path at runtime; gating the symlink here keeps it
+# off PATH entirely elsewhere.
+if [[ -x "$HOME/Library/Application Support/Murmur/MLXAudioBridge/com.murmur.app/venv/bin/python" ]]; then
+  mkdir -p "$HOME/.local/bin"
+  link_file "$DOTFILES_DIR/config/bin/narrate" "$HOME/.local/bin/narrate"
+fi
+
 # ============ Runtime Installers ============
 # Install NVM if not present
 if [[ ! -d "$HOME/.nvm" ]]; then

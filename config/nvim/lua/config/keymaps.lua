@@ -30,6 +30,7 @@ local function define(text)
 end
 
 local speech_job
+local narrate_job
 
 local function stop_speech()
   if speech_job then
@@ -37,7 +38,13 @@ local function stop_speech()
     speech_job = nil
   end
 
+  if narrate_job then
+    vim.fn.jobstop(narrate_job)
+    narrate_job = nil
+  end
+
   vim.fn.system({ "/usr/bin/pkill", "-x", "say" })
+  vim.fn.system({ "/usr/bin/pkill", "-x", "afplay" })
 end
 
 local function speak(text)
@@ -72,9 +79,49 @@ vim.keymap.set("x", "<leader>dw", function()
   define(visual_selection())
 end, { desc = "Define Selection" })
 
+local function narrate(text)
+  text = vim.trim(text or "")
+  if text == "" then
+    vim.notify("No text selected", vim.log.levels.WARN)
+    return
+  end
+
+  stop_speech()
+
+  local bin = vim.fn.expand("~/.local/bin/narrate")
+  if vim.fn.executable(bin) == 0 then
+    vim.notify("narrate not found at " .. bin, vim.log.levels.ERROR)
+    return
+  end
+
+  narrate_job = vim.fn.jobstart({ bin }, {
+    on_exit = function()
+      narrate_job = nil
+    end,
+  })
+
+  if narrate_job <= 0 then
+    narrate_job = nil
+    vim.notify("Could not start narrate", vim.log.levels.ERROR)
+    return
+  end
+
+  vim.fn.chansend(narrate_job, text)
+  vim.fn.chanclose(narrate_job, "stdin")
+end
+
 vim.keymap.set("x", "<leader>dr", function()
   speak(visual_selection())
 end, { desc = "Read Selection" })
+
+-- Kokoro read-aloud: only bind when the narrate CLI is actually installed
+-- (bootstrap symlinks it only on machines with Murmur's runtime). Keeps the
+-- mapping absent elsewhere instead of binding a key that just errors.
+if vim.fn.executable(vim.fn.expand("~/.local/bin/narrate")) == 1 then
+  vim.keymap.set("x", "<leader>dR", function()
+    narrate(visual_selection())
+  end, { desc = "Read Selection (Kokoro)" })
+end
 
 vim.keymap.set("n", "<leader>ds", stop_speech, { desc = "Stop Reading" })
 

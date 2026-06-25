@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# narrate — read stdin text aloud with a Kokoro voice, reusing Murmur's
+# bundled mlx-audio runtime. Mirrors /usr/bin/say's stdin interface:
+#   echo "hello there" | narrate
+# Config: NARRATE_VOICE (default am_adam).
+set -euo pipefail
+
+BRIDGE="$HOME/Library/Application Support/Murmur/MLXAudioBridge/com.murmur.app"
+PYTHON="$BRIDGE/venv/bin/python"
+MODEL="prince-canuma/Kokoro-82M"
+VOICE="${NARRATE_VOICE:-am_adam}"
+
+if [[ ! -x "$PYTHON" ]]; then
+  echo "narrate: Murmur runtime not found at:" >&2
+  echo "  $PYTHON" >&2
+  echo "narrate: open Murmur once (or reinstall) to provision its mlx-audio venv." >&2
+  exit 1
+fi
+
+text="$(cat)"
+if [[ -z "${text//[[:space:]]/}" ]]; then
+  echo "narrate: no input text" >&2
+  exit 1
+fi
+
+workdir="$(mktemp -d "${TMPDIR:-/tmp}/narrate.XXXXXX")"
+trap 'rm -rf "$workdir"' EXIT INT TERM
+
+export HF_HOME="$BRIDGE/huggingface"
+
+"$PYTHON" -m mlx_audio.tts.generate \
+  --model "$MODEL" \
+  --voice "$VOICE" \
+  --text "$text" \
+  --output_path "$workdir" \
+  --file_prefix narrate \
+  --audio_format wav \
+  --join_audio >/dev/null 2>"$workdir/err.log"
+
+wav="$workdir/narrate.wav"
+if [[ ! -f "$wav" ]]; then
+  # Fall back to any wav the generator produced (segment naming varies).
+  wav="$(/bin/ls "$workdir"/*.wav 2>/dev/null | head -n1 || true)"
+fi
+if [[ -z "${wav:-}" || ! -f "$wav" ]]; then
+  if [[ -s "$workdir/err.log" ]]; then
+    echo "narrate: mlx-audio error:" >&2
+    tail -n 5 "$workdir/err.log" >&2
+  fi
+  echo "narrate: synthesis produced no audio" >&2
+  exit 1
+fi
+
+afplay "$wav"
