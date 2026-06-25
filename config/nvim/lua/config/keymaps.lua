@@ -158,3 +158,15 @@ local function daily_note()
 end
 
 vim.keymap.set("n", "<leader>od", daily_note, { desc = "Daily Note (today)" })
+
+-- Jump between harper's grammar/style suggestions the way ]e/]w jump errors and
+-- warnings. Harper is scoped to markdown/gitcommit and emitted at HINT severity,
+-- so ]g/[g cycle its prose recommendations (and float the message on landing).
+local function grammar_jump(count)
+  return function()
+    vim.diagnostic.jump({ count = count, severity = vim.diagnostic.severity.HINT, float = true })
+  end
+end
+
+vim.keymap.set("n", "]g", grammar_jump(1), { desc = "Next Grammar Hint (harper)" })
+vim.keymap.set("n", "[g", grammar_jump(-1), { desc = "Prev Grammar Hint (harper)" })
