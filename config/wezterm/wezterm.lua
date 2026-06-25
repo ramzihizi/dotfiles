@@ -32,7 +32,7 @@ config.font = wezterm.font_with_fallback({
 	-- covers that block; this makes the window-index numbers show like in kitty.
 	"MonaspiceNe Nerd Font Mono",
 })
-config.font_size = 13.0
+config.font_size = 13.3
 
 -- Cursor + selection: gruvbox yellow cursor, warm-grey selection (non-blinking).
 -- Yellow #b57614 reads as gruvbox, not the old teal; selection uses bg2 #504945
