@@ -147,3 +147,14 @@ end
 
 vim.api.nvim_create_user_command("MdView", mdview, { desc = "Render markdown + mermaid in browser" })
 vim.keymap.set("n", "<leader>mv", mdview, { desc = "Markdown+mermaid preview" })
+
+-- Open today's daily note in the rmh-wiki vault. Heavy journaling lives in the
+-- Obsidian app, but this is a quick capture path from Neovim. Mirrors the old
+-- obsidian.nvim daily-notes layout: raw/journal/personal/YYYY/YYYY-MM-DD.md.
+local function daily_note()
+  local dir = vim.fn.expand("~/bsdn/rmh-wiki/raw/journal/personal/" .. os.date("%Y"))
+  vim.fn.mkdir(dir, "p")
+  vim.cmd.edit(dir .. "/" .. os.date("%Y-%m-%d") .. ".md")
+end
+
+vim.keymap.set("n", "<leader>od", daily_note, { desc = "Daily Note (today)" })
