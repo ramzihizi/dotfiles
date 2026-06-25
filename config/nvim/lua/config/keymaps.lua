@@ -114,9 +114,14 @@ vim.keymap.set("x", "<leader>dr", function()
   speak(visual_selection())
 end, { desc = "Read Selection" })
 
-vim.keymap.set("x", "<leader>dR", function()
-  narrate(visual_selection())
-end, { desc = "Read Selection (Kokoro)" })
+-- Kokoro read-aloud: only bind when the narrate CLI is actually installed
+-- (bootstrap symlinks it only on machines with Murmur's runtime). Keeps the
+-- mapping absent elsewhere instead of binding a key that just errors.
+if vim.fn.executable(vim.fn.expand("~/.local/bin/narrate")) == 1 then
+  vim.keymap.set("x", "<leader>dR", function()
+    narrate(visual_selection())
+  end, { desc = "Read Selection (Kokoro)" })
+end
 
 vim.keymap.set("n", "<leader>ds", stop_speech, { desc = "Stop Reading" })
 
