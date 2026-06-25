@@ -17,15 +17,14 @@ local config = wezterm.config_builder()
 -- the ghostty+herdr environment, which stays Tokyo Night (cool/blue).
 config.color_scheme = "Gruvbox Dark"
 
--- Font: Dank Mono. Only Regular + (cursive) Italic faces are installed, so bold
--- is synthesized by wezterm; italic auto-resolves to "Dank Mono Italic".
--- Fallbacks: Operator Mono for text, then BlexMono Nerd Font Mono for icon
--- glyphs (tmux status bar, prompt icons). kitty auto-falls-back to the same
--- Nerd Font; wezterm must name it explicitly or tokyo-night-tmux's Nerd Font v3
--- glyphs render as tofu. The "Mono" variant forces icons to single-cell width.
+-- Font: SF Mono (Apple's monospace, installed at /Library/Fonts/SF-Mono-*.otf).
+-- Ships real Regular/Medium/Bold + matching italics, so wezterm synthesizes
+-- nothing. SF Mono has no icon glyphs, so the Nerd Font fallbacks stay: BlexMono
+-- Nerd Font Mono covers tmux status + prompt icons (kitty auto-falls-back to the
+-- same; wezterm must name it explicitly or tokyo-night-tmux's Nerd Font v3 glyphs
+-- render as tofu — the "Mono" variant forces icons to single-cell width).
 config.font = wezterm.font_with_fallback({
-	{ family = "Dank Mono", weight = "Regular" },
-	"Operator Mono",
+	{ family = "SF Mono", weight = "Regular" },
 	"BlexMono Nerd Font Mono",
 	-- tokyo-night-tmux draws window numbers with U+1FBF0+ "segmented digits"
 	-- (its default `digital` id style), which Blex lacks — so they vanished in
@@ -33,7 +32,7 @@ config.font = wezterm.font_with_fallback({
 	-- covers that block; this makes the window-index numbers show like in kitty.
 	"MonaspiceNe Nerd Font Mono",
 })
-config.font_size = 14.0
+config.font_size = 13.0
 
 -- Cursor + selection: gruvbox yellow cursor, warm-grey selection (non-blinking).
 -- Yellow #b57614 reads as gruvbox, not the old teal; selection uses bg2 #504945
