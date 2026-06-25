@@ -232,6 +232,32 @@ link_file "$DOTFILES_DIR/config/pi/keybindings.json" "$HOME/.pi/agent/keybinding
 link_dir "$DOTFILES_DIR/config/pi/extensions" "$HOME/.pi/agent/extensions"
 link_dir "$DOTFILES_DIR/config/pi/themes" "$HOME/.pi/agent/themes"
 
+# Pi packages (npm extensions). `pi install` records them in ~/.pi/agent/
+# settings.json and downloads into ~/.pi/agent/npm/node_modules — both
+# machine-local and regenerable, so the source of truth lives here. Idempotent:
+# re-installing an already-present package is a no-op for the settings list.
+# These replace the old local guardrails.ts (permission gate) and
+# duckduckgo-search.ts (web access) extensions.
+PI_PACKAGES=(
+  "npm:pi-web-access"                          # web search/fetch (replaces duckduckgo-search.ts)
+  "npm:@hypabolic/pi-hypa"
+  "npm:context-mode"
+  "npm:pi-subagents"
+  "npm:@juicesharp/rpiv-ask-user-question"     # permission gate (replaces guardrails.ts)
+)
+if command -v pi >/dev/null 2>&1; then
+  for pkg in "${PI_PACKAGES[@]}"; do
+    if $DRY_RUN; then
+      echo "    would install pi package: $pkg"
+    else
+      echo "    installing pi package: $pkg"
+      pi install "$pkg"
+    fi
+  done
+else
+  echo "    skipping pi packages (pi not on PATH yet)"
+fi
+
 # Claude Code
 mkdir -p "$HOME/.claude"
 if $DRY_RUN; then
