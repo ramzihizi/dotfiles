@@ -1,0 +1,16 @@
+{
+  "lastChangelogVersion": "0.80.2",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.5",
+  "defaultThinkingLevel": "high",
+  "theme": "tokyo-night-darkest",
+  "enableInstallTelemetry": false,
+  "defaultProjectTrust": "ask",
+  "packages": [
+    "npm:pi-web-access",
+    "npm:@hypabolic/pi-hypa",
+    "npm:context-mode",
+    "npm:pi-subagents",
+    "npm:@juicesharp/rpiv-ask-user-question"
+  ]
+}

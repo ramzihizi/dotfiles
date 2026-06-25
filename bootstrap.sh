@@ -226,34 +226,32 @@ link_file "$DOTFILES_DIR/config/tmux/tmux.conf" "$HOME/.tmux.conf"
 mkdir -p "$HOME/.config/herdr"
 link_file "$DOTFILES_DIR/config/herdr/config.toml" "$HOME/.config/herdr/config.toml"
 
-# Pi coding agent (link config-owned directories; pi keeps auth/sessions/settings in ~/.pi/agent)
+# Pi coding agent (link config-owned directories; pi keeps auth/sessions in ~/.pi/agent).
+# settings.json IS tracked: pi writes it in place (verified — symlink survives), so
+# runtime `pi install`s / pref changes flow back into the repo as diffs. Note its
+# `lastChangelogVersion` field churns across pi versions — expect occasional diffs.
 mkdir -p "$HOME/.pi/agent"
 link_file "$DOTFILES_DIR/config/pi/keybindings.json" "$HOME/.pi/agent/keybindings.json"
+link_file "$DOTFILES_DIR/config/pi/settings.json" "$HOME/.pi/agent/settings.json"
 link_dir "$DOTFILES_DIR/config/pi/extensions" "$HOME/.pi/agent/extensions"
 link_dir "$DOTFILES_DIR/config/pi/themes" "$HOME/.pi/agent/themes"
 
-# Pi packages (npm extensions). `pi install` records them in ~/.pi/agent/
-# settings.json and downloads into ~/.pi/agent/npm/node_modules — both
-# machine-local and regenerable, so the source of truth lives here. Idempotent:
-# re-installing an already-present package is a no-op for the settings list.
-# These replace the old local guardrails.ts (permission gate) and
-# duckduckgo-search.ts (web access) extensions.
-PI_PACKAGES=(
-  "npm:pi-web-access"                          # web search/fetch (replaces duckduckgo-search.ts)
-  "npm:@hypabolic/pi-hypa"
-  "npm:context-mode"
-  "npm:pi-subagents"
-  "npm:@juicesharp/rpiv-ask-user-question"     # permission gate (replaces guardrails.ts)
-)
+# Pi packages (npm extensions): settings.json's `packages[]` is the source of
+# truth. `pi install` downloads each into ~/.pi/agent/npm/node_modules (a
+# regenerable tree, not tracked) and is idempotent, so re-running is safe. This
+# is how a fresh machine populates the packages it already "knows" from the
+# tracked settings.json. These replace the old local guardrails.ts (permission
+# gate) and duckduckgo-search.ts (web access) extensions.
 if command -v pi >/dev/null 2>&1; then
-  for pkg in "${PI_PACKAGES[@]}"; do
+  while IFS= read -r pkg; do
+    [[ -z "$pkg" ]] && continue
     if $DRY_RUN; then
       echo "    would install pi package: $pkg"
     else
       echo "    installing pi package: $pkg"
       pi install "$pkg"
     fi
-  done
+  done < <(/usr/bin/python3 -c 'import json,sys; print("\n".join(json.load(open(sys.argv[1])).get("packages", [])))' "$DOTFILES_DIR/config/pi/settings.json" 2>/dev/null)
 else
   echo "    skipping pi packages (pi not on PATH yet)"
 fi
