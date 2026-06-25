@@ -7,8 +7,15 @@
 -- endpoint takes no system prompt and only suits code base-models, which makes
 -- prose come out code-flavored / parroted. The chat endpoint lets us steer tone
 -- and continue the author's voice. gemma3 writes the most natural English prose
--- of the open-weight models (tops EQ-Bench creative writing) and is good at both
--- fiction and expository notes.
+-- of the open-weight models and is good at both fiction and expository notes.
+--
+-- NOTE: deliberately gemma3, not gemma4. gemma4:12b is a reasoning-first model
+-- that "thinks" by default; that can only be disabled via Ollama's native
+-- /api/chat (think=false), NOT the OpenAI-compatible /v1 endpoint minuet uses.
+-- Through /v1 it spends the whole token budget reasoning and returns empty
+-- content — useless for inline completion. gemma3 is a plain instruct model, so
+-- it just writes. Revisit if minuet adds a native-Ollama backend or gemma4 ships
+-- a non-thinking tag.
 --
 -- Requires Ollama running with the model pulled:
 --   ollama pull gemma3:12b
