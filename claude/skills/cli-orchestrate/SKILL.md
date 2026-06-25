@@ -25,10 +25,11 @@ For a single small change, just do it directly — don't pay orchestration overh
 
 `scripts/run-worker.sh <backend> <workdir> <prompt-file> <out-file> [work|review]`
 
-- `backend` ∈ `codex|pi|opencode` · runs headless, captures the worker's final answer to `<out-file>`.
-- Model overrides via env: `CODEX_MODEL`, `PI_MODEL`/`PI_PROVIDER`, `OPENCODE_MODEL`/`OPENCODE_AGENT`.
+- `backend` ∈ `codex|pi|opencode|claude` · runs headless, captures the worker's final answer to `<out-file>`.
+- Model overrides via env: `CODEX_MODEL`, `PI_MODEL`/`PI_PROVIDER`, `OPENCODE_MODEL`/`OPENCODE_AGENT`, `CLAUDE_MODEL`.
 - `WORKER_TIMEOUT` (seconds, default 1200) caps each worker.
 - `mode=review` runs read-only (Codex uses `codex exec review`; OpenCode drops `--dangerously-skip-permissions`).
+- The **`claude` backend is review-only** (`claude -p`, no file-writing flag) — use it as a *visible-pane* Claude critic/reviewer leg. For a file-*writing* Claude leg, use the conductor's own Agent tool (in-process, not a pane) or route the write to codex/pi/opencode.
 
 ## Routing table — which worker for which sub-task
 
@@ -43,6 +44,8 @@ For a single small change, just do it directly — don't pay orchestration overh
 Heterogeneous reviewing is the point: never let the same backend write and review the same change.
 
 ## Procedure
+
+> **Visibility is the default.** Unless the user says otherwise, run the fan-out through a **tmux `grid`** (see below) so the human sees every agent live in its own pane — progress *and* answer — instead of a spinner. Prefer CLI-backed legs (`codex`/`pi`/`opencode`/`claude`) over the in-process Agent tool when running a grid, because only CLI workers can live in a pane. Launch the grid, tell the user the `tmux attach -t <session>` line, then poll the out-files to collect.
 
 1. **Decompose.** Break the task into independent sub-tasks. State the split to the user. If sub-tasks share state / must be sequential, say so and run them in order, not parallel.
 2. **Isolate.** One git worktree per parallel worker so concurrent edits never collide:
@@ -65,27 +68,32 @@ Heterogeneous reviewing is the point: never let the same backend write and revie
    Never auto-merge a failed or unreviewed branch.
 8. **Report.** One table: sub-task · backend · worktree · review verdict · merged?
 
-## Visibility — watch it live in a named tmux session
+## Visibility — watch it live in a named tmux session (default for `/orch`)
 
 `scripts/orch-tmux.sh` gives the flow a pre-named tmux session so the human can
-watch each worker in its own window/pane instead of staring at a spinner.
+watch each agent live instead of staring at a spinner. **Default to `grid`.**
 
-- **Run mode** — one window per worker, each running the worker live; panes stay open after exit so the result is readable:
+- **Grid mode (the default)** — every worker live in its own tiled **pane**, side by side in one window; each pane streams that worker's progress, then prints its final answer, then stays open:
   ```bash
   # jobs file: label|backend|workdir|prompt-file|out-file|mode
   cat > /tmp/orch.jobs <<'EOF'
-  auth|codex|../wt-auth|/tmp/auth.prompt|/tmp/auth.out|work
-  cache|opencode|../wt-cache|/tmp/cache.prompt|/tmp/cache.out|work
+  critique-codex|codex|.|/tmp/crit.prompt|/tmp/codex.out|review
+  critique-pi|pi|.|/tmp/crit.prompt|/tmp/pi.out|review
+  critique-claude|claude|.|/tmp/crit.prompt|/tmp/claude.out|review
   EOF
-  scripts/orch-tmux.sh run hermes /tmp/orch.jobs
-  # → attach: tmux attach -t hermes   (Ctrl-b d to detach, Ctrl-b w to list windows)
+  scripts/orch-tmux.sh grid orch /tmp/orch.jobs
+  # → attach: tmux attach -t orch   (Ctrl-b z zoom a pane · Ctrl-b o cycle · Ctrl-b d detach)
   ```
-- **Watch mode** — when the conductor runs workers itself (background Bash) and you only want to tail their outputs in a tiled dashboard:
+- **Run mode** — one **window** per worker (flip with Ctrl-b w). Use when output is long and panes would be too cramped to read:
   ```bash
-  scripts/orch-tmux.sh watch hermes /tmp/auth.out /tmp/cache.out
+  scripts/orch-tmux.sh run orch /tmp/orch.jobs
   ```
-- Session name is yours to set (`hermes`, `orch`, the task slug). Re-using a live name is refused — `tmux kill-session -t <name>` first.
-- When you (Claude) drive this non-interactively, launch with `run`/`watch`, tell the human the `tmux attach -t <name>` command, then poll the out-files for completion. The human watches; you collect and review.
+- **Watch mode** — when the conductor runs workers itself (background Bash) and you only want to tail their out-files in a tiled dashboard:
+  ```bash
+  scripts/orch-tmux.sh watch orch /tmp/codex.out /tmp/pi.out /tmp/claude.out
+  ```
+- Session name is yours to set (`orch`, `hermes`, the task slug). Re-using a live name is refused — `tmux kill-session -t <name>` first.
+- **How you (Claude) drive it:** write the prompt + jobs file, launch `grid`, tell the human the `tmux attach -t <name>` line up front, then poll the out-files for completion and collect. The human watches the panes; you read the out-files and judge. To put a Claude leg in a pane, use the `claude` backend (review-only); reserve the in-process Agent tool for a leg that must *write* files or hold this conversation's context (it won't appear as a pane — say so).
 
 ## Worktree-per-worker example
 

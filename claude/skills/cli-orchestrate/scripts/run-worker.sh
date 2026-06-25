@@ -4,20 +4,21 @@
 # Usage:
 #   run-worker.sh <backend> <workdir> <prompt-file> <out-file> [mode]
 #
-#   backend    codex | pi | opencode
+#   backend    codex | pi | opencode | claude
 #   workdir    directory the worker runs in (usually a git worktree)
 #   prompt-file path to a file containing the task prompt
 #   out-file   where the worker's final answer is written
 #   mode       work (default, may edit files) | review (read-only second opinion)
 #
-# Model overrides via env: CODEX_MODEL, PI_MODEL, OPENCODE_MODEL
+# Model overrides via env: CODEX_MODEL, PI_MODEL, OPENCODE_MODEL, CLAUDE_MODEL
+# (claude backend = headless `claude -p`, so a Claude leg is a visible tmux pane like the rest)
 # Per-worker timeout (seconds) via WORKER_TIMEOUT (default 1200).
 #
 # Exit code is the worker's exit code. Full transcript goes to stderr/out-file;
 # the conductor reads <out-file> for the distilled result.
 set -uo pipefail
 
-backend=${1:?backend required: codex|pi|opencode}
+backend=${1:?backend required: codex|pi|opencode|claude}
 workdir=${2:?workdir required}
 promptfile=${3:?prompt-file required}
 outfile=${4:?out-file required}
@@ -65,6 +66,18 @@ case "$backend" in
       ${OPENCODE_MODEL:+--model "$OPENCODE_MODEL"} \
       ${OPENCODE_AGENT:+--agent "$OPENCODE_AGENT"} \
       "$prompt" >"$outfile" 2>&2
+    ;;
+  claude)
+    # headless Claude Code, read-only by design — the visible-pane Claude *critic/reviewer*
+    # leg of the panel. No file-writing flag: keep work-mode edits in the conductor or a
+    # supervised session, not an unattended `--dangerously-skip-permissions` agent.
+    if [ "$mode" = work ]; then
+      echo "run-worker: claude backend is review-only here; route file-writing legs to codex/pi/opencode or the conductor's own Agent tool" >&2
+      exit 2
+    fi
+    ( cd "$workdir" && runtimeout claude -p \
+        ${CLAUDE_MODEL:+--model "$CLAUDE_MODEL"} \
+        "$prompt" ) >"$outfile" 2>&2
     ;;
   *)
     echo "run-worker: unknown backend '$backend'" >&2; exit 2;;
