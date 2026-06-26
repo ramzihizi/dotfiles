@@ -32,6 +32,17 @@ end
 local speech_job
 local narrate_job
 
+-- Reflect read-aloud state on the statusline (the lualine indicator in
+-- plugins/lualine.lua reads vim.g.tts_active / vim.g.tts_kind) and force an
+-- immediate redraw so it appears/clears without lualine's refresh-interval lag.
+local function update_tts_status(kind)
+  vim.g.tts_active = speech_job ~= nil or narrate_job ~= nil
+  vim.g.tts_kind = vim.g.tts_active and kind or nil
+  pcall(function()
+    require("lualine").refresh()
+  end)
+end
+
 local function stop_speech()
   if speech_job then
     vim.fn.jobstop(speech_job)
@@ -45,6 +56,7 @@ local function stop_speech()
 
   vim.fn.system({ "/usr/bin/pkill", "-x", "say" })
   vim.fn.system({ "/usr/bin/pkill", "-x", "afplay" })
+  update_tts_status()
 end
 
 local function speak(text)
@@ -58,6 +70,7 @@ local function speak(text)
   speech_job = vim.fn.jobstart({ "/usr/bin/say" }, {
     on_exit = function()
       speech_job = nil
+      update_tts_status()
     end,
   })
 
@@ -67,6 +80,8 @@ local function speak(text)
     return
   end
 
+  update_tts_status("say")
+  vim.notify("🔊 Reading…", vim.log.levels.INFO, { title = "say" })
   vim.fn.chansend(speech_job, text)
   vim.fn.chanclose(speech_job, "stdin")
 end
@@ -94,9 +109,27 @@ local function narrate(text)
     return
   end
 
+  local stderr = {}
   narrate_job = vim.fn.jobstart({ bin }, {
-    on_exit = function()
+    stderr_buffered = true,
+    on_stderr = function(_, data)
+      for _, line in ipairs(data or {}) do
+        if line ~= "" then
+          stderr[#stderr + 1] = line
+        end
+      end
+    end,
+    on_exit = function(_, code)
       narrate_job = nil
+      update_tts_status()
+      if code ~= 0 then
+        local msg = vim.trim(table.concat(stderr, "\n"))
+        vim.notify(
+          "narrate failed" .. (msg ~= "" and ":\n" .. msg or " (exit " .. code .. ")"),
+          vim.log.levels.ERROR,
+          { title = "narrate" }
+        )
+      end
     end,
   })
 
@@ -106,6 +139,8 @@ local function narrate(text)
     return
   end
 
+  update_tts_status("Kokoro")
+  vim.notify("🔊 Narrating…", vim.log.levels.INFO, { title = "narrate" })
   vim.fn.chansend(narrate_job, text)
   vim.fn.chanclose(narrate_job, "stdin")
 end
