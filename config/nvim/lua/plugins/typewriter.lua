@@ -1,20 +1,46 @@
--- typewriter.nvim — keeps the cursor line vertically centered as you write
--- ("typewriter scrolling"). Fills the one focus gap snacks-zen/twilight leave:
--- they dim/center the buffer but don't pin the active line. Aimed at long-form
--- prose (the novel + the wiki).
+-- "Typewriter" writing mode via native scrolloff — flicker-free.
 --
--- Default OFF; flip a writing session on with <leader>uW. To instead make it
--- always-on in prose buffers, add `always_center_filetypes = { "markdown" }`.
+-- We tried typewriter.nvim, but it re-runs `zz` on every CursorMoved AND
+-- WinScrolled, which oscillates on the long soft-wrapped paragraph lines a novel
+-- uses (story.md averages ~230 chars/line, up to 1184) and produces visible
+-- flicker. There's no option to disable that re-centering. A huge scrolloff pins
+-- the cursor line to the vertical centre using Neovim's own viewport management
+-- — one render pass, no autocmd loop — so it's flicker-free and works with
+-- wrapped prose. Loses typewriter.nvim's treesitter block-centering, which we
+-- didn't use anyway.
+--
+-- <leader>uW toggles it; snacks zen turns it on/off automatically.
+-- (typewriter.nvim is no longer referenced; run :Lazy clean to uninstall it.)
+
+local CENTER = 999
+
+local function set_typewriter(on)
+  if on and not vim.g.typewriter_on then
+    vim.g.typewriter_prev_scrolloff = vim.o.scrolloff
+  end
+  vim.g.typewriter_on = on
+  vim.o.scrolloff = on and CENTER or (vim.g.typewriter_prev_scrolloff or 4)
+end
+
+vim.keymap.set("n", "<leader>uW", function()
+  set_typewriter(not vim.g.typewriter_on)
+  vim.notify("Typewriter " .. (vim.g.typewriter_on and "on" or "off"))
+end, { desc = "Typewriter (Writing) Mode" })
+
 return {
-  "joshuadanpeterson/typewriter",
-  dependencies = { "nvim-treesitter/nvim-treesitter" },
-  cmd = { "TWToggle", "TWEnable", "TWDisable", "TWCenter", "TWTop", "TWBottom" },
-  keys = {
-    { "<leader>uW", "<cmd>TWToggle<cr>", desc = "Typewriter (Writing) Mode" },
-  },
-  opts = {
-    keep_cursor_position = true,
-    enable_notifications = false,
-    enable_with_zen_mode = true, -- no-op with snacks zen, harmless to leave on
+  -- Auto-enable typewriter centering inside snacks zen (the focus mode already
+  -- in this setup), and turn it back off on exit.
+  {
+    "folke/snacks.nvim",
+    opts = {
+      zen = {
+        on_open = function()
+          set_typewriter(true)
+        end,
+        on_close = function()
+          set_typewriter(false)
+        end,
+      },
+    },
   },
 }
