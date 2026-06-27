@@ -17,22 +17,31 @@ local config = wezterm.config_builder()
 -- the ghostty+herdr environment, which stays Tokyo Night (cool/blue).
 config.color_scheme = "Gruvbox Dark"
 
--- Font: SF Mono (Apple's monospace, installed at /Library/Fonts/SF-Mono-*.otf).
+-- Font: Comic Code Ligatures (primary). The Nerd Font fallbacks below still
+-- carry the tmux-status / prompt icons that Comic Code lacks — same reason the
+-- old SF Mono setup kept them (previous config preserved, commented out, below).
+config.font = wezterm.font_with_fallback({
+	"Comic Code Ligatures",
+	"BlexMono Nerd Font Mono",
+	"MonaspiceNe Nerd Font Mono",
+})
+
+-- Previous font: SF Mono (Apple's monospace, installed at /Library/Fonts/SF-Mono-*.otf).
 -- Ships real Regular/Medium/Bold + matching italics, so wezterm synthesizes
 -- nothing. SF Mono has no icon glyphs, so the Nerd Font fallbacks stay: BlexMono
 -- Nerd Font Mono covers tmux status + prompt icons (kitty auto-falls-back to the
 -- same; wezterm must name it explicitly or tokyo-night-tmux's Nerd Font v3 glyphs
 -- render as tofu — the "Mono" variant forces icons to single-cell width).
-config.font = wezterm.font_with_fallback({
-	{ family = "SF Mono", weight = "Regular" },
-	"BlexMono Nerd Font Mono",
-	-- tokyo-night-tmux draws window numbers with U+1FBF0+ "segmented digits"
-	-- (its default `digital` id style), which Blex lacks — so they vanished in
-	-- wezterm while kitty fell back to a font that has them. Monaspace Nerd Font
-	-- covers that block; this makes the window-index numbers show like in kitty.
-	"MonaspiceNe Nerd Font Mono",
-})
-config.font_size = 13.3
+-- config.font = wezterm.font_with_fallback({
+-- 	{ family = "SF Mono", weight = "Regular" },
+-- 	"BlexMono Nerd Font Mono",
+-- 	-- tokyo-night-tmux draws window numbers with U+1FBF0+ "segmented digits"
+-- 	-- (its default `digital` id style), which Blex lacks — so they vanished in
+-- 	-- wezterm while kitty fell back to a font that has them. Monaspace Nerd Font
+-- 	-- covers that block; this makes the window-index numbers show like in kitty.
+-- 	"MonaspiceNe Nerd Font Mono",
+-- })
+config.font_size = 13
 
 -- Cursor + selection: gruvbox yellow cursor, warm-grey selection (non-blinking).
 -- Yellow #b57614 reads as gruvbox, not the old teal; selection uses bg2 #504945
