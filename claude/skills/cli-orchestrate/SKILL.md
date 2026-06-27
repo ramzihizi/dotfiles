@@ -1,6 +1,6 @@
 ---
 name: cli-orchestrate
-description: Use when the user wants to orchestrate a multi-agent coding flow across heterogeneous CLI backends — Claude Code as conductor dispatching parallel workers (Codex, Pi, OpenCode) with reviewer agents grading their output. The "Hermes" conductor + workers + reviewers pattern. Triggers - "orchestrate", "fan out to codex/pi/opencode", "conductor flow", "run this across the agents", "hermes-style".
+description: Use when the user wants to orchestrate a multi-agent coding flow across heterogeneous CLI backends — Claude Code as conductor dispatching parallel workers (Codex, Pi, agy) with reviewer agents grading their output. The "Hermes" conductor + workers + reviewers pattern. Triggers - "orchestrate", "fan out to codex/pi/agy", "conductor flow", "run this across the agents", "hermes-style".
 ---
 
 # cli-orchestrate — heterogeneous agent conductor
@@ -10,8 +10,9 @@ best worker backend, runs them in **parallel in isolated git worktrees**, then r
 **reviewer** passes before merging. This is the local, heterogeneous version of the
 Hermes conductor/worker/reviewer flow.
 
-Workers available (see the per-backend skills `codex-cli`, `pi-cli`, `opencode-cli`
-for exact flags): **Codex**, **Pi**, **OpenCode**, and **Claude itself** (own subagents).
+Workers available (see the per-backend skills `codex-cli`, `pi-cli` for exact
+flags): **Codex**, **Pi**, **agy** (the new agent harness — replaced OpenCode),
+and **Claude itself** (own subagents).
 
 ## When to use
 
@@ -25,27 +26,27 @@ For a single small change, just do it directly — don't pay orchestration overh
 
 `scripts/run-worker.sh <backend> <workdir> <prompt-file> <out-file> [work|review]`
 
-- `backend` ∈ `codex|pi|opencode|claude` · runs headless, captures the worker's final answer to `<out-file>`.
-- Model overrides via env: `CODEX_MODEL`, `PI_MODEL`/`PI_PROVIDER`, `OPENCODE_MODEL`/`OPENCODE_AGENT`, `CLAUDE_MODEL`.
+- `backend` ∈ `codex|pi|agy|claude` · runs headless, captures the worker's final answer to `<out-file>`.
+- Model overrides via env: `CODEX_MODEL`, `PI_MODEL`/`PI_PROVIDER`, `AGY_MODEL`, `CLAUDE_MODEL`.
 - `WORKER_TIMEOUT` (seconds, default 1200) caps each worker.
-- `mode=review` runs read-only (Codex uses `codex exec review`; OpenCode drops `--dangerously-skip-permissions`).
-- The **`claude` backend is review-only** (`claude -p`, no file-writing flag) — use it as a *visible-pane* Claude critic/reviewer leg. For a file-*writing* Claude leg, use the conductor's own Agent tool (in-process, not a pane) or route the write to codex/pi/opencode.
+- `mode=review` runs read-only (Codex uses `codex exec review`; agy drops `--dangerously-skip-permissions`).
+- The **`claude` backend is review-only** (`claude -p`, no file-writing flag) — use it as a *visible-pane* Claude critic/reviewer leg. For a file-*writing* Claude leg, use the conductor's own Agent tool (in-process, not a pane) or route the write to codex/pi/agy.
 
 ## Routing table — which worker for which sub-task
 
-| Sub-task shape | Route to | Why |
-|---|---|---|
-| Multi-file design, security-sensitive, ambiguous reasoning | **Claude** (own subagent) | strongest reasoning, keeps conductor context |
-| Well-specified single-file implementation, mechanical refactor | **Codex** | fast, cheap, strong sandbox, `-o` clean capture |
-| Quick scripted edits, glue, throwaway exploration | **Pi** | minimal, fast spawn, ephemeral `--no-session` |
-| Broad multi-file feature with LSP context, alt-provider opinion | **OpenCode** | LSP integration, 75+ providers |
-| **Review** of any worker's diff | a **different** backend than wrote it | heterogeneous second opinion catches model-specific blind spots |
+| Sub-task shape                                                 | Route to                              | Why                                                             |
+| -------------------------------------------------------------- | ------------------------------------- | --------------------------------------------------------------- |
+| Multi-file design, security-sensitive, ambiguous reasoning     | **Claude** (own subagent)             | strongest reasoning, keeps conductor context                    |
+| Well-specified single-file implementation, mechanical refactor | **Codex**                             | fast, cheap, strong sandbox, `-o` clean capture                 |
+| Quick scripted edits, glue, throwaway exploration              | **Pi**                                | minimal, fast spawn, ephemeral `--no-session`                   |
+| Broad multi-file feature, alt-harness second opinion           | **agy**                               | Claude-Code-style agent harness (replaced OpenCode)             |
+| **Review** of any worker's diff                                | a **different** backend than wrote it | heterogeneous second opinion catches model-specific blind spots |
 
 Heterogeneous reviewing is the point: never let the same backend write and review the same change.
 
 ## Procedure
 
-> **Visibility is the default.** Unless the user says otherwise, run the fan-out through a **tmux `grid`** (see below) so the human sees every agent live in its own pane — progress *and* answer — instead of a spinner. Prefer CLI-backed legs (`codex`/`pi`/`opencode`/`claude`) over the in-process Agent tool when running a grid, because only CLI workers can live in a pane. Launch the grid, tell the user the `tmux attach -t <session>` line, then poll the out-files to collect.
+> **Visibility is the default.** Unless the user says otherwise, run the fan-out through a **tmux `grid`** (see below) so the human sees every agent live in its own pane — progress *and* answer — instead of a spinner. Prefer CLI-backed legs (`codex`/`pi`/`agy`/`claude`) over the in-process Agent tool when running a grid, because only CLI workers can live in a pane. Launch the grid, tell the user the `tmux attach -t <session>` line, then poll the out-files to collect.
 
 1. **Decompose.** Break the task into independent sub-tasks. State the split to the user. If sub-tasks share state / must be sequential, say so and run them in order, not parallel.
 2. **Isolate.** One git worktree per parallel worker so concurrent edits never collide:
@@ -57,7 +58,7 @@ Heterogeneous reviewing is the point: never let the same backend write and revie
 4. **Fan out.** Launch workers concurrently. Either:
    - shell: run each `run-worker.sh …` in the background (`&`) and `wait`; or
    - launch them as Claude `run_in_background` Bash tasks and collect on completion.
-   Cap concurrency at ~4.
+     Cap concurrency at ~4.
 5. **Collect.** Read each `<out-file>`. Summarize what each worker did + its worktree/branch.
 6. **Review.** For each worker's diff, dispatch a `review` pass to a *different* backend (or use Claude **Agent Teams** — `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` — to run parallel security / logic / test-coverage reviewer lenses). Collect verdicts.
 7. **Gate + merge.** Only merge worktrees whose review passed. Show the user the diffs and verdicts; merge on approval:
@@ -102,9 +103,9 @@ SK=~/.claude/skills/cli-orchestrate/scripts/run-worker.sh
 git worktree add ../wt-auth   -b orch/auth
 git worktree add ../wt-cache  -b orch/cache
 bash "$SK" codex    ../wt-auth  /tmp/auth.prompt   /tmp/auth.out   work &
-bash "$SK" opencode ../wt-cache /tmp/cache.prompt  /tmp/cache.out  work &
+bash "$SK" agy      ../wt-cache /tmp/cache.prompt  /tmp/cache.out  work &
 wait
-# heterogeneous review: pi reviews codex's auth work, codex reviews opencode's cache work
+# heterogeneous review: pi reviews codex's auth work, codex reviews agy's cache work
 bash "$SK" pi    ../wt-auth  /tmp/auth.review.prompt  /tmp/auth.review.out  review &
 bash "$SK" codex ../wt-cache /tmp/cache.review.prompt /tmp/cache.review.out review &
 wait

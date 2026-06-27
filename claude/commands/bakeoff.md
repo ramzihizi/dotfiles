@@ -30,9 +30,9 @@ Flow:
    writing nothing), skip worktrees and run them in place.
 3. **Fan out the identical job** to a *heterogeneous* set — vary the
    backend/model deliberately so you get genuinely different approaches, not N
-   copies of one model. Writer legs are codex/pi/agy (each lives in a pane —
-   note agy's run-worker keyword is still `opencode`); for a Claude *writer* leg
-   use the in-process Agent tool (it won't be a pane — say so). Cap ~4 workers.
+   copies of one model. Writer legs are codex/pi/agy (each lives in a pane); for
+   a Claude *writer* leg use the in-process Agent tool (it won't be a pane — say
+   so). Cap ~4 workers.
 4. **Judge.** Collect every worker's diff and run a judge pass — a backend that
    did **not** write (the review-only `claude` leg, or Claude reviewer lenses) —
    that reads all N solutions side by side and ranks them on correctness,
