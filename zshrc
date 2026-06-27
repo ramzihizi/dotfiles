@@ -53,6 +53,10 @@ command -v rg &>/dev/null && alias grep="rg"
 alias df="df -h"
 alias du="du -h"
 
+# macOS
+command -v caffeinate &>/dev/null && alias awake="caffeinate -i"          # keep the Mac awake until Ctrl-C
+command -v caffeinate &>/dev/null && alias awake-screen="caffeinate -di"  # also keep the display on
+
 # Safety
 alias rm="rm -i"
 alias cp="cp -i"
