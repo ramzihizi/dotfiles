@@ -56,27 +56,45 @@ vim.api.nvim_create_autocmd("FileType", {
 local dim_group = vim.api.nvim_create_augroup("DimOnUnfocus", { clear = true })
 local in_wezterm = vim.env.TMUX ~= nil or vim.env.TERM_PROGRAM == "WezTerm"
 local DIM_BG = in_wezterm and "#303030" or "#292e42"
--- Background groups to override. Restored by re-applying the colorscheme, which
--- is cheap and robust against gruvbox variants / future theme swaps.
+-- Background groups to override, with their original definitions cached on dim
+-- and restored on un-dim. We deliberately do NOT re-source the colorscheme to
+-- restore: a full re-source fires ColorScheme, which makes other plugins rebuild
+-- their highlights every focus change (it was wiping the bufferline active-tab
+-- highlight — see plugins/bufferline.lua) and is needlessly heavy. Caching the
+-- exact prior groups restores the identical look without the churn.
 local dim_targets = { "Normal", "NormalNC", "SignColumn", "LineNr", "EndOfBuffer", "FoldColumn" }
+local saved_hl = nil
 
 local function set_dim(on)
   if on then
+    if saved_hl then return end -- already dimmed; don't cache the dimmed state
+    saved_hl = {}
     for _, grp in ipairs(dim_targets) do
       local ok, hl = pcall(vim.api.nvim_get_hl, 0, { name = grp, link = false })
       if ok then
-        hl.bg = DIM_BG
-        pcall(vim.api.nvim_set_hl, 0, grp, hl)
+        saved_hl[grp] = hl
+        local dimmed = vim.tbl_extend("force", {}, hl)
+        dimmed.bg = DIM_BG
+        pcall(vim.api.nvim_set_hl, 0, grp, dimmed)
       end
     end
-  else
-    -- Re-source the active colorscheme to restore exact original highlights.
-    local scheme = vim.g.colors_name
-    if scheme then
-      pcall(vim.cmd.colorscheme, scheme)
+  elseif saved_hl then
+    for grp, hl in pairs(saved_hl) do
+      pcall(vim.api.nvim_set_hl, 0, grp, hl)
     end
+    saved_hl = nil
   end
 end
+
+-- If the colorscheme changes while dimmed, the cached groups are stale; drop
+-- them so un-dim leaves the new theme's (undimmed) highlights in place.
+vim.api.nvim_create_autocmd("ColorScheme", {
+  group = dim_group,
+  callback = function()
+    saved_hl = nil
+  end,
+  desc = "Invalidate cached dim highlights on colorscheme change",
+})
 
 vim.api.nvim_create_autocmd("FocusLost", {
   group = dim_group,
