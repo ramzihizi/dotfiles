@@ -2,8 +2,8 @@
   "lastChangelogVersion": "0.80.2",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.5",
-  "defaultThinkingLevel": "high",
-  "theme": "gruvbox-dark",
+  "defaultThinkingLevel": "xhigh",
+  "theme": "tokyo-night-darkest",
   "enableInstallTelemetry": false,
   "defaultProjectTrust": "ask",
   "packages": [
