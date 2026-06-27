@@ -38,16 +38,24 @@ vim.api.nvim_create_autocmd("FileType", {
   desc = "Disable spell for markdown/gitcommit/text",
 })
 
--- Dim the editor when its tmux pane loses focus, so the active pane is obvious.
--- The tmux side (window-style in config/tmux/tmux.conf) dims plain shell panes,
--- but nvim paints its own background, so tmux can't dim it. This mirrors that:
--- on FocusLost we shift the background groups to a neutral mid-gray (#303030) —
--- the SAME shade tmux uses for inactive panes — and restore on FocusGained.
--- The active bg is near-black, so the unfocused gray reads as a lighter overlay
--- rather than blending in. Requires `set -g focus-events on` in tmux.conf
--- (already set) so the events actually fire inside tmux.
+-- Dim the editor when its pane loses focus, so the active pane is obvious.
+-- On FocusLost we shift the background groups to a darker overlay and restore
+-- on FocusGained. The active bg is near-black, so the unfocused shade reads as
+-- a lighter overlay rather than blending in. Requires focus events to reach
+-- nvim (`set -g focus-events on` in tmux.conf, already set).
+--
+-- The dim shade matches the active environment's colorscheme, using the same
+-- $TMUX / $TERM_PROGRAM detection as plugins/colorscheme.lua:
+--   wezterm + tmux  -> gruvbox: neutral #303030, the SAME shade tmux paints on
+--                      inactive shell panes (window-style in tmux.conf), so
+--                      nvim and the surrounding panes dim to one tone.
+--   ghostty + herdr -> tokyonight (transparent, "night"): blue-tinted #292e42
+--                      (tokyonight's bg_highlight) so the dim harmonizes with
+--                      the cool palette and reads as a lighter overlay over
+--                      ghostty's #1a1b26 background instead of a warm gray.
 local dim_group = vim.api.nvim_create_augroup("DimOnUnfocus", { clear = true })
-local DIM_BG = "#303030" -- neutral mid-gray; matches tmux window-style inactive bg
+local in_wezterm = vim.env.TMUX ~= nil or vim.env.TERM_PROGRAM == "WezTerm"
+local DIM_BG = in_wezterm and "#303030" or "#292e42"
 -- Background groups to override. Restored by re-applying the colorscheme, which
 -- is cheap and robust against gruvbox variants / future theme swaps.
 local dim_targets = { "Normal", "NormalNC", "SignColumn", "LineNr", "EndOfBuffer", "FoldColumn" }
