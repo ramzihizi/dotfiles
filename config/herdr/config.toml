@@ -131,6 +131,30 @@ resize_mode = "prefix+shift+r"
 # type = "pane"
 # command = "lazygit"
 
+# Swap pane positions, vim-directional (herdr 0.7.1 has no native swap_pane
+# keybinding, so bind the `herdr pane swap` CLI via custom commands). Mirrors the
+# focus keys: ctrl+h/j/k/l focuses, prefix+shift+h/j/k/l swaps. tmux equivalent:
+# prefix+{ / prefix+} (swap-pane -U/-D), but herdr swaps directionally.
+[[keys.command]]
+key = "prefix+shift+h"
+type = "shell"
+command = "herdr pane swap --direction left --current"
+
+[[keys.command]]
+key = "prefix+shift+j"
+type = "shell"
+command = "herdr pane swap --direction down --current"
+
+[[keys.command]]
+key = "prefix+shift+k"
+type = "shell"
+command = "herdr pane swap --direction up --current"
+
+[[keys.command]]
+key = "prefix+shift+l"
+type = "shell"
+command = "herdr pane swap --direction right --current"
+
 # Legacy indexed shortcut config is still parsed for compatibility.
 # Prefer switch_tab, switch_workspace, and focus_agent for new configs.
 # [keys.indexed]
