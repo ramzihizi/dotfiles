@@ -7,24 +7,41 @@ description: Use when the user wants to spin up the four CLI harnesses (claude, 
 
 Spin up the four coding **harnesses** — `claude`, `codex`, `pi`, `agy` — each in
 its own pane, all in a **new tab of the current herdr workspace**, each launched
-**interactively with the same task pre-loaded**. You watch all four work side by
-side and steer any pane directly. Nothing is captured, scored, or auto-judged —
-this is the deliberately-simple, herdr-native cousin of `/bakeoff`.
+**interactively with the same task pre-loaded**, in **auto + read-only mode**:
+they run hands-off (no approval prompts) but cannot modify the working tree, so
+all four safely share one repo without colliding. You watch all four work side
+by side and steer any pane directly. Nothing is captured, scored, or auto-judged
+— this is the deliberately-simple, herdr-native cousin of `/bakeoff`.
 
 ## Harnesses, not agents
 
 The four panes run the **harness CLIs themselves**, not bare models or
 subagents. Each harness drives whatever model it is pointed at; override per
-harness before launching:
+harness before launching. Each launches in **auto + read-only** mode:
 
-| Harness  | Pane         | Interactive launch | Model override               |
-| -------- | ------------ | ------------------ | ---------------------------- |
-| `claude` | top-left     | `claude "<task>"`  | `CLAUDE_MODEL`               |
-| `codex`  | top-right    | `codex "<task>"`   | `CODEX_MODEL`                |
-| `pi`     | bottom-left  | `pi "<task>"`      | `PI_MODEL` (+ `PI_PROVIDER`) |
-| `agy`    | bottom-right | `agy -i "<task>"`  | `AGY_MODEL`                  |
+| Harness  | Pane         | Read-only + auto launch                                                                                | Model override               |
+| -------- | ------------ | ------------------------------------------------------------------------------------------------------ | ---------------------------- |
+| `claude` | top-left     | `claude --permission-mode dontAsk --disallowedTools "Edit Write MultiEdit NotebookEdit Bash" "<task>"` | `CLAUDE_MODEL`               |
+| `codex`  | top-right    | `codex -s read-only -a never "<task>"`                                                                 | `CODEX_MODEL`                |
+| `pi`     | bottom-left  | `pi --tools read,grep,find,ls -a "<task>"`                                                             | `PI_MODEL` (+ `PI_PROVIDER`) |
+| `agy`    | bottom-right | `agy -i "<task>"` (see read-only note below)                                                           | `AGY_MODEL`                  |
 
 When the user says "the crew" / "all four harnesses", they mean these four CLIs.
+
+### Read-only enforcement
+
+`claude`, `codex` (read-only sandbox), and `pi` (read-only tool allow-list) are
+**hard read-only** — they physically cannot modify the tree and never stop for
+approvals. For `claude` this is `dontAsk` mode with the write tools (and `Bash`,
+which could write via the shell) denied — **not** plan mode: plan mode gates on
+an "exit plan mode to proceed" prompt that reads as "switch to auto" instead of
+just returning a result, so it's deliberately avoided. `claude` reviews with
+`Read`/`Grep`/`Glob`. `agy` has **no** read-only/plan flag, so it is launched
+*without* `--dangerously-skip-permissions`: it can't auto-write, and a write
+attempt pauses for you to deny. In addition, the task each harness receives is
+prefixed with an explicit **read-only preamble** ("you may read/analyze but must
+not create/edit/delete… deliver a report only"), so they frame output as
+analysis — this is the primary guard for `agy`.
 
 ## When to use
 
@@ -55,10 +72,12 @@ The script (run from the repo you want them working in):
 
 - **herdr-only.** Requires a running herdr (the script bails if not inside a
   herdr pane). There is no tmux path here — for that, use the orch grid.
-- **Shared working tree.** All four panes run in the same `$PWD`. They launch
-  with **normal interactive approval prompts** (you approve tool calls), so you
-  stay in control; if you let several *write*, their edits share one tree —
-  steer them, or point the harnesses at different files.
+- **Shared working tree — made safe by read-only.** All four panes run in the
+  same `$PWD`. Because they're launched **auto + read-only**, sharing one tree is
+  safe: claude/codex/pi can't write at all, and agy will pause rather than
+  auto-write. That's the whole point — hands-off parallelism without the
+  colliding-edits problem. (If you ever want them to actually *implement* and
+  compete, that's `/bakeoff`, which gives each its own git worktree.)
 - **Same task to all four** — the whole point is divergent approaches to the
   identical prompt. There's no sub-task splitting (that's `/orch`).
 - Panes persist as shells after a harness exits, so you can rerun or inspect in

@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 # herdr-crew.sh — open a new tab in the CURRENT herdr workspace, tile it 2x2,
 # and launch the four CLI HARNESSES (claude, codex, pi, agy) interactively with
-# the same task pre-loaded. Watch and steer all four live; nothing is captured
-# or auto-judged. herdr-only, no tmux, no worktrees, no out-files.
+# the same task pre-loaded, each in AUTO + READ-ONLY mode: they run without
+# stopping for approvals, but cannot write/modify the tree — so all four can
+# share one working tree without colliding. Best of both worlds: hands-off, but
+# safe. Watch and steer all four live; nothing is captured or auto-judged.
+# herdr-only, no tmux, no worktrees, no out-files.
 #
 # Usage: herdr-crew.sh <task…>
 #
@@ -79,14 +82,40 @@ launch() { # pane label cmd args...
   herdr pane run "$pane" "bash $f" >/dev/null
 }
 
-# Interactive invocation per harness, with optional model override. Normal
-# interactive approval prompts are kept (you stay in control / steer each pane).
-launch "$p1" claude claude ${CLAUDE_MODEL:+--model "$CLAUDE_MODEL"} "$task"
-launch "$p2" codex  codex  ${CODEX_MODEL:+-m "$CODEX_MODEL"} "$task"
-launch "$p3" pi     pi     ${PI_MODEL:+--model "$PI_MODEL"} ${PI_PROVIDER:+--provider "$PI_PROVIDER"} "$task"
-launch "$p4" agy    agy -i ${AGY_MODEL:+--model "$AGY_MODEL"} "$task"
+# Read-only preamble prepended to the task, so each harness frames its output as
+# analysis and doesn't try to edit. This is belt-and-suspenders with the
+# per-harness read-only flags below — and it's the PRIMARY guard for agy, which
+# has no read-only/plan flag of its own.
+ro_preamble="You are running in READ-ONLY mode. You may read, search, and \
+analyze any files in this repository, but you MUST NOT create, edit, move, or \
+delete files, and MUST NOT run commands that change state. Deliver your findings \
+and concrete recommendations as a written report only — do not apply changes."
+task_ro="${ro_preamble}
 
-echo "▶ herdr-crew: new tab 'crew: $short' in workspace $ws — 4 harnesses, same task, interactive:"
+Task: ${task}"
+
+# Auto + read-only invocation per harness (plus optional model override):
+#   claude  dontAsk + write tools denied  reads freely, never prompts, no write
+#                                         tools — just reports. NOT plan mode:
+#                                         plan mode gates on an "exit plan mode
+#                                         to proceed" prompt that reads as "switch
+#                                         to auto" instead of giving a result.
+#                                         Bash is denied too, since dontAsk would
+#                                         otherwise auto-approve a shell write
+#                                         (claude has no read-only fs sandbox);
+#                                         Read/Grep/Glob cover read-only review.
+#   codex   -s read-only -a never         read-only sandbox; never asks
+#   pi      --tools read,grep,find,ls     only read-only tools enabled
+#   agy     (no read-only flag)           launched WITHOUT --dangerously-skip-
+#                                         permissions, so it can't auto-write — a
+#                                         write attempt pauses for you to deny.
+launch "$p1" claude claude --permission-mode dontAsk --disallowedTools "Edit Write MultiEdit NotebookEdit Bash" ${CLAUDE_MODEL:+--model "$CLAUDE_MODEL"} "$task_ro"
+launch "$p2" codex  codex  -s read-only -a never ${CODEX_MODEL:+-m "$CODEX_MODEL"} "$task_ro"
+launch "$p3" pi     pi     --tools read,grep,find,ls -a ${PI_MODEL:+--model "$PI_MODEL"} ${PI_PROVIDER:+--provider "$PI_PROVIDER"} "$task_ro"
+launch "$p4" agy    agy -i ${AGY_MODEL:+--model "$AGY_MODEL"} "$task_ro"
+
+echo "▶ herdr-crew: new tab 'crew: $short' in workspace $ws — 4 harnesses, same task, AUTO + READ-ONLY:"
 echo "    claude (top-left) · codex (top-right) · pi (bottom-left) · agy (bottom-right)"
-echo "  Switch to the tab and steer any pane directly. Same repo ($PWD) — if you let"
-echo "  several WRITE, their edits share one working tree, so drive them accordingly."
+echo "  They run hands-off but can't modify $PWD (claude/codex/pi are hard read-only;"
+echo "  agy is instructed read-only and will pause rather than auto-write). Switch to"
+echo "  the tab to watch; nothing is captured or judged."
