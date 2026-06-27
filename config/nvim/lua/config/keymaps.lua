@@ -59,8 +59,28 @@ local function stop_speech()
   update_tts_status()
 end
 
+-- Strip Markdown so TTS reads words, not punctuation. Removes emphasis/code
+-- markers (* ` ~~), unwraps [label](url) -> label, and drops line-start heading
+-- (#), blockquote (>) and list-bullet (-, +) markers. Leaves prose, hyphenated
+-- words and snake_case untouched.
+local function clean_for_speech(text)
+  text = text or ""
+  text = text:gsub("!?%[([^%]]*)%]%([^)]*%)", "%1") -- images/links -> label
+  text = text:gsub("`+", "") -- inline/fenced code backticks
+  text = text:gsub("%*+", "") -- bold/italic asterisks
+  text = text:gsub("~~", "") -- strikethrough
+  text = text:gsub("/+", " ") -- slashes -> space ("and/or" reads "and or", not "slash")
+  text = text:gsub("^%s*#+%s*", "") -- heading marker, first line
+  text = text:gsub("\n%s*#+%s*", "\n") -- heading markers, later lines
+  text = text:gsub("^%s*>+%s*", "") -- blockquote, first line
+  text = text:gsub("\n%s*>+%s*", "\n") -- blockquote, later lines
+  text = text:gsub("^%s*[-+]%s+", "") -- list bullet, first line
+  text = text:gsub("\n%s*[-+]%s+", "\n") -- list bullets, later lines
+  return text
+end
+
 local function speak(text)
-  text = vim.trim(text or "")
+  text = vim.trim(clean_for_speech(text))
   if text == "" then
     vim.notify("No text selected", vim.log.levels.WARN)
     return
@@ -95,7 +115,7 @@ vim.keymap.set("x", "<leader>dw", function()
 end, { desc = "Define Selection" })
 
 local function narrate(text)
-  text = vim.trim(text or "")
+  text = vim.trim(clean_for_speech(text))
   if text == "" then
     vim.notify("No text selected", vim.log.levels.WARN)
     return
