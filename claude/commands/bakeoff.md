@@ -5,15 +5,21 @@ argument-hint: [task for every agent to attempt, e.g. "implement X"]
 
 Use the cli-orchestrate skill's machinery, but in **best-of-N / bake-off mode** —
 the opposite of `/orch`: do **NOT** decompose. Send the *same full task* to
-several heterogeneous workers (Codex, Pi, agy, and Claude's own subagent) that
-each produce an independent competing solution to the identical problem. Then run
-a judge pass that compares them and picks the best one to keep.
+several heterogeneous worker **harnesses** (the CLIs `codex`, `pi`, `agy`, and
+`claude` — plus Claude's own in-process subagent for a file-writing leg; each
+harness drives its own model via `*_MODEL` env, so vary those for real
+diversity) that each produce an independent competing solution to the identical
+problem. Then run a judge pass that compares them and picks the best one to keep.
 
-**Run it visibly by default:** launch the workers through a tmux `grid`
-(`scripts/orch-tmux.sh grid <session> <jobs-file>`) so I can watch every agent
-attempt the task live in its own pane — not just a spinner. Tell me the
-`tmux attach -t <session>` line up front, then poll the out-files and collect.
-Only skip the grid if I ask you to.
+**Run it visibly by default:** launch the workers through a `grid`
+(`scripts/orch-mux.sh grid <session> <jobs-file>`) so I can watch every agent
+attempt the task live in its own pane — not just a spinner. `orch-mux.sh` runs
+the grid under **tmux or herdr, chosen at prompt time**: it auto-detects my
+current multiplexer (`$TMUX` → tmux, `$HERDR_ENV` → herdr), but honor it if I
+say "use tmux" / "use herdr" (force with a leading `tmux`/`herdr` token or
+`ORCH_MUX=`). Tell me the attach/focus line the script prints up front (tmux:
+`tmux attach -t <session>`; herdr: `herdr workspace focus <id>`), then poll the
+out-files and collect. Only skip the grid if I ask you to.
 
 Flow:
 

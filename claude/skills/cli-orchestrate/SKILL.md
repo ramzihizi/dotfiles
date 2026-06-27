@@ -10,9 +10,13 @@ best worker backend, runs them in **parallel in isolated git worktrees**, then r
 **reviewer** passes before merging. This is the local, heterogeneous version of the
 Hermes conductor/worker/reviewer flow.
 
-Workers available (see the per-backend skills `codex-cli`, `pi-cli` for exact
-flags): **Codex**, **Pi**, **agy** (the new agent harness — replaced OpenCode),
-and **Claude itself** (own subagents).
+Workers are the **CLI harnesses** themselves — `codex`, `pi`, `agy`, `claude` —
+not bare models. Each harness drives whatever model/agent it's pointed at (set
+per leg via `CODEX_MODEL`/`PI_MODEL`/`AGY_MODEL`/`CLAUDE_MODEL`); the harness is
+the unit you fan out and review. Available (see the per-backend skills
+`codex-cli`, `pi-cli` for exact flags): **Codex**, **Pi**, **agy** (the new agent
+harness — replaced OpenCode), and **Claude itself** (`claude -p`, plus the
+conductor's own in-process subagents for file-writing legs).
 
 ## When to use
 
@@ -46,7 +50,7 @@ Heterogeneous reviewing is the point: never let the same backend write and revie
 
 ## Procedure
 
-> **Visibility is the default.** Unless the user says otherwise, run the fan-out through a **tmux `grid`** (see below) so the human sees every agent live in its own pane — progress *and* answer — instead of a spinner. Prefer CLI-backed legs (`codex`/`pi`/`agy`/`claude`) over the in-process Agent tool when running a grid, because only CLI workers can live in a pane. Launch the grid, tell the user the `tmux attach -t <session>` line, then poll the out-files to collect.
+> **Visibility is the default.** Unless the user says otherwise, run the fan-out through a **`grid`** (see below) so the human sees every agent live in its own pane — progress *and* answer — instead of a spinner. The grid runs under **either tmux or herdr**, picked at prompt time via `orch-mux.sh` (auto-detected from the current environment; override by saying "use tmux"/"use herdr"). Prefer CLI-backed legs (`codex`/`pi`/`agy`/`claude` — the worker *harnesses*) over the in-process Agent tool when running a grid, because only CLI workers can live in a pane. Launch the grid, tell the user the attach/focus line it prints, then poll the out-files to collect.
 
 1. **Decompose.** Break the task into independent sub-tasks. State the split to the user. If sub-tasks share state / must be sequential, say so and run them in order, not parallel.
 2. **Isolate.** One git worktree per parallel worker so concurrent edits never collide:
@@ -69,12 +73,25 @@ Heterogeneous reviewing is the point: never let the same backend write and revie
    Never auto-merge a failed or unreviewed branch.
 8. **Report.** One table: sub-task · backend · worktree · review verdict · merged?
 
-## Visibility — watch it live in a named tmux session (default for `/orch`)
+## Visibility — watch it live in a named session (default for `/orch`)
 
-`scripts/orch-tmux.sh` gives the flow a pre-named tmux session so the human can
-watch each agent live instead of staring at a spinner. **Default to `grid`.**
+`scripts/orch-mux.sh` gives the flow a pre-named, visible session so the human
+can watch each agent live instead of staring at a spinner. It is a thin front
+door over two interchangeable backends — **tmux** (`orch-tmux.sh`, a tmux
+session) and **herdr** (`orch-herdr.sh`, a herdr workspace) — that share the
+exact same `grid|run|watch <session> <args>` interface and jobs-file format.
+**Default to `grid`.**
 
-- **Grid mode (the default)** — every worker live in its own tiled **pane**, side by side in one window; each pane streams that worker's progress, then prints its final answer, then stays open:
+**Which multiplexer (decide at prompt time).** `orch-mux.sh` auto-detects from
+the conductor's environment — `$TMUX` set → tmux; `$HERDR_ENV`/`$HERDR_PANE_ID`
+set (or a reachable herdr server) → herdr. The user can override per run by
+saying "use tmux" / "use herdr"; force it with a leading token
+(`orch-mux.sh herdr grid …`) or `ORCH_MUX=tmux`. Everything below is identical
+on both — only the attach gesture differs (tmux: `tmux attach -t <s>`; herdr:
+`herdr workspace focus <id>` or the `prefix+w` picker), and `orch-mux.sh` prints
+the right one.
+
+- **Grid mode (the default)** — every worker live in its own tiled **pane**, side by side; each pane streams that worker's progress, then prints its final answer, then stays open:
   ```bash
   # jobs file: label|backend|workdir|prompt-file|out-file|mode
   cat > /tmp/orch.jobs <<'EOF'
@@ -82,19 +99,20 @@ watch each agent live instead of staring at a spinner. **Default to `grid`.**
   critique-pi|pi|.|/tmp/crit.prompt|/tmp/pi.out|review
   critique-claude|claude|.|/tmp/crit.prompt|/tmp/claude.out|review
   EOF
-  scripts/orch-tmux.sh grid orch /tmp/orch.jobs
-  # → attach: tmux attach -t orch   (Ctrl-b z zoom a pane · Ctrl-b o cycle · Ctrl-b d detach)
+  scripts/orch-mux.sh grid orch /tmp/orch.jobs       # auto-detect tmux vs herdr
+  # tmux  → attach: tmux attach -t orch   (Ctrl-b z zoom · Ctrl-b o cycle · Ctrl-b d detach)
+  # herdr → focus:  herdr workspace focus <id>   (prefix+| / prefix+- split · prefix+w picker)
   ```
-- **Run mode** — one **window** per worker (flip with Ctrl-b w). Use when output is long and panes would be too cramped to read:
+- **Run mode** — one **window** (tmux) / **tab** (herdr) per worker. Use when output is long and panes would be too cramped to read:
   ```bash
-  scripts/orch-tmux.sh run orch /tmp/orch.jobs
+  scripts/orch-mux.sh run orch /tmp/orch.jobs
   ```
 - **Watch mode** — when the conductor runs workers itself (background Bash) and you only want to tail their out-files in a tiled dashboard:
   ```bash
-  scripts/orch-tmux.sh watch orch /tmp/codex.out /tmp/pi.out /tmp/claude.out
+  scripts/orch-mux.sh watch orch /tmp/codex.out /tmp/pi.out /tmp/claude.out
   ```
-- Session name is yours to set (`orch`, `hermes`, the task slug). Re-using a live name is refused — `tmux kill-session -t <name>` first.
-- **How you (Claude) drive it:** write the prompt + jobs file, launch `grid`, tell the human the `tmux attach -t <name>` line up front, then poll the out-files for completion and collect. The human watches the panes; you read the out-files and judge. To put a Claude leg in a pane, use the `claude` backend (review-only); reserve the in-process Agent tool for a leg that must *write* files or hold this conversation's context (it won't appear as a pane — say so).
+- Session name is yours to set (`orch`, `hermes`, the task slug). Re-using a live name is refused — `tmux kill-session -t <name>` (tmux) or `herdr workspace close <id>` (herdr) first.
+- **How you (Claude) drive it:** write the prompt + jobs file, launch `grid` via `orch-mux.sh`, tell the human the attach/focus line it printed up front, then poll the out-files for completion and collect. The human watches the panes; you read the out-files and judge. To put a Claude leg in a pane, use the `claude` backend (review-only); reserve the in-process Agent tool for a leg that must *write* files or hold this conversation's context (it won't appear as a pane — say so).
 
 ## Worktree-per-worker example
 
