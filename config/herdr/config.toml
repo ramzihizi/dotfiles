@@ -10,7 +10,7 @@ onboarding = false
 # Built-in themes: catppuccin, terminal, tokyo-night, dracula, nord,
 #                  gruvbox, one-dark, solarized, kanagawa, rose-pine,
 #                  vesper
-name = "tokyo-night"
+name = "gruvbox"
 
 # Follow host terminal light/dark appearance and switch Herdr UI themes.
 # Existing manual behavior is unchanged unless this is true.
@@ -18,13 +18,21 @@ name = "tokyo-night"
 # dark_name = "catppuccin"
 # light_name = "catppuccin-latte"
 
+auto_switch = false
+
 # Override individual color tokens on top of the base theme.
 # Accepts: hex (#rrggbb), named colors, rgb(r,g,b), or panel_bg = "reset"
-# [theme.custom]
-# panel_bg = "reset"
+#
+# Darkest gruvbox: the built-in gruvbox theme uses the standard bg (#282828);
+# pin the pane background to gruvbox's "hard" contrast #1d2021 so herdr matches
+# the ghostty "Gruvbox Dark Hard" theme and the nvim `contrast = "hard"` setting.
+# panel_bg (sidebar/chrome) is left one step up (#282828) so the sidebar stays
+# distinguishable from the darkest pane area — set it to #1d2021 too for a flat,
+# uniformly-darkest look.
+[theme.custom]
+background = "#1d2021"
+panel_bg = "#282828"
 # accent = "#f5c2e7"
-# red = "#ff6188"
-# green = "#a6e3a1"
 
 [terminal]
 # Executable used for new interactive panes.

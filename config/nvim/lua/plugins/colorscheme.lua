@@ -4,6 +4,10 @@ return {
     "ellisonleao/gruvbox.nvim",
     opts = {
       transparent_mode = true,
+      -- Darkest gruvbox: "hard" contrast pins the background to #1d2021 (matches
+      -- the ghostty "Gruvbox Dark Hard" theme). transparent_mode lets the
+      -- terminal background show through, so this sets the non-transparent tone.
+      contrast = "hard",
       bold = false,
       -- Warm down the bright yellow (#fabd2f reads as harsh/distracting) to
       -- gruvbox's faded/ochre yellow — the same #b57614 used for the wezterm
@@ -105,14 +109,12 @@ return {
   },
   {
     "LazyVim/LazyVim",
-    -- Per-environment colorscheme so the editor matches its terminal:
-    --   wezterm + tmux (serious-work env)  -> gruvbox   (warm/amber)
-    --   ghostty + herdr (everything else)  -> tokyonight (cool/blue)
-    -- Detected via $TMUX (set only inside tmux) or wezterm's $TERM_PROGRAM
-    -- (tmux rewrites TERM_PROGRAM to "tmux", so check both).
+    -- Gruvbox in every environment now (ghostty + herdr and wezterm + tmux),
+    -- using gruvbox's "hard" contrast to match each terminal's "Gruvbox Dark
+    -- Hard" theme. The old per-environment $TMUX / $TERM_PROGRAM switch (gruvbox
+    -- vs tokyonight) is gone now that both terminals run gruvbox.
     opts = function()
-      local in_wezterm = vim.env.TMUX ~= nil or vim.env.TERM_PROGRAM == "WezTerm"
-      return { colorscheme = in_wezterm and "gruvbox" or "tokyonight" }
+      return { colorscheme = "gruvbox" }
     end,
     -- Manual alternates: "catppuccin", "catppuccin-mocha", "poimandres",
     -- "github_dark_default", "github_dark".
