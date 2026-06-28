@@ -252,12 +252,12 @@ delivery = "system"
 # Play sounds when agents change state in background workspaces
 [ui.sound]
 enabled = true
-# Needs-attention alert = the macOS "Hero" sound (transcoded to mp3, the only
-# format herdr accepts; source is /System/Library/Sounds/Hero.aiff). "Done"
-# notifications keep herdr's default sound, so an agent that needs input is
-# audibly distinct from one that just finished. Relative path resolves from
-# this config file's directory.
-request_path = "sounds/hero.mp3"
+# Needs-attention alert = "powerup.mp3", an original synthesized sci-fi chime
+# (rising glide into a bright shimmering bell — a Halo/game "objective" feel).
+# mp3 is the only format herdr accepts. "Done" notifications keep herdr's
+# default sound, so an agent that needs input is audibly distinct from one that
+# just finished. Relative path resolves from this config file's directory.
+request_path = "sounds/powerup.mp3"
 # path = "sounds/notification.mp3"   # one mp3 file for all sound notifications
 # done_path = "sounds/done.mp3"      # overrides only finished notifications
 
