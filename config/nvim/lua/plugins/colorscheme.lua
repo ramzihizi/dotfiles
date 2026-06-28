@@ -1,6 +1,46 @@
 return {
 
   {
+    -- Solarized Dark, the restrained classic look: a faithful port of
+    -- vim-solarized8 (Ethan Schoonover's base03 #002b36 palette). Chosen over
+    -- the more saturated maxmx03/solarized.nvim, which painted markdown bold
+    -- bright magenta and cycled headings through loud hues. Here `**bold**` is
+    -- just bold base text and headings stay muted. Registers colorscheme
+    -- "solarized" (variants: solarized-low / solarized-flat / solarized-high).
+    "ishan9299/nvim-solarized-lua",
+    lazy = false,
+    priority = 1000,
+    init = function()
+      vim.g.solarized_italics = 1
+      vim.g.solarized_termtrans = 1 -- transparent: let the terminal bg show through
+      vim.g.solarized_visibility = "normal"
+
+      -- Markdown headings default to solarized's orange/red (#cb4b16), which
+      -- reads harsh. Recolor them to the calmer signature blue (#268bd2). We
+      -- define the per-level @markup.heading.N.markdown groups (normally empty,
+      -- so they fall back to the red @markup.heading) plus the base group: this
+      -- catches both treesitter-rendered heading text AND render-markdown, whose
+      -- RenderMarkdownH{N} groups link to these same targets — so it works
+      -- regardless of which plugin paints last.
+      local function style_headings()
+        if not (vim.g.colors_name or ""):find("solarized") then
+          return
+        end
+        local hl = { fg = "#268bd2", bold = true }
+        vim.api.nvim_set_hl(0, "@markup.heading", hl)
+        for i = 1, 6 do
+          vim.api.nvim_set_hl(0, "@markup.heading." .. i .. ".markdown", hl)
+        end
+      end
+      vim.api.nvim_create_autocmd("ColorScheme", {
+        pattern = "solarized*",
+        callback = style_headings,
+        desc = "Solarized: recolor markdown headings to blue",
+      })
+      style_headings() -- in case the scheme is already active when this runs
+    end,
+  },
+  {
     "ellisonleao/gruvbox.nvim",
     opts = {
       transparent_mode = true,
@@ -105,14 +145,12 @@ return {
   },
   {
     "LazyVim/LazyVim",
-    -- Per-environment colorscheme so the editor matches its terminal:
-    --   wezterm + tmux (serious-work env)  -> gruvbox   (warm/amber)
-    --   ghostty + herdr (everything else)  -> tokyonight (cool/blue)
-    -- Detected via $TMUX (set only inside tmux) or wezterm's $TERM_PROGRAM
-    -- (tmux rewrites TERM_PROGRAM to "tmux", so check both).
+    -- Solarized Dark in every environment (ghostty + herdr and wezterm + tmux).
+    -- Force a dark background so the solarized scheme picks base03 (#002b36)
+    -- rather than the light base3 palette.
     opts = function()
-      local in_wezterm = vim.env.TMUX ~= nil or vim.env.TERM_PROGRAM == "WezTerm"
-      return { colorscheme = in_wezterm and "gruvbox" or "tokyonight" }
+      vim.o.background = "dark"
+      return { colorscheme = "solarized" }
     end,
     -- Manual alternates: "catppuccin", "catppuccin-mocha", "poimandres",
     -- "github_dark_default", "github_dark".

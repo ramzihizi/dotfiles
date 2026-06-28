@@ -14,7 +14,7 @@ return {
       cond = function()
         return vim.g.tts_active == true
       end,
-      color = { fg = "#fabd2f", gui = "bold" }, -- gruvbox bright yellow
+      color = { fg = "#b58900", gui = "bold" }, -- solarized yellow
     })
   end,
 }

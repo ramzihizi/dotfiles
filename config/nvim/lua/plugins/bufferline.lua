@@ -20,9 +20,15 @@ return {
     local palettes = {
       tokyonight = { sel = "#292e42", fg = "#c0caf5", dim = "#565f89", accent = "#7aa2f7" },
       gruvbox = { sel = "#3c3836", fg = "#ebdbb2", dim = "#928374", accent = "#b57614" },
+      -- Solarized: base02 raised bg · base1 bright fg · base01 dim · blue accent.
+      solarized = { sel = "#073642", fg = "#93a1a1", dim = "#586e75", accent = "#268bd2" },
     }
-    -- colors_name is "tokyonight-night" / "gruvbox" / etc — match by substring.
-    local p = (vim.g.colors_name or ""):find("gruvbox") and palettes.gruvbox or palettes.tokyonight
+    -- colors_name is "tokyonight-night" / "gruvbox" / "solarized" / etc — match
+    -- by substring.
+    local name = vim.g.colors_name or ""
+    local p = name:find("solarized") and palettes.solarized
+      or name:find("gruvbox") and palettes.gruvbox
+      or palettes.tokyonight
 
     opts.options = opts.options or {}
     -- A visible bar on the active buffer, independent of background fill.
