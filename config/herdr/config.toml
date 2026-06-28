@@ -239,7 +239,7 @@ show_agent_labels_on_pane_borders = true
 # system = ask the OS notification service directly
 # Deliver as a real desktop notification (and let the attention sound fire);
 # was "off", which suppressed both popups and sounds.
-delivery = "system"
+delivery = "herdr"
 # delay_seconds = 1
 
 [ui.toast.herdr]
@@ -252,14 +252,13 @@ delivery = "system"
 # Play sounds when agents change state in background workspaces
 [ui.sound]
 enabled = true
-# Needs-attention alert = "powerup.mp3", an original synthesized sci-fi chime
-# (rising glide into a bright shimmering bell — a Halo/game "objective" feel).
-# mp3 is the only format herdr accepts. "Done" notifications keep herdr's
-# default sound, so an agent that needs input is audibly distinct from one that
-# just finished. Relative path resolves from this config file's directory.
-request_path = "sounds/powerup.mp3"
-# path = "sounds/notification.mp3"   # one mp3 file for all sound notifications
-# done_path = "sounds/done.mp3"      # overrides only finished notifications
+# Both channels use "powerup.mp3", an original synthesized sci-fi chime (rising
+# glide into a bright shimmering bell — a Halo/game "objective" feel): the
+# needs-attention alert AND the finished alert. mp3 is the only format herdr
+# accepts. Relative paths resolve from this config file's directory.
+request_path = "sounds/powerup.mp3" # agent needs your input
+done_path = "sounds/powerup.mp3"    # agent finished its turn
+# path = "sounds/notification.mp3"  # alt: a single mp3 for all sound notifications
 
 # Per-agent overrides: default | on | off
 # By default, droid is muted.
