@@ -44,18 +44,13 @@ vim.api.nvim_create_autocmd("FileType", {
 -- a lighter overlay rather than blending in. Requires focus events to reach
 -- nvim (`set -g focus-events on` in tmux.conf, already set).
 --
--- The dim shade matches the active environment's colorscheme, using the same
--- $TMUX / $TERM_PROGRAM detection as plugins/colorscheme.lua:
---   wezterm + tmux  -> gruvbox: neutral #303030, the SAME shade tmux paints on
---                      inactive shell panes (window-style in tmux.conf), so
---                      nvim and the surrounding panes dim to one tone.
---   ghostty + herdr -> tokyonight (transparent, "night"): blue-tinted #292e42
---                      (tokyonight's bg_highlight) so the dim harmonizes with
---                      the cool palette and reads as a lighter overlay over
---                      ghostty's #1a1b26 background instead of a warm gray.
+-- Both environments now run gruvbox, so the dim shade is gruvbox's neutral
+-- #303030 everywhere — the SAME shade tmux paints on inactive shell panes
+-- (window-style in tmux.conf), so nvim and the surrounding panes dim to one
+-- tone. It reads as a lighter overlay over the "hard" background (#1d2021)
+-- rather than blending in.
 local dim_group = vim.api.nvim_create_augroup("DimOnUnfocus", { clear = true })
-local in_wezterm = vim.env.TMUX ~= nil or vim.env.TERM_PROGRAM == "WezTerm"
-local DIM_BG = in_wezterm and "#303030" or "#292e42"
+local DIM_BG = "#303030"
 -- Background groups to override, with their original definitions cached on dim
 -- and restored on un-dim. We deliberately do NOT re-source the colorscheme to
 -- restore: a full re-source fires ColorScheme, which makes other plugins rebuild
