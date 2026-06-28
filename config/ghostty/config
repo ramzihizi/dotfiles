@@ -21,7 +21,7 @@ macos-option-as-alt = true
 
 # Window background opacity. The command palette action
 # "Toggle Background Opacity" switches between this value and fully opaque.
-background-opacity = 0.55
+background-opacity = 0.45
 
 # Apply opacity even when terminal apps paint explicit background cells.
 # This makes opacity visible in tmux, Neovim, and similar full-screen apps.
