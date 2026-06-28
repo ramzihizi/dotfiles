@@ -222,9 +222,13 @@ link_dir "$DOTFILES_DIR/config/dprint" "$HOME/.config/dprint"
 link_file "$DOTFILES_DIR/config/tmux/tmux.conf" "$HOME/.tmux.conf"
 
 # Herdr (AI-agent terminal multiplexer; link only config.toml since herdr keeps
-# sockets, logs, and session state alongside it in ~/.config/herdr).
+# sockets, logs, and session state alongside it in ~/.config/herdr). The sounds/
+# subdir is symlinked separately so notification mp3s referenced by relative
+# paths in config.toml (e.g. ui.sound.request_path = "sounds/hero.mp3", which
+# herdr resolves from ~/.config/herdr/) resolve into the repo.
 mkdir -p "$HOME/.config/herdr"
 link_file "$DOTFILES_DIR/config/herdr/config.toml" "$HOME/.config/herdr/config.toml"
+link_dir "$DOTFILES_DIR/config/herdr/sounds" "$HOME/.config/herdr/sounds"
 
 # Pi coding agent (link config-owned directories; pi keeps auth/sessions in ~/.pi/agent).
 # settings.json IS tracked: pi writes it in place (verified — symlink survives), so

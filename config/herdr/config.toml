@@ -229,7 +229,9 @@ show_agent_labels_on_pane_borders = true
 # herdr = show in-app toasts
 # terminal = ask the outer terminal to show a desktop notification
 # system = ask the OS notification service directly
-# delivery = "off"
+# Deliver as a real desktop notification (and let the attention sound fire);
+# was "off", which suppressed both popups and sounds.
+delivery = "system"
 # delay_seconds = 1
 
 [ui.toast.herdr]
@@ -241,11 +243,15 @@ show_agent_labels_on_pane_borders = true
 
 # Play sounds when agents change state in background workspaces
 [ui.sound]
-# enabled = true
-# Optional custom mp3 sound files. Relative paths are resolved from this config file's directory.
+enabled = true
+# Needs-attention alert = the macOS "Hero" sound (transcoded to mp3, the only
+# format herdr accepts; source is /System/Library/Sounds/Hero.aiff). "Done"
+# notifications keep herdr's default sound, so an agent that needs input is
+# audibly distinct from one that just finished. Relative path resolves from
+# this config file's directory.
+request_path = "sounds/hero.mp3"
 # path = "sounds/notification.mp3"   # one mp3 file for all sound notifications
 # done_path = "sounds/done.mp3"      # overrides only finished notifications
-# request_path = "sounds/request.mp3" # overrides only needs-attention notifications
 
 # Per-agent overrides: default | on | off
 # By default, droid is muted.
