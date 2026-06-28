@@ -12,6 +12,12 @@ cursor-style-blink = false
 
 theme = TokyoNight Night
 
+# Treat the macOS Option key as a real Alt modifier (instead of composing
+# special characters like ¡™£), so Alt-chord shortcuts reach terminal apps —
+# e.g. herdr's prefix+alt+1..9 workspace jumps. Use "left" instead if you want
+# to keep the right Option key for composing accented characters.
+macos-option-as-alt = true
+
 # Window background opacity. The command palette action
 # "Toggle Background Opacity" switches between this value and fully opaque.
 background-opacity = 0.55

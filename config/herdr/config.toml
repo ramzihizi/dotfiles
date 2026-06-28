@@ -1,3 +1,4 @@
+onboarding = false
 # herdr configuration
 # Place this file at ~/.config/herdr/config.toml
 
@@ -91,6 +92,7 @@ rename_tab = "prefix+,"
 # next_tab = "prefix+n"
 switch_tab = "prefix+1..9"
 # switch_workspace = ""   # optional indexed binding, e.g. "prefix+shift+1..9"
+switch_workspace = "prefix+alt+1..9"   # jump to workspace N (matches sidebar numbers); needs macos-option-as-alt in ghostty
 # close_tab = "prefix+shift+x"
 # rename_pane = "prefix+shift+p"
 # edit_scrollback = "prefix+e"
