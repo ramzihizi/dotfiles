@@ -10,16 +10,40 @@
 -- over stdin and never auto-discovers a project config. Crucially it is NOT a
 -- conform formatter here, so it can't --fix the buffer on save and fight dprint.
 return {
-  -- Diagnostics: markdownlint-cli2 with our explicit rule file.
+  -- Diagnostics: markdownlint-cli2, resolving the NEAREST project rule file.
+  --
+  -- markdownlint-cli2 lints over stdin and never auto-discovers a project
+  -- config (it resolves from cwd, not the file path), so we pass --config
+  -- explicitly. Make it dynamic: walk up from the file being linted to the
+  -- nearest .markdownlint(.yaml/.json/-cli2.*) so prose projects can carry
+  -- their own rules (e.g. ~/bsdn/rmh-wiki and ~/novels/star-rays each loosen
+  -- the stylistic rules). Fall back to our global rule file for everything
+  -- else — including dotfiles markdown, which finds this very file walking up
+  -- to ~/.config/nvim/.markdownlint.yaml.
   {
     "mfussenegger/nvim-lint",
     optional = true,
     opts = {
       linters = {
         ["markdownlint-cli2"] = {
+          -- nvim-lint evaluates each arg element, so the config path can be a
+          -- function resolved per-lint against the current buffer's location.
           args = {
             "--config",
-            vim.fn.stdpath("config") .. "/.markdownlint.yaml",
+            function()
+              local names = {
+                ".markdownlint.yaml",
+                ".markdownlint.yml",
+                ".markdownlint.json",
+                ".markdownlint.jsonc",
+                ".markdownlint-cli2.yaml",
+                ".markdownlint-cli2.jsonc",
+              }
+              local name = vim.api.nvim_buf_get_name(0)
+              local start = name ~= "" and vim.fs.dirname(name) or vim.fn.getcwd()
+              local found = vim.fs.find(names, { path = start, upward = true, limit = 1 })[1]
+              return found or (vim.fn.stdpath("config") .. "/.markdownlint.yaml")
+            end,
             "-",
           },
         },
