@@ -23,6 +23,83 @@
 -- The `api_key = "TERM"` is the documented Ollama trick: minuet treats it as an
 -- env-var NAME (TERM is always set) and sends its value as a throwaway bearer
 -- token that Ollama ignores.
+
+-- ── Ollama reachability guard ──────────────────────────────────────────────
+-- minuet shells out to `curl` against localhost:11434. When Ollama is not
+-- running, curl exits 7 (connection refused) and minuet raises "Request failed
+-- with exit code 7" — on every keystroke, since this is an as-you-type source.
+-- blink calls a source's enabled() constantly, so we must NOT do a blocking
+-- network call there. Instead keep a cached up/down flag refreshed by a short,
+-- non-blocking libuv TCP probe: a plain connect to the port is exactly what
+-- decides curl's exit 7, so it maps perfectly to the failure mode.
+local uv = vim.uv or vim.loop
+local ollama = { up = false, checking = false, last_check = nil }
+local OLLAMA_HOST, OLLAMA_PORT = "127.0.0.1", 11434
+local RECHECK_MS = 4000 -- re-probe at most this often while typing
+local CONNECT_TIMEOUT_MS = 250 -- a local server answers in single-digit ms
+
+local function probe_ollama()
+  if ollama.checking then
+    return
+  end
+  ollama.checking = true
+  ollama.last_check = uv.now()
+
+  local tcp = uv.new_tcp()
+  local timer = uv.new_timer()
+  if not tcp or not timer then
+    if tcp then
+      tcp:close()
+    end
+    if timer then
+      timer:close()
+    end
+    ollama.checking = false
+    return
+  end
+
+  local settled = false
+  local function settle(is_up)
+    if settled then
+      return
+    end
+    settled = true
+    ollama.up = is_up
+    ollama.checking = false
+    if not timer:is_closing() then
+      timer:stop()
+      timer:close()
+    end
+    if not tcp:is_closing() then
+      tcp:close()
+    end
+  end
+
+  -- Fail "down" if connect hasn't resolved in time (host unreachable/filtered).
+  timer:start(CONNECT_TIMEOUT_MS, 0, function()
+    settle(false)
+  end)
+  -- err == nil means the TCP handshake succeeded → something is listening.
+  local ok = pcall(function()
+    tcp:connect(OLLAMA_HOST, OLLAMA_PORT, function(err)
+      settle(err == nil)
+    end)
+  end)
+  if not ok then
+    settle(false)
+  end
+end
+
+-- Non-blocking: return the last known state, kicking a background refresh when
+-- the cached value is stale. The first call reports "down" and starts a probe,
+-- so no request fires until a probe has actually reached the server.
+local function ollama_reachable()
+  if not ollama.last_check or (uv.now() - ollama.last_check) >= RECHECK_MS then
+    probe_ollama()
+  end
+  return ollama.up
+end
+
 return {
   {
     "milanglacier/minuet-ai.nvim",
@@ -78,9 +155,15 @@ paragraph and stop at a natural sentence or paragraph boundary.]],
         async = true,
         timeout_ms = 6000, -- match the longer prose request_timeout
         score_offset = 50, -- surface minuet above other sources
-        -- Off in commit messages. Stays on for markdown/text — the whole point.
+        -- Off in commit messages, and only when a local Ollama server is
+        -- actually reachable — otherwise every keystroke shells out to a dead
+        -- curl and raises "Request failed with exit code 7". Stays on for
+        -- markdown/text (the whole point) whenever the server is up.
         enabled = function()
-          return vim.bo.filetype ~= "gitcommit"
+          if vim.bo.filetype == "gitcommit" then
+            return false
+          end
+          return ollama_reachable()
         end,
         -- Tag minuet's AI suggestions with a robot icon + "Minuet" kind so they
         -- are unmistakable next to LSP/buffer/snippet completions.
