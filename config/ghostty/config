@@ -49,3 +49,22 @@ unfocused-split-fill = #1d2021
 
 # Divider color between splits (gruvbox bg2)
 split-divider-color = #3c3836
+
+# Scrollback buffer per terminal surface, in bytes. Default is 10 MB
+# (10000000); bumped to 50 MB so long agent/build output stays scrollable.
+# Byte-based, not a fixed line count. Applies to new surfaces (tabs/windows)
+# created after a config reload — it does not recover already-dropped lines.
+scrollback-limit = 50000000
+
+# Clipboard: make copying land on the macOS system clipboard.
+#   clipboard-write = allow lets programs running inside Ghostty (herdr, tmux,
+#   Neovim) push to the system clipboard via OSC 52 without a prompt. This is
+#   already Ghostty's default, but pinned here so a copy from inside a
+#   multiplexer always reaches pbpaste.
+#   copy-on-select = clipboard also puts mouse-selected text straight onto the
+#   system clipboard (the default only copies to Ghostty's internal selection
+#   buffer). Trade-off: every selection overwrites the clipboard — drop this
+#   line if that clobbering is unwanted and rely on explicit Cmd-C instead.
+# clipboard-read is left at its default (ask) since only copying was requested.
+clipboard-write = allow
+copy-on-select = clipboard

@@ -310,5 +310,7 @@ pane_history = false
 
 [advanced]
 # Maximum scrollback buffer size in bytes retained per pane terminal.
-# Matches Ghostty's default scrollback-limit behavior.
-# scrollback_limit_bytes = 10000000
+# Default 10 MB (10000000), matching Ghostty's default scrollback-limit.
+# Bumped to 50 MB so long agent/build output stays in prefix+e scrollback.
+# Byte-based, not line-based; applies to panes created after a config reload.
+scrollback_limit_bytes = 50000000

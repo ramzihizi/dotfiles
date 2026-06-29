@@ -12,10 +12,14 @@ local config = wezterm.config_builder()
 
 -- ============ Appearance (ported from kitty) ============
 
--- Theme: Gruvbox Dark (built-in scheme; matches tmux + nvim in this env).
--- Deliberately warm/amber here so wezterm+tmux is visually unmistakable from
--- the ghostty+herdr environment, which stays Tokyo Night (cool/blue).
-config.color_scheme = "Gruvbox Dark"
+-- Theme: "Gruvbox Dark (Gogh)" — the EXACT name of the built-in scheme
+-- (bg #282828, fg #ebdbb2, which the cursor/selection overrides below assume).
+-- A bare "Gruvbox Dark" is not a built-in name, so wezterm logged "scheme not
+-- found" and silently fell back to its default; the manual color overrides
+-- below hid the regression. "GruvboxDark" is an identical no-spaces alias.
+-- Warm/amber on purpose so wezterm+tmux stays visually distinct from the
+-- ghostty+herdr environment (which runs Gruvbox Dark Hard, bg #1d2021).
+config.color_scheme = "Gruvbox Dark (Gogh)"
 
 -- Font: Comic Code Ligatures (primary). The Nerd Font fallbacks below still
 -- carry the tmux-status / prompt icons that Comic Code lacks — same reason the
@@ -99,6 +103,19 @@ config.send_composed_key_when_right_alt_is_pressed = false
 -- config/karabiner/karabiner.json. Without that exclusion the keys arrive as
 -- literal arrow keys and never reach tmux as C-h/j/k/l at all.
 config.enable_kitty_keyboard = true
+
+-- ============ Clipboard ============
+-- Copy already lands on the macOS system clipboard with no extra config:
+--   * Mouse selection completes via WezTerm's default CompleteSelection ->
+--     "ClipboardAndPrimarySelection"; on macOS (no X11 primary selection) the
+--     Clipboard half writes to the system pasteboard, so selecting copies.
+--   * Cmd-C copies to the system clipboard, and OSC 52 clipboard *writes* are
+--     honored by default, so tmux / Neovim copies inside wezterm reach pbpaste
+--     (tmux still needs `set -g set-clipboard on` + an Ms terminfo override to
+--     emit OSC 52 — that lives in tmux.conf, not here).
+-- Nothing to set: documented so the system-clipboard behavior isn't second-
+-- guessed. (Don't override the default mouse bindings just to force "Clipboard";
+-- that would mean replicating the whole default mouse table for no gain.)
 
 -- ============ Keys (only kitty's two; tmux gets everything else) ============
 -- No leader, no pane/tab/workspace/copy-mode bindings — tmux owns all of that
