@@ -76,6 +76,18 @@ return {
         language_left = "", -- no left edge decoration on the label
         language_right = "", -- no right edge decoration on the label
       },
+      -- Tables: rounded borders read cleaner than the default square corners.
+      -- This is cosmetic only — it CANNOT save a table wider than the window.
+      -- markdown keeps `wrap` on (good for prose), so a wide table soft-wraps
+      -- mid-cell and the alignment shreds. To read a wide one: <leader>uw turns
+      -- wrap off and the table snaps into aligned columns you scroll across
+      -- (zL / zH); toggle it back for prose. Genuinely huge sentence-cell tables
+      -- are better read in Obsidian. Swap `cell = "trimmed"` for narrower,
+      -- less-rigidly-aligned columns if more tables should fit on screen.
+      pipe_table = {
+        preset = "round",
+        cell = "padded",
+      },
     },
   },
 
