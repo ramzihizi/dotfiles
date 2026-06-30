@@ -282,6 +282,17 @@ if [[ -d "$DOTFILES_DIR/claude/skills" ]]; then
   done
 fi
 
+# Claude commands — link each dotfiles-owned command into ~/.claude/commands
+# (per-file link, mirroring the skills loop). Retroactively fixes commands that
+# were previously linked by hand so they survive a fresh bootstrap.
+mkdir -p "$HOME/.claude/commands"
+if [[ -d "$DOTFILES_DIR/claude/commands" ]]; then
+  for cmd_file in "$DOTFILES_DIR"/claude/commands/*.md; do
+    [[ -f "$cmd_file" ]] || continue
+    link_file "$cmd_file" "$HOME/.claude/commands/$(basename "$cmd_file")"
+  done
+fi
+
 # Codex — link only the stable, hand-authored config (hooks + herdr state script).
 # NOT config.toml: Codex rewrites it every session (projects/hooks.state/plugin
 # install state), so it is machine-local runtime state, not a dotfile.
