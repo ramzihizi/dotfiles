@@ -144,7 +144,7 @@ export DOPPLER_TOKEN="..."
 
 ## Repository Structure
 
-```
+```txt
 dotfiles/
 ├── bootstrap.sh           # Setup script
 ├── homebrew/
@@ -251,11 +251,14 @@ cd ~/dotfiles && ./bootstrap.sh
 If detach/attach is broken or the status bar/theme isn't showing, the most common causes are:
 
 1. TPM plugins were never installed. `bootstrap.sh` now installs them automatically, but if you skipped that step, run:
+
    ```bash
    ~/.tmux/plugins/tpm/bin/install_plugins
    ```
+
    Or, inside a tmux session, press `prefix + I`.
 2. `tmux-continuum` is auto-restoring a stale session from another machine. Kill all sessions and start fresh:
+
    ```bash
    tmux kill-server
    ```
@@ -279,10 +282,12 @@ Fix:
    - `Karabiner-Elements`
 2. Open **System Settings → Privacy & Security → Accessibility** and enable `Karabiner-Elements`.
 3. Make sure the Virtual HID Device system extension is enabled (System Settings → Privacy & Security → "Allow system software from developer 'Fumihiko Takayama'" if prompted). Verify with:
+
    ```bash
    systemextensionsctl list | grep -i karabiner
    # should show: [activated enabled]
    ```
+
 4. Quit and relaunch Karabiner-Elements from Spotlight. `karabiner_grabber` should now start.
 
 Verify:
