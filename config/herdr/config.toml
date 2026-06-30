@@ -32,7 +32,13 @@ auto_switch = false
 [theme.custom]
 background = "#1d2021"
 panel_bg = "#282828"
-# accent = "#f5c2e7"
+
+# accent is herdr's single highlight token — it colors the active-tab
+# background, the agent label, and the focused pane border together. The default
+# gruvbox accent is too dim to track the focused tab when juggling many sessions
+# (the handoff workflow), so pin it to gruvbox bright_yellow for a brighter,
+# more obvious active tab while staying on-palette.
+accent = "#fabd2f"
 
 [terminal]
 # Executable used for new interactive panes.
