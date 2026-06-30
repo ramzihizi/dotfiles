@@ -125,7 +125,11 @@ focus_pane_right = "ctrl+l"
 split_vertical = "prefix+|"
 # split_horizontal = "prefix+minus"
 # close_pane = "prefix+x"
-# zoom = "prefix+z"       # legacy alias: fullscreen
+# zoom toggles maximize/restore for the focused pane. Default is prefix+z, but z
+# sits right next to x (close_pane) — reaching for zoom and slipping onto x
+# silently closes the pane (herdr has no close confirmation). Move zoom to
+# prefix+m (mnemonic: maximize) so the destructive key is no longer a neighbor.
+zoom = "prefix+m"       # legacy alias: fullscreen
 # resize_mode = "prefix+r"
 resize_mode = "prefix+shift+r"
 # toggle_sidebar = "prefix+b"
