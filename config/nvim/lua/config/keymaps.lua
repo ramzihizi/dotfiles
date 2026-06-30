@@ -31,6 +31,7 @@ end
 
 local speech_job
 local narrate_job
+local tts_paused = false
 
 -- Reflect read-aloud state on the statusline (the lualine indicator in
 -- plugins/lualine.lua reads vim.g.tts_active / vim.g.tts_kind) and force an
@@ -38,12 +39,21 @@ local narrate_job
 local function update_tts_status(kind)
   vim.g.tts_active = speech_job ~= nil or narrate_job ~= nil
   vim.g.tts_kind = vim.g.tts_active and kind or nil
+  if not vim.g.tts_active then
+    tts_paused = false -- nothing playing can't be paused
+  end
+  vim.g.tts_paused = tts_paused
   pcall(function()
     require("lualine").refresh()
   end)
 end
 
 local function stop_speech()
+  -- Resume first: a SIGSTOP'd (paused) process ignores SIGTERM until it
+  -- continues, so un-pause before killing or a paused reader won't die.
+  vim.fn.system({ "/usr/bin/pkill", "-CONT", "-x", "say" })
+  vim.fn.system({ "/usr/bin/pkill", "-CONT", "-x", "afplay" })
+
   if speech_job then
     vim.fn.jobstop(speech_job)
     speech_job = nil
@@ -57,6 +67,29 @@ local function stop_speech()
   vim.fn.system({ "/usr/bin/pkill", "-x", "say" })
   vim.fn.system({ "/usr/bin/pkill", "-x", "afplay" })
   update_tts_status()
+end
+
+-- Pause / resume the active reader. `say` plays audio itself and `narrate`
+-- plays its WAV via `afplay`, so SIGSTOP/SIGCONT on both process names pauses
+-- and resumes whichever backend is running. One key toggles between the two.
+local function toggle_pause_speech()
+  if not (speech_job or narrate_job) then
+    vim.notify("Nothing is reading", vim.log.levels.WARN)
+    return
+  end
+  local signal = tts_paused and "-CONT" or "-STOP"
+  vim.fn.system({ "/usr/bin/pkill", signal, "-x", "say" })
+  vim.fn.system({ "/usr/bin/pkill", signal, "-x", "afplay" })
+  tts_paused = not tts_paused
+  vim.g.tts_paused = tts_paused
+  pcall(function()
+    require("lualine").refresh()
+  end)
+  vim.notify(
+    tts_paused and "⏸ Paused" or "▶ Resumed",
+    vim.log.levels.INFO,
+    { title = vim.g.tts_kind or "tts" }
+  )
 end
 
 -- Strip Markdown so TTS reads words, not punctuation. Removes emphasis/code
@@ -142,7 +175,10 @@ local function narrate(text)
     on_exit = function(_, code)
       narrate_job = nil
       update_tts_status()
-      if code ~= 0 then
+      -- Codes >= 128 mean killed by a signal (143 = SIGTERM, 137 = SIGKILL,
+      -- 130 = SIGINT) — that's an intentional <leader>ds stop, not a failure.
+      -- The script's genuine errors all `exit 1`, so only surface codes < 128.
+      if code ~= 0 and code < 128 then
         local msg = vim.trim(table.concat(stderr, "\n"))
         vim.notify(
           "narrate failed" .. (msg ~= "" and ":\n" .. msg or " (exit " .. code .. ")"),
@@ -179,6 +215,7 @@ if vim.fn.executable(vim.fn.expand("~/.local/bin/narrate")) == 1 then
 end
 
 vim.keymap.set("n", "<leader>ds", stop_speech, { desc = "Stop Reading" })
+vim.keymap.set("n", "<leader>dP", toggle_pause_speech, { desc = "Pause/Resume Reading" })
 
 local function mdview()
   local file = vim.fn.expand("%:p")
