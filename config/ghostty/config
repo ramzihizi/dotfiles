@@ -6,12 +6,17 @@ font-size = 14
 
 # Cursor: teal #1abc9c, non-blinking (matches kitty/wezterm).
 cursor-color = #1abc9c
-cursor-text = #1d2021
+cursor-text = #161819
 cursor-style = block
 cursor-style-blink = false
 
 # Gruvbox Dark Hard: the darkest gruvbox variant (background #1d2021).
 theme = Gruvbox Dark Hard
+
+# Go one shade below gruvbox hard: override the theme's background with a
+# proportionally-darkened near-black that keeps the gruvbox cool tint. This is
+# the shared "darker gruvbox bg" token mirrored in herdr/nvim/kitty/etc.
+background = #161819
 
 # Treat the macOS Option key as a real Alt modifier (instead of composing
 # special characters like ¡™£), so Alt-chord shortcuts reach terminal apps —
@@ -44,8 +49,8 @@ macos-window-shadow = false
 # Opacity for unfocused splits (0.0 to 1.0)
 unfocused-split-opacity = 0.7
 
-# Fill color for unfocused splits (gruvbox dark hard background)
-unfocused-split-fill = #1d2021
+# Fill color for unfocused splits (matches the darkened gruvbox background)
+unfocused-split-fill = #161819
 
 # Divider color between splits (gruvbox bg2)
 split-divider-color = #3c3836
