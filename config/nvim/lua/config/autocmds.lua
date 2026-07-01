@@ -12,8 +12,11 @@ local group = vim.api.nvim_create_augroup("AutoRead", { clear = true })
 vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, {
   group = group,
   callback = function()
-    local mode = vim.api.nvim_get_mode().mode
-    if not mode:match("^[nt]") then
+    -- Reload in every mode EXCEPT command-line ('c'), where checktime can
+    -- interrupt the command being typed. (The old guard skipped normal/terminal
+    -- mode instead, which defeated the point — CursorHold/BufEnter reloads
+    -- fire in normal mode, so they never ran.)
+    if vim.fn.mode() ~= "c" then
       pcall(vim.cmd.checktime)
     end
   end,
@@ -26,6 +29,38 @@ vim.api.nvim_create_autocmd("FileChangedShellPost", {
     vim.notify("File changed on disk. Buffer reloaded.", vim.log.levels.WARN, { title = "nvim" })
   end,
   desc = "Notify after auto-reload",
+})
+
+-- Autosave (the "send" half; AutoRead above is the "receive" half). Forgetting
+-- to :w means Obsidian — which watches the vault and reloads external changes —
+-- never sees the edit. Save on leaving the buffer or tabbing away from nvim,
+-- NOT on every keystroke: writes stay infrequent and the window where the same
+-- note is dirty in both nvim and Obsidian stays tiny. `:update` writes only
+-- when the buffer is actually modified, so most BufLeave fires are a cheap
+-- no-op. The guards skip anything that isn't a real, writable, on-disk file:
+-- special buffers (nofile/terminal/help, the bidi scratch tab), unnamed
+-- buffers, readonly, and non-modifiable buffers.
+local save_group = vim.api.nvim_create_augroup("AutoSave", { clear = true })
+
+vim.api.nvim_create_autocmd({ "FocusLost", "BufLeave" }, {
+  group = save_group,
+  callback = function(args)
+    local buf = args.buf
+    if
+      vim.bo[buf].buftype ~= "" -- real file buffers only
+      or not vim.bo[buf].modifiable
+      or vim.bo[buf].readonly
+      or not vim.bo[buf].modified
+      or vim.api.nvim_buf_get_name(buf) == ""
+    then
+      return
+    end
+    -- Save this specific buffer even when the event fired for a different one.
+    vim.api.nvim_buf_call(buf, function()
+      pcall(vim.cmd, "silent! update")
+    end)
+  end,
+  desc = "Autosave on focus-lost / buffer-leave",
 })
 
 -- Disable spell (and optionally wrap) for prose-like filetypes
