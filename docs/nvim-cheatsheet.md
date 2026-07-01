@@ -225,3 +225,14 @@ Two engines, both driven from visual mode:
 `mlx-audio` runtime and model cache, so Murmur must stay installed. Override the
 voice with the `NARRATE_VOICE` env var (default `af_heart`); usable from any
 shell as `echo "hello" | narrate`.
+
+## Markdown (`<leader>m`)
+
+- `<leader>mv` — render the current file's markdown + mermaid in the browser
+  (`MdView`, via the `mdview` CLI).
+- `<leader>mb` — Arabic / RTL reading view (`BidiView`). Neither Neovim nor the
+  terminal does bidirectional reordering, so raw Arabic shows shaped but
+  reversed. This pipes the buffer through [GNU FriBidi](https://github.com/fribidi/fribidi)
+  (`brew install fribidi`) and opens the correctly-ordered result in a read-only
+  scratch tab — the file on disk is untouched. `q` closes it. Read-only: to
+  *type* Arabic you'd want a bidi-aware plugin instead.

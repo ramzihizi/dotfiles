@@ -240,6 +240,49 @@ end
 vim.api.nvim_create_user_command("MdView", mdview, { desc = "Render markdown + mermaid in browser" })
 vim.keymap.set("n", "<leader>mv", mdview, { desc = "Markdown+mermaid preview" })
 
+-- Bidi (Arabic/RTL) reading view. Neither Neovim nor the terminal (Ghostty,
+-- herdr) implements the Unicode bidirectional algorithm, so raw Arabic renders
+-- shaped-but-reversed: nvim's 'arabicshape' joins the letters, but word order
+-- stays logical (= visually backwards). GNU FriBidi runs the Bidi algorithm AND
+-- Arabic joining, emitting terminal-ready visual order. We drop that into a
+-- read-only scratch tab so the file on disk is never modified. --ltr fixes the
+-- paragraph base direction so markdown markers (>, -, #, —) stay on the left
+-- while each Arabic run is still reordered correctly. This is a VIEW, not an
+-- editor — to type Arabic you'd want a bidi-aware plugin (e.g. bidi.nvim).
+local function bidi_view()
+  if vim.fn.executable("fribidi") == 0 then
+    vim.notify("fribidi not found (brew install fribidi)", vim.log.levels.ERROR)
+    return
+  end
+
+  local src = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+  local name = vim.fn.expand("%:t")
+  local out = vim.fn.systemlist(
+    { "fribidi", "--charset", "UTF-8", "--nopad", "--nobreak", "--ltr" },
+    table.concat(src, "\n")
+  )
+  if vim.v.shell_error ~= 0 then
+    vim.notify("fribidi failed:\n" .. table.concat(out, "\n"), vim.log.levels.ERROR)
+    return
+  end
+
+  -- Full-width scratch tab: long RTL lines aren't squeezed by a split. Plain
+  -- (no filetype) on purpose — a faithful, verbatim view with no markdown
+  -- plugin re-processing the already-reordered presentation forms. `q` closes.
+  vim.cmd("tabnew")
+  local buf = vim.api.nvim_get_current_buf()
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, out)
+  vim.bo[buf].buftype = "nofile"
+  vim.bo[buf].bufhidden = "wipe"
+  vim.bo[buf].swapfile = false
+  vim.bo[buf].modifiable = false
+  pcall(vim.api.nvim_buf_set_name, buf, "bidi://" .. (name ~= "" and name or "buffer"))
+  vim.keymap.set("n", "q", "<cmd>close<cr>", { buffer = buf, nowait = true, desc = "Close bidi view" })
+end
+
+vim.api.nvim_create_user_command("BidiView", bidi_view, { desc = "Arabic/RTL reading view (FriBidi)" })
+vim.keymap.set("n", "<leader>mb", bidi_view, { desc = "Bidi (Arabic) view" })
+
 -- Open today's daily note in the rmh-wiki vault. Heavy journaling lives in the
 -- Obsidian app, but this is a quick capture path from Neovim. Mirrors the old
 -- obsidian.nvim daily-notes layout: raw/journal/personal/YYYY/YYYY-MM-DD.md.
