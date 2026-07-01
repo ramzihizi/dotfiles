@@ -39,70 +39,63 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 -- Dim the editor when its pane loses focus, so the active pane is obvious.
--- On FocusLost we shift the background groups to a darker overlay and restore
--- on FocusGained. The active bg is near-black, so the unfocused shade reads as
--- a lighter overlay rather than blending in. Requires focus events to reach
--- nvim (`set -g focus-events on` in tmux.conf, already set).
+-- On FocusLost we lift the background groups to a subtle overlay and drop back
+-- to transparent on FocusGained. Requires focus events to reach nvim — both
+-- tmux (`set -g focus-events on`) and herdr forward them (herdr speaks DECSET
+-- 1004 focus reporting).
 --
--- Both environments now run gruvbox, so the dim shade is gruvbox's neutral
--- #303030 everywhere — the SAME shade tmux paints on inactive shell panes
--- (window-style in tmux.conf), so nvim and the surrounding panes dim to one
--- tone. It reads as a lighter overlay over the "hard" background (#1d2021)
--- rather than blending in.
+-- The overlay is #242424: just above the darkened gruvbox base (#161819), so it
+-- reads as "inactive" without the harsh jump the old #303030 made against the
+-- darker background. Kept in sync with tmux.conf's window-style so nvim and
+-- shell panes dim to one tone.
 local dim_group = vim.api.nvim_create_augroup("DimOnUnfocus", { clear = true })
-local DIM_BG = "#303030"
--- Background groups to override, with their original definitions cached on dim
--- and restored on un-dim. We deliberately do NOT re-source the colorscheme to
--- restore: a full re-source fires ColorScheme, which makes other plugins rebuild
--- their highlights every focus change (it was wiping the bufferline active-tab
--- highlight — see plugins/bufferline.lua) and is needlessly heavy. Caching the
--- exact prior groups restores the identical look without the churn.
+local DIM_BG = "#242424"
+-- All our colorschemes run transparent (transparent_mode / transparent), so the
+-- *undimmed* background for these groups is "NONE" — the terminal shows through.
+-- We rely on that instead of caching-and-restoring prior highlights: the old
+-- cache got poisoned when a ColorScheme event fired mid-dim (it invalidated the
+-- cache, then a later FocusLost re-cached the ALREADY dimmed #303030 as the
+-- "original" and baked it in — the stuck-gray bug). A deterministic toggle
+-- between DIM_BG and NONE can't get stuck.
 local dim_targets = { "Normal", "NormalNC", "SignColumn", "LineNr", "EndOfBuffer", "FoldColumn" }
-local saved_hl = nil
+local is_dimmed = false
 
-local function set_dim(on)
-  if on then
-    if saved_hl then return end -- already dimmed; don't cache the dimmed state
-    saved_hl = {}
-    for _, grp in ipairs(dim_targets) do
-      local ok, hl = pcall(vim.api.nvim_get_hl, 0, { name = grp, link = false })
-      if ok then
-        saved_hl[grp] = hl
-        local dimmed = vim.tbl_extend("force", {}, hl)
-        dimmed.bg = DIM_BG
-        pcall(vim.api.nvim_set_hl, 0, grp, dimmed)
-      end
-    end
-  elseif saved_hl then
-    for grp, hl in pairs(saved_hl) do
+local function apply_dim()
+  for _, grp in ipairs(dim_targets) do
+    local ok, hl = pcall(vim.api.nvim_get_hl, 0, { name = grp, link = false })
+    if ok then
+      hl.bg = is_dimmed and DIM_BG or "NONE"
       pcall(vim.api.nvim_set_hl, 0, grp, hl)
     end
-    saved_hl = nil
   end
 end
 
--- If the colorscheme changes while dimmed, the cached groups are stale; drop
--- them so un-dim leaves the new theme's (undimmed) highlights in place.
+-- A ColorScheme reload repaints these groups from scratch. If we're currently
+-- unfocused, re-apply the overlay once the new highlights land (scheduled to run
+-- after the colorscheme finishes). When focused there's nothing to do — the
+-- fresh theme is already the correct undimmed look.
 vim.api.nvim_create_autocmd("ColorScheme", {
   group = dim_group,
   callback = function()
-    saved_hl = nil
+    if is_dimmed then vim.schedule(apply_dim) end
   end,
-  desc = "Invalidate cached dim highlights on colorscheme change",
+  desc = "Re-apply dim overlay after a colorscheme reload if still unfocused",
 })
 
 vim.api.nvim_create_autocmd("FocusLost", {
   group = dim_group,
   callback = function()
-    set_dim(true)
+    is_dimmed = true
+    apply_dim()
   end,
-  desc = "Dim editor background when tmux pane is inactive",
+  desc = "Dim editor background when the pane is inactive",
 })
 
 vim.api.nvim_create_autocmd("FocusGained", {
   group = dim_group,
   callback = function()
-    set_dim(false)
+    is_dimmed = false
+    apply_dim()
   end,
-  desc = "Restore editor background when tmux pane regains focus",
+  desc = "Restore editor background when the pane regains focus",
 })
