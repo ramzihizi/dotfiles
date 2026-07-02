@@ -6,6 +6,7 @@ input=$(cat)
 # Extract current directory
 current_dir=$(echo "$input" | jq -r '.workspace.current_dir')
 model=$(echo "$input" | jq -r '.model.display_name')
+effort=$(echo "$input" | jq -r '.effort.level // empty')
 
 # Colors (dimmed for statusline)
 CYAN='\033[2;36m'
@@ -30,9 +31,10 @@ if cd "$current_dir" 2>/dev/null && git rev-parse --git-dir >/dev/null 2>&1; the
 
     # Git status counts
     status=$(git status --porcelain 2>/dev/null)
-    modified=$(echo "$status" | grep -c "^ M\|^MM\|^ D" 2>/dev/null || echo 0)
-    staged=$(echo "$status" | grep -c "^M\|^A\|^D\|^R" 2>/dev/null || echo 0)
-    untracked=$(echo "$status" | grep -c "^??" 2>/dev/null || echo 0)
+    # grep -c prints 0 itself on no match (with exit 1), so no || echo fallback
+    modified=$(echo "$status" | grep -c "^ M\|^MM\|^ D")
+    staged=$(echo "$status" | grep -c "^M\|^A\|^D\|^R")
+    untracked=$(echo "$status" | grep -c "^??")
 
     # Ahead/behind
     ahead=$(git rev-list --count @{upstream}..HEAD 2>/dev/null || echo 0)
@@ -76,7 +78,7 @@ if [ -f "$current_dir/Cargo.toml" ]; then
     [ -n "$rust_ver" ] && output+=" ${RED}󱘗 ${rust_ver}${RESET}"
 fi
 
-# Model at the end
-output+=" ${DIM}(${model})${RESET}"
+# Model (and effort, when the model supports it) at the end
+output+=" ${DIM}(${model}${effort:+ · ${effort}})${RESET}"
 
 printf "%b" "$output"
