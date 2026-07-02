@@ -245,6 +245,7 @@ link_dir "$DOTFILES_DIR/config/herdr/sounds" "$HOME/.config/herdr/sounds"
 # runtime `pi install`s / pref changes flow back into the repo as diffs. Note its
 # `lastChangelogVersion` field churns across pi versions — expect occasional diffs.
 mkdir -p "$HOME/.pi/agent"
+link_file "$DOTFILES_DIR/config/pi/AGENTS.md" "$HOME/.pi/agent/AGENTS.md"
 link_file "$DOTFILES_DIR/config/pi/keybindings.json" "$HOME/.pi/agent/keybindings.json"
 link_file "$DOTFILES_DIR/config/pi/settings.json" "$HOME/.pi/agent/settings.json"
 link_dir "$DOTFILES_DIR/config/pi/extensions" "$HOME/.pi/agent/extensions"
@@ -269,6 +270,11 @@ if command -v pi >/dev/null 2>&1; then
 else
   echo "    skipping pi packages (pi not on PATH yet)"
 fi
+
+# Antigravity CLI (agy) — global customizations root is ~/.agents (AGENTS.md,
+# skills/, workflows/). Only AGENTS.md is dotfiles-owned; agy manages the rest.
+mkdir -p "$HOME/.agents"
+link_file "$DOTFILES_DIR/config/agy/AGENTS.md" "$HOME/.agents/AGENTS.md"
 
 # Claude Code
 mkdir -p "$HOME/.claude"
@@ -308,6 +314,7 @@ fi
 # NOT config.toml: Codex rewrites it every session (projects/hooks.state/plugin
 # install state), so it is machine-local runtime state, not a dotfile.
 if [[ -d "$HOME/.codex" ]]; then
+  link_file "$DOTFILES_DIR/codex/AGENTS.md" "$HOME/.codex/AGENTS.md"
   link_file "$DOTFILES_DIR/codex/hooks.json" "$HOME/.codex/hooks.json"
   link_file "$DOTFILES_DIR/codex/herdr-agent-state.sh" "$HOME/.codex/herdr-agent-state.sh"
 fi

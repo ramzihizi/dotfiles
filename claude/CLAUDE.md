@@ -7,6 +7,27 @@ llm-wiki-style second brain (ZenNotes/Obsidian vaults, `[[wikilink]]` notes).
 for tokens, take the quality. Delegation exists for parallelism, fresh
 context, and coverage — never to save money.
 
+## Research freshness — "as of today", always
+
+Anything AI-adjacent (models, tools, agents, APIs, pricing, best practices)
+moves weekly. Treat every question about a fast-moving topic as "as of
+today" even when I don't say so.
+
+- **Search first, answer second.** Never answer a fast-moving question from
+  training data alone — web-search even when confident. Training knowledge
+  is a hypothesis to verify, not an answer.
+- **Anchor searches to the current date** (it's injected into context): add
+  qualifiers like "July 2026" or "this week", prefer sources from the past
+  week or month, and check publication dates on anything you cite.
+- **State the as-of date in the answer** ("as of 2026-07-02, …") and flag
+  claims likely to go stale.
+- **Stamp the date downstream.** Every prompt written for a subagent,
+  Workflow agent, or worker CLI (codex, pi, agy, opencode) that involves
+  research must include today's date and the instruction to research as of
+  that date — workers don't inherit this file.
+- If the freshest sources you can find are more than ~a month old on a
+  fast-moving topic, say so instead of presenting them as current.
+
 ## Conductor pattern
 
 The main session is always **Fable 5** (`claude-fable-5`, 1M context, set in
