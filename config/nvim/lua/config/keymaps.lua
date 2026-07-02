@@ -293,3 +293,10 @@ local function daily_note()
 end
 
 vim.keymap.set("n", "<leader>od", daily_note, { desc = "Daily Note (today)" })
+
+-- Re-apply the active colorscheme from ~/.config/active-theme without
+-- restarting. The `theme` switcher (config/bin/theme) sends this to every
+-- running nvim after a switch; also runnable by hand as :ThemeReload.
+vim.api.nvim_create_user_command("ThemeReload", function()
+  require("config.theme").apply()
+end, { desc = "Re-apply theme from ~/.config/active-theme" })

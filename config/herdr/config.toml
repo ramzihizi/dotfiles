@@ -6,39 +6,33 @@ onboarding = false
 # Missing also shows onboarding; set false after you've chosen.
 # onboarding = true
 
-[theme]
+# ============ Theme ============
 # Built-in themes: catppuccin, terminal, tokyo-night, dracula, nord,
-#                  gruvbox, one-dark, solarized, kanagawa, rose-pine,
-#                  vesper
-name = "gruvbox"
+#                  gruvbox, one-dark, solarized, kanagawa, rose-pine, vesper
+#
+# The block between the markers below is rewritten by the `theme` command
+# (config/bin/theme), which switches this ghostty+herdr environment between
+# gruvbox and tokyo-night and then runs `herdr server reload-config`. herdr has
+# no config include, so the theme has to live in this tracked file — meaning a
+# `theme` toggle leaves a diff here (ghostty + nvim leave none). Commit your
+# preferred default; `git checkout config/herdr/config.toml` drops a scratch flip.
+#
+# background pins the pane bg to each theme's darkest contrast (gruvbox "hard"
+# #1d2021 / tokyo-night #1a1b26); panel_bg keeps the sidebar one step lighter so
+# it stays distinguishable. accent is herdr's single highlight token (active tab,
+# agent label, focused pane border) — kept bright so the focused tab is easy to
+# track while juggling many sessions (the handoff workflow).
 
-# Follow host terminal light/dark appearance and switch Herdr UI themes.
-# Existing manual behavior is unchanged unless this is true.
-# auto_switch = false
-# dark_name = "catppuccin"
-# light_name = "catppuccin-latte"
-
+# >>> theme-switcher (managed by `theme`) >>>
+[theme]
+name = "tokyo-night"
 auto_switch = false
 
-# Override individual color tokens on top of the base theme.
-# Accepts: hex (#rrggbb), named colors, rgb(r,g,b), or panel_bg = "reset"
-#
-# Darkest gruvbox: the built-in gruvbox theme uses the standard bg (#282828);
-# pin the pane background to gruvbox's "hard" contrast #1d2021 so herdr matches
-# the ghostty "Gruvbox Dark Hard" theme and the nvim `contrast = "hard"` setting.
-# panel_bg (sidebar/chrome) is left one step up (#282828) so the sidebar stays
-# distinguishable from the darkest pane area — set it to #1d2021 too for a flat,
-# uniformly-darkest look.
 [theme.custom]
-background = "#1d2021"
-panel_bg = "#282828"
-
-# accent is herdr's single highlight token — it colors the active-tab
-# background, the agent label, and the focused pane border together. The default
-# gruvbox accent is too dim to track the focused tab when juggling many sessions
-# (the handoff workflow), so pin it to gruvbox bright_yellow for a brighter,
-# more obvious active tab while staying on-palette.
-accent = "#fabd2f"
+background = "#1a1b26"
+panel_bg = "#1f2335"
+accent = "#7aa2f7"
+# <<< theme-switcher <<<
 
 [terminal]
 # Executable used for new interactive panes.

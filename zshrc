@@ -105,17 +105,14 @@ fi
 # Homebrew
 [[ -x "/opt/homebrew/bin/brew" ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
 
-# Starship prompt — warm Gruvbox palette in the wezterm+tmux work env, cool
-# Tokyo Night (default starship.toml) everywhere else. Same per-environment
-# detection as the nvim colorscheme so prompt + editor + terminal all agree.
-if [ -n "$TMUX" ] || [ "$TERM_PROGRAM" = "WezTerm" ]; then
-    [ -f "$HOME/.config/starship-gruvbox.toml" ] && export STARSHIP_CONFIG="$HOME/.config/starship-gruvbox.toml"
-    # eza ships no gruvbox default, so its file colors land on the bright ANSI
-    # slots (neon in gruvbox). Pin them to neutral gruvbox tones in this env;
-    # ghostty+herdr leaves EZA_COLORS unset and keeps eza's Tokyo Night-adjacent
-    # defaults.
-    export EZA_COLORS="di=38;2;69;133;136:ex=38;2;152;151;26:ln=38;2;104;157;106:fi=38;2;235;219;178:or=38;2;204;36;29:mi=38;2;204;36;29:pi=38;2;214;93;14:so=38;2;214;93;14:bd=38;2;215;153;33:cd=38;2;215;153;33:su=38;2;204;36;29:sg=38;2;204;36;29:xx=38;2;146;131;116"
-fi
+# Starship prompt + eza file colors are theme-neutral: starship.toml styles use
+# ANSI color names and EZA_COLORS uses ANSI slots (not truecolor hex), so both
+# inherit whatever palette the active terminal theme provides — gruvbox in
+# wezterm/kitty/tmux, tokyo-night in ghostty+herdr (switched by the `theme`
+# command). No per-environment branching: one prompt config, always correct.
+# (Using ANSI slots also fixes eza's default neon-on-gruvbox look without pinning
+# it to a single theme's hex.)
+export EZA_COLORS="di=34:ln=36:ex=32:pi=33:so=33:bd=33:cd=33:or=31:mi=31:su=31:sg=31:tw=32:ow=34"
 command -v starship &>/dev/null && eval "$(starship init zsh)"
 
 # FZF - Set up fzf key bindings and fuzzy completion

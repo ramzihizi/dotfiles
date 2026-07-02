@@ -193,9 +193,10 @@ link_file "$DOTFILES_DIR/gitignore_global" "$HOME/.gitignore_global"
 # Zshrc
 link_file "$DOTFILES_DIR/zshrc" "$HOME/.zshrc"
 
-# Starship prompt (default = cool Tokyo Night; gruvbox variant for wezterm+tmux)
+# Starship prompt — theme-neutral: its styles use ANSI color names, so it
+# inherits the active terminal palette (gruvbox or tokyo-night). One config, no
+# per-environment variant. (The old starship-gruvbox.toml is retired.)
 link_file "$DOTFILES_DIR/config/starship/starship.toml" "$HOME/.config/starship.toml"
-link_file "$DOTFILES_DIR/config/starship/starship-gruvbox.toml" "$HOME/.config/starship-gruvbox.toml"
 
 # Kitty
 link_dir "$DOTFILES_DIR/config/kitty" "$HOME/.config/kitty"
@@ -211,6 +212,15 @@ link_dir "$DOTFILES_DIR/config/karabiner" "$HOME/.config/karabiner"
 
 # Ghostty
 link_dir "$DOTFILES_DIR/config/ghostty" "$HOME/.config/ghostty"
+
+# Theme switcher state: seed the active-theme pointer and the theme-active.conf
+# symlink that ghostty's config includes, so ghostty renders correctly before
+# the `theme` command is ever run. (theme-active.conf is gitignored; the
+# theme-*.conf fragments it points at are tracked.)
+if ! $DRY_RUN; then
+  [ -f "$HOME/.config/active-theme" ] || echo gruvbox >"$HOME/.config/active-theme"
+  ln -sfn "theme-$(cat "$HOME/.config/active-theme").conf" "$HOME/.config/ghostty/theme-active.conf"
+fi
 
 # Gitui
 link_dir "$DOTFILES_DIR/config/gitui" "$HOME/.config/gitui"
@@ -314,6 +324,10 @@ if [[ -x "$HOME/Library/Application Support/Murmur/MLXAudioBridge/com.murmur.app
   mkdir -p "$HOME/.local/bin"
   link_file "$DOTFILES_DIR/config/bin/narrate" "$HOME/.local/bin/narrate"
 fi
+
+# theme (colorscheme switcher for the ghostty + herdr + nvim environment).
+mkdir -p "$HOME/.local/bin"
+link_file "$DOTFILES_DIR/config/bin/theme" "$HOME/.local/bin/theme"
 
 # ============ Runtime Installers ============
 # Install NVM if not present

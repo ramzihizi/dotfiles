@@ -109,12 +109,12 @@ return {
   },
   {
     "LazyVim/LazyVim",
-    -- Gruvbox in every environment now (ghostty + herdr and wezterm + tmux),
-    -- using gruvbox's "hard" contrast to match each terminal's "Gruvbox Dark
-    -- Hard" theme. The old per-environment $TMUX / $TERM_PROGRAM switch (gruvbox
-    -- vs tokyonight) is gone now that both terminals run gruvbox.
+    -- Colorscheme is resolved per-environment by config.theme: wezterm + tmux
+    -- stays gruvbox; ghostty + herdr follows the `theme` switcher's pointer file
+    -- (~/.config/active-theme → gruvbox | tokyonight). This restores the old
+    -- $TMUX / $TERM_PROGRAM split, now driven by the switcher. See config/bin/theme.
     opts = function()
-      return { colorscheme = "gruvbox" }
+      return { colorscheme = require("config.theme").name() }
     end,
     -- Manual alternates: "catppuccin", "catppuccin-mocha", "poimandres",
     -- "github_dark_default", "github_dark".

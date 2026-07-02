@@ -1,0 +1,115 @@
+#!/usr/bin/env bash
+# theme — switch the ghostty + herdr + nvim environment between colorschemes.
+#
+#   theme                 print the current theme
+#   theme status          print the current theme
+#   theme gruvbox         switch to gruvbox
+#   theme tokyo-night     switch to tokyo-night
+#   theme toggle          flip to the other one
+#
+# Scope: only the ghostty + herdr + nvim ("agent") environment switches. wezterm,
+# kitty, tmux and pi intentionally stay gruvbox; starship + eza are theme-neutral
+# (ANSI slots) and inherit whichever palette the active terminal provides.
+#
+# What each tool does on a switch:
+#   ghostty — repoints ~/.config/ghostty/theme-active.conf (a symlink); existing
+#             windows need a manual reload (cmd+shift+,), new windows are correct.
+#   herdr   — rewrites the managed block in ~/.config/herdr/config.toml, then
+#             `herdr server reload-config` (live). NB: config.toml is tracked, so
+#             a switch leaves a git diff there.
+#   nvim    — new instances read ~/.config/active-theme; running ones are updated
+#             best-effort via :ThemeReload over their sockets.
+set -euo pipefail
+
+CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}"
+POINTER="$CONFIG/active-theme"
+GHOSTTY_DIR="$CONFIG/ghostty"
+HERDR_CONF="$CONFIG/herdr/config.toml"
+
+die() { echo "theme: $*" >&2; exit 1; }
+
+current() { [ -f "$POINTER" ] && cat "$POINTER" || echo gruvbox; }
+
+herdr_block() {
+  case "$1" in
+    gruvbox) cat <<'EOF'
+[theme]
+name = "gruvbox"
+auto_switch = false
+
+[theme.custom]
+background = "#1d2021"
+panel_bg = "#282828"
+accent = "#fabd2f"
+EOF
+      ;;
+    tokyo-night) cat <<'EOF'
+[theme]
+name = "tokyo-night"
+auto_switch = false
+
+[theme.custom]
+background = "#1a1b26"
+panel_bg = "#1f2335"
+accent = "#7aa2f7"
+EOF
+      ;;
+  esac
+}
+
+apply_ghostty() {
+  [ -d "$GHOSTTY_DIR" ] || return 0
+  # Relative target so the symlink stays valid whether the dir is real or itself
+  # a symlink into the dotfiles repo.
+  ln -sf "theme-$1.conf" "$GHOSTTY_DIR/theme-active.conf"
+}
+
+apply_herdr() {
+  [ -f "$HERDR_CONF" ] || return 0
+  local blockfile out
+  blockfile="$(mktemp)"
+  out="$(mktemp)"
+  herdr_block "$1" >"$blockfile"
+  # Replace everything between the markers, keeping the marker lines. The block
+  # is read from a file via getline — macOS's BSD awk rejects a multi-line -v.
+  awk -v blockfile="$blockfile" '
+    /# >>> theme-switcher/ { print; while ((getline line < blockfile) > 0) print line; close(blockfile); skip=1; next }
+    /# <<< theme-switcher/ { skip=0 }
+    !skip
+  ' "$HERDR_CONF" >"$out"
+  # Write through the symlink (do not mv, which would replace it with a file).
+  cat "$out" >"$HERDR_CONF"
+  rm -f "$blockfile" "$out"
+  command -v herdr >/dev/null 2>&1 && herdr server reload-config >/dev/null 2>&1 || true
+}
+
+apply_nvim() {
+  command -v nvim >/dev/null 2>&1 || return 0
+  local s
+  for s in "${TMPDIR:-/tmp}"/nvim.*/*/nvim.*.0 "${XDG_RUNTIME_DIR:-/run}"/nvim.*.0; do
+    [ -S "$s" ] || continue
+    nvim --server "$s" --remote-send '<C-\><C-N>:ThemeReload<CR>' >/dev/null 2>&1 || true
+  done
+}
+
+switch() {
+  local t="$1"
+  case "$t" in
+    gruvbox|tokyo-night) ;;
+    *) die "unknown theme '$t' (valid: gruvbox, tokyo-night)" ;;
+  esac
+  echo "$t" >"$POINTER"
+  apply_ghostty "$t"
+  apply_herdr "$t"
+  apply_nvim
+  echo "theme → $t"
+  echo "  herdr reloaded · nvim: new windows (running: :ThemeReload) · ghostty: cmd+shift+, or new window"
+}
+
+case "${1:-status}" in
+  status|"")             echo "current theme: $(current)" ;;
+  toggle)               [ "$(current)" = gruvbox ] && switch tokyo-night || switch gruvbox ;;
+  gruvbox|tokyo-night)  switch "$1" ;;
+  -h|--help|help)       sed -n '2,13p' "$0" | sed 's/^#\s\{0,1\}//' ;;
+  *)                    die "unknown command '$1' (try: gruvbox, tokyo-night, toggle, status)" ;;
+esac

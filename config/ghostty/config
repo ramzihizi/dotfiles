@@ -10,13 +10,13 @@ cursor-text = #161819
 cursor-style = block
 cursor-style-blink = false
 
-# Gruvbox Dark Hard: the darkest gruvbox variant (background #1d2021).
-theme = Gruvbox Dark Hard
-
-# Go one shade below gruvbox hard: override the theme's background with a
-# proportionally-darkened near-black that keeps the gruvbox cool tint. This is
-# the shared "darker gruvbox bg" token mirrored in herdr/nvim/kitty/etc.
-background = #161819
+# Colorscheme is switchable at runtime with the `theme` command
+# (gruvbox <-> tokyo-night), which repoints theme-active.conf. The theme name,
+# background, and split colors live in the theme-{gruvbox,tokyo-night}.conf
+# fragments; this include applies whichever one is active. Ghostty has no signal
+# reload, so existing windows need a manual reload (cmd+shift+,); new windows
+# pick it up automatically.
+config-file = theme-active.conf
 
 # Treat the macOS Option key as a real Alt modifier (instead of composing
 # special characters like ¡™£), so Alt-chord shortcuts reach terminal apps —
@@ -49,11 +49,8 @@ macos-window-shadow = false
 # Opacity for unfocused splits (0.0 to 1.0)
 unfocused-split-opacity = 0.7
 
-# Fill color for unfocused splits (matches the darkened gruvbox background)
-unfocused-split-fill = #161819
-
-# Divider color between splits (gruvbox bg2)
-split-divider-color = #3c3836
+# unfocused-split-fill and split-divider-color are theme-specific colors; they
+# live in the theme-*.conf fragments pulled in via config-file above.
 
 # Scrollback buffer per terminal surface, in bytes. Default is 10 MB
 # (10000000); bumped to 50 MB so long agent/build output stays scrollable.

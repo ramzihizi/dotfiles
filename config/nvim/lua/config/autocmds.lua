@@ -79,13 +79,21 @@ vim.api.nvim_create_autocmd("FileType", {
 -- a lighter overlay rather than blending in. Requires focus events to reach
 -- nvim (`set -g focus-events on` in tmux.conf, already set).
 --
--- Both environments now run gruvbox, so the dim shade is gruvbox's neutral
--- #303030 everywhere — the SAME shade tmux paints on inactive shell panes
--- (window-style in tmux.conf), so nvim and the surrounding panes dim to one
--- tone. It reads as a lighter overlay over the "hard" background (#1d2021)
--- rather than blending in.
+-- The dim shade tracks the active colorscheme so it reads as a tone-correct
+-- overlay, not a leftover. gruvbox → #303030 (the SAME grey tmux paints on
+-- inactive shell panes via window-style in tmux.conf, so nvim and surrounding
+-- panes dim to one tone in the wezterm+tmux env, over the "hard" bg #1d2021);
+-- tokyonight → #292e42 (Tokyo Night's bg_highlight), a cool overlay over its
+-- near-black bg. Keyed off vim.g.colors_name, so it follows a runtime
+-- :ThemeReload (the theme switcher) without needing a restart.
 local dim_group = vim.api.nvim_create_augroup("DimOnUnfocus", { clear = true })
-local DIM_BG = "#303030"
+local function dim_bg()
+  local cs = vim.g.colors_name or ""
+  if cs:match("^tokyonight") then
+    return "#292e42"
+  end
+  return "#303030"
+end
 -- Background groups to override, with their original definitions cached on dim
 -- and restored on un-dim. We deliberately do NOT re-source the colorscheme to
 -- restore: a full re-source fires ColorScheme, which makes other plugins rebuild
@@ -104,7 +112,7 @@ local function set_dim(on)
       if ok then
         saved_hl[grp] = hl
         local dimmed = vim.tbl_extend("force", {}, hl)
-        dimmed.bg = DIM_BG
+        dimmed.bg = dim_bg()
         pcall(vim.api.nvim_set_hl, 0, grp, dimmed)
       end
     end

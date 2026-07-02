@@ -6,6 +6,11 @@
 # macOS
 .DS_Store
 
+# Ghostty theme switcher: the active-theme symlink is repointed at runtime by
+# the `theme` command (config/bin/theme). The two theme-*.conf fragments it
+# points at ARE tracked; this mutable pointer is not.
+config/ghostty/theme-active.conf
+
 # Claude Code local settings
 claude/settings.local.json
 
