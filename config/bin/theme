@@ -38,7 +38,9 @@ name = "gruvbox"
 auto_switch = false
 
 [theme.custom]
-background = "#1d2021"
+# background "reset" = translucent panes; pairs with ghostty's
+# background-opacity-cells = false (painted cells render opaque, full color).
+background = "reset"
 panel_bg = "#282828"
 accent = "#fabd2f"
 EOF
@@ -49,9 +51,13 @@ name = "tokyo-night"
 auto_switch = false
 
 [theme.custom]
-background = "#1a1b26"
+# background "reset" = translucent panes; pairs with ghostty's
+# background-opacity-cells = false (painted cells render opaque, full color).
+background = "reset"
 panel_bg = "#1f2335"
-accent = "#7aa2f7"
+# Lighter than stock tokyo-night blue (#7aa2f7); renders at full
+# brightness now that painted bg cells escape the opacity wash.
+accent = "#9ecbff"
 EOF
       ;;
   esac

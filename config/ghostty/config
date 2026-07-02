@@ -28,9 +28,12 @@ macos-option-as-alt = true
 # "Toggle Background Opacity" switches between this value and fully opaque.
 background-opacity = 0.45
 
-# Apply opacity even when terminal apps paint explicit background cells.
-# This makes opacity visible in tmux, Neovim, and similar full-screen apps.
-background-opacity-cells = true
+# Keep explicitly painted background cells opaque (only the default background
+# gets the opacity). nvim themes run transparent (no painted bg) and herdr's
+# background is "reset", so translucency still shows everywhere it used to —
+# but UI highlights like herdr's active tab now render at full color instead
+# of being washed to 45% (accent #9ecbff was showing as ~#536882).
+background-opacity-cells = false
 
 # Keep background windows sharp when multitasking.
 background-blur = false
