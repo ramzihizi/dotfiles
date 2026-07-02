@@ -247,7 +247,9 @@ delivery = "herdr"
 # delay_seconds = 1
 
 [ui.toast.herdr]
-# position = "bottom-right"
+# Where in-app toasts appear. Default is "bottom-right"; moved to the top-right
+# corner so notifications don't collide with the prompt/status area.
+position = "top-right"
 
 [ui.toast.clipboard]
 # enabled = true
