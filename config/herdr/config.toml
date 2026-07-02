@@ -247,13 +247,14 @@ delivery = "herdr"
 # delay_seconds = 1
 
 [ui.toast.herdr]
-# Where in-app toasts appear. Default is "bottom-right"; moved to the top-right
+# Where in-app toasts appear. Default is "bottom-right"; moved to the top-left
 # corner so notifications don't collide with the prompt/status area.
-position = "top-right"
+position = "top-left"
 
 [ui.toast.clipboard]
 # enabled = true
-# position = "bottom-center"
+# Match the herdr toasts above (default was "bottom-center").
+position = "top-left"
 
 # Play sounds when agents change state in background workspaces
 [ui.sound]
