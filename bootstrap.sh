@@ -279,6 +279,7 @@ else
   echo "    generated: ~/.claude/settings.json"
 fi
 link_file "$DOTFILES_DIR/claude/statusline-command.sh" "$HOME/.claude/statusline-command.sh"
+link_file "$DOTFILES_DIR/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 link_dir "$DOTFILES_DIR/claude/agents" "$HOME/.claude/agents"
 link_dir "$DOTFILES_DIR/claude/hooks" "$HOME/.claude/hooks"
 
