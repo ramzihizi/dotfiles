@@ -2,6 +2,8 @@
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
 
+vim.keymap.set("i", "jj", "<Esc>", { desc = "Exit insert mode" })
+
 local function visual_selection()
   local mode = vim.fn.mode()
   local start_pos = vim.fn.getpos("v")
