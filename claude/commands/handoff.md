@@ -3,7 +3,9 @@ description: Write a project-shaped session handoff (.handoffs/HANDOFF.md) so th
 argument-hint: [optional focus, e.g. "the auth refactor"]
 ---
 
-Use the **handoff** skill to write a session handoff for the current repo.
+Use the **handoff** skill to write a session handoff for the current repo —
+the repo containing the working directory this session was launched in, even
+if the session's work touched other repos.
 
 Optional focus for this handoff:
 

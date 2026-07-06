@@ -13,7 +13,11 @@ push); finish by telling the user the files are ready to commit.
 
 ## What you produce
 
-In the current repo:
+In the current repo — always the repo containing the **current working
+directory** (where this session was launched), never another repo, even if the
+session's work happened elsewhere. If work touched other repos or vaults,
+describe it in the handoff body (Done / Key files & pointers) instead of
+writing handoff files there:
 
 - `.handoffs/HANDOFF.md` — the current handoff; the next session reads this first.
 - `.handoffs/archive/YYYY-MM-DD-HHMM.md` — the previous HANDOFF.md, archived each run.
@@ -118,6 +122,8 @@ hook (`~/.claude/hooks/handoff-detect.sh`).
 ## Guardrails
 
 - Write files only; never run git operations.
+- Handoff files go in the current working directory's repo only — cross-repo
+  work is *described* in the handoff, never written out to the other repo.
 - Draft first, then let the user tweak; ask only when critical info is unknown.
 - Keep `## ▶ Resume here` exact so the hook can extract it.
 - Stay specific to this session — no boilerplate filler.
