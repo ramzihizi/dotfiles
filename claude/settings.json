@@ -22,6 +22,15 @@
             "timeout": 10
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "__HOME__/.claude/hooks/prompt-craft-reminder.py",
+            "timeout": 10
+          }
+        ]
       }
     ],
     "SessionStart": [
