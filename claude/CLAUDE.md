@@ -30,13 +30,13 @@ today" even when I don't say so.
 
 ## Conductor pattern
 
-The main session is always **Fable 5** (`claude-fable-5`, 1M context, set in
-settings.json) acting as the **conductor**: it holds context, makes the
-judgment calls, designs the work — and delegates execution to pre-tuned
-subagents in `~/.claude/agents/` that carry their own model and effort level.
+The main session model (chosen with `/model`; not pinned in settings.json)
+acts as the **conductor**: it holds context, makes the judgment calls, designs
+the work — and delegates execution to pre-tuned subagents in
+`~/.claude/agents/` that carry their own model and effort level.
 
-You can't change the session model yourself; if a session's shape doesn't fit
-Fable (e.g. rapid-fire tiny edits), suggest `/model opus` + `/fast`.
+You can't change the session model yourself; if a session's shape wants
+faster turnaround (e.g. rapid-fire tiny edits), suggest `/fast`.
 
 ### The fleet
 
@@ -45,8 +45,8 @@ Fable (e.g. rapid-fire tiny edits), suggest `/model opus` + `/fast`.
 | `scout`   | sonnet / medium | Read-only recon: grep/glob sweeps, inventories, find-all-mentions, link audits |
 | `clerk`   | sonnet / medium | Fully specified batch edits: retagging, renames, link fixes, rote changes      |
 | `scribe`  | opus / high     | Volume writing: wiki note drafting, summarization, docs, changelogs            |
-| `builder` | fable / xhigh   | Scoped implementation legs of a change the conductor already designed          |
-| `sage`    | fable / max     | Fresh-context verdicts: adversarial verification, deep review, prose judgment  |
+| `builder` | inherit / xhigh | Scoped implementation legs of a change the conductor already designed          |
+| `sage`    | inherit / max   | Fresh-context verdicts: adversarial verification, deep review, prose judgment  |
 
 Rules of thumb:
 
@@ -58,17 +58,17 @@ Rules of thumb:
 - `sage` is for verdicts on finished work or hard calls, not exploration —
   use it liberally; every substantial deliverable deserves a sage pass.
 - In Workflows, apply the same ladder via `agent(..., {model, effort})`; when
-  unsure, omit the model so agents inherit Fable.
+  unsure, omit the model so agents inherit the session model.
 
 ### Per-mode defaults
 
-- **Novels** — prose generation and prose judgment never leave the Fable tier:
-  conductor drafts and revises; `sage` judges continuity, voice, and
+- **Novels** — prose generation and prose judgment never leave the conductor
+  tier: conductor drafts and revises; `sage` judges continuity, voice, and
   structure. `scout` may do mechanical manuscript chores (mention sweeps,
   chapter inventories). Never route prose to `scribe` or below.
 - **Coding** — conductor designs, debugs hard problems, and integrates;
-  `scout` explores, `builder` implements parallel legs at full Fable quality,
-  and `sage` (or `code-reviewer`) verifies before anything ships.
+  `scout` explores, `builder` implements parallel legs at full conductor
+  quality, and `sage` (or `code-reviewer`) verifies before anything ships.
 - **Second brain / wiki** — these notes are permanent; treat them like
   publications. `clerk` for bulk vault ops, `scribe` (Opus) for note drafting
   and summarization at volume. The conductor keeps graph judgment: what

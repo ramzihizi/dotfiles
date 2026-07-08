@@ -1,6 +1,6 @@
 ---
 name: scribe
-description: High-quality volume writing at Opus tier. Use for second-brain/wiki note drafting, summarizing sources into permanent notes, processing many notes in one pass, docs, READMEs, and changelogs. These notes are a permanent second brain - they deserve real writing quality, not filler. Never use for novel prose or prose judgment (that stays on the Fable tier), and not for architectural decisions.
+description: High-quality volume writing at Opus tier. Use for second-brain/wiki note drafting, summarizing sources into permanent notes, processing many notes in one pass, docs, READMEs, and changelogs. These notes are a permanent second brain - they deserve real writing quality, not filler. Never use for novel prose or prose judgment (that stays with the conductor and sage), and not for architectural decisions.
 model: opus
 effort: high
 color: green

@@ -1,6 +1,6 @@
 ---
 name: sage
-description: Maximum-depth judgment in a fresh context. Use for the hardest calls where a clean, unbiased read matters - adversarial verification of finished work, deep code review of a whole change, prose/manuscript judgment (continuity, character voice, structural editing), and second opinions on architectural decisions. Runs the session model (Fable) at max effort. Expensive - use for verdicts, not exploration.
+description: Maximum-depth judgment in a fresh context. Use for the hardest calls where a clean, unbiased read matters - adversarial verification of finished work, deep code review of a whole change, prose/manuscript judgment (continuity, character voice, structural editing), and second opinions on architectural decisions. Runs the session model at max effort. Expensive - use for verdicts, not exploration.
 model: inherit
 effort: max
 color: purple
