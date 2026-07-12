@@ -1,14 +1,18 @@
 #!/usr/bin/env bash
-# narrate — read stdin text aloud with a Kokoro voice, reusing Murmur's
+# narrate — read stdin text aloud with a local MLX voice, reusing Murmur's
 # bundled mlx-audio runtime. Mirrors /usr/bin/say's stdin interface:
 #   echo "hello there" | narrate
-# Config: NARRATE_VOICE (default am_adam).
+# Config: NARRATE_VOICE (default Aiden).
 set -euo pipefail
 
 BRIDGE="$HOME/Library/Application Support/Murmur/MLXAudioBridge/com.murmur.app"
 PYTHON="$BRIDGE/venv/bin/python"
-MODEL="prince-canuma/Kokoro-82M"
-VOICE="${NARRATE_VOICE:-am_adam}"
+# Previous Kokoro setup (kept for quick rollback):
+# MODEL="prince-canuma/Kokoro-82M"
+# VOICE="${NARRATE_VOICE:-am_adam}"
+
+MODEL="mlx-community/Qwen3-TTS-12Hz-0.6B-Base-bf16"
+VOICE="${NARRATE_VOICE:-Aiden}"
 
 if [[ ! -x "$PYTHON" ]]; then
   echo "narrate: Murmur runtime not found at:" >&2
