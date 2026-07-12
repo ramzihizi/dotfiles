@@ -74,6 +74,7 @@ cask "raycast"                     # Spotlight replacement
 # Utilities
 cask "appcleaner"
 cask "caffeine"
+cask "fluidvoice"                  # Local dictation (Parakeet STT + Fluid Intelligence)
 cask "karabiner-elements"          # Keyboard customization
 
 # Fonts
