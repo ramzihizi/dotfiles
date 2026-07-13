@@ -1,4 +1,4 @@
--- Transient read-aloud indicator: shows 🔊 with the engine (Kokoro / say) while
+-- Transient read-aloud indicator: shows 🔊 with the engine (Qwen / say) while
 -- narration is active, switching to ⏸ when paused. State is published by the
 -- speak()/narrate()/toggle_pause_speech() functions in config/keymaps.lua via
 -- vim.g.tts_active / vim.g.tts_kind / vim.g.tts_paused, which also force a

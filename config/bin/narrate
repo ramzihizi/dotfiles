@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 # narrate — read stdin text aloud with a local MLX voice, reusing Murmur's
-# bundled mlx-audio runtime. Mirrors /usr/bin/say's stdin interface:
+# bundled mlx-audio runtime. The Python reader beside this wrapper loads the
+# model once, chunks long prose, and feeds each generated chunk to afplay.
+# Mirrors /usr/bin/say's stdin interface:
 #   echo "hello there" | narrate
-# Config: NARRATE_VOICE (default Aiden).
+# Config: NARRATE_MODEL, NARRATE_VOICE, NARRATE_LANGUAGE.
 set -euo pipefail
 
 BRIDGE="$HOME/Library/Application Support/Murmur/MLXAudioBridge/com.murmur.app"
@@ -10,9 +12,12 @@ PYTHON="$BRIDGE/venv/bin/python"
 # Previous Kokoro setup (kept for quick rollback):
 # MODEL="prince-canuma/Kokoro-82M"
 # VOICE="${NARRATE_VOICE:-am_adam}"
+# Previous Qwen Base setup (voice names are not pinned without reference audio):
+# MODEL="mlx-community/Qwen3-TTS-12Hz-0.6B-Base-bf16"
 
-MODEL="mlx-community/Qwen3-TTS-12Hz-0.6B-Base-bf16"
-VOICE="${NARRATE_VOICE:-Aiden}"
+export NARRATE_MODEL="${NARRATE_MODEL:-mlx-community/Qwen3-TTS-12Hz-0.6B-CustomVoice-bf16}"
+export NARRATE_VOICE="${NARRATE_VOICE:-Aiden}"
+export NARRATE_LANGUAGE="${NARRATE_LANGUAGE:-English}"
 
 if [[ ! -x "$PYTHON" ]]; then
   echo "narrate: Murmur runtime not found at:" >&2
@@ -21,38 +26,27 @@ if [[ ! -x "$PYTHON" ]]; then
   exit 1
 fi
 
-text="$(cat)"
-if [[ -z "${text//[[:space:]]/}" ]]; then
-  echo "narrate: no input text" >&2
-  exit 1
-fi
-
-workdir="$(mktemp -d "${TMPDIR:-/tmp}/narrate.XXXXXX")"
-trap 'rm -rf "$workdir"' EXIT INT TERM
-
 export HF_HOME="$BRIDGE/huggingface"
 
-"$PYTHON" -m mlx_audio.tts.generate \
-  --model "$MODEL" \
-  --voice "$VOICE" \
-  --text "$text" \
-  --output_path "$workdir" \
-  --file_prefix narrate \
-  --audio_format wav \
-  --join_audio >/dev/null 2>"$workdir/err.log"
-
-wav="$workdir/narrate.wav"
-if [[ ! -f "$wav" ]]; then
-  # Fall back to any wav the generator produced (segment naming varies).
-  wav="$(/bin/ls "$workdir"/*.wav 2>/dev/null | head -n1 || true)"
-fi
-if [[ -z "${wav:-}" || ! -f "$wav" ]]; then
-  if [[ -s "$workdir/err.log" ]]; then
-    echo "narrate: mlx-audio error:" >&2
-    tail -n 5 "$workdir/err.log" >&2
+# Resolve the checked-in helper when this wrapper is invoked through its
+# ~/.local/bin symlink. Bootstrap always creates a single absolute symlink.
+script_path="$0"
+if [[ -L "$script_path" ]]; then
+  target="$(readlink "$script_path")"
+  if [[ "$target" == /* ]]; then
+    script_path="$target"
+  else
+    script_path="$(dirname "$script_path")/$target"
   fi
-  echo "narrate: synthesis produced no audio" >&2
+fi
+script_dir="$(cd "$(dirname "$script_path")" && pwd)"
+reader="$script_dir/narrate-reader.py"
+
+if [[ ! -f "$reader" ]]; then
+  echo "narrate: reader helper not found at $reader" >&2
   exit 1
 fi
 
-afplay "$wav"
+# exec keeps the Neovim job PID attached to the actual reader. Neovim signals
+# it alongside afplay so pause, resume, and stop cover generation and playback.
+exec "$PYTHON" "$reader"

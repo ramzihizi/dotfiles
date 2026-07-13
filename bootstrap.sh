@@ -323,7 +323,7 @@ fi
 mkdir -p "$HOME/.config/opencode"
 link_file "$DOTFILES_DIR/config/opencode/opencode.jsonc" "$HOME/.config/opencode/opencode.jsonc"
 
-# narrate (Kokoro read-aloud CLI; reuses Murmur's bundled mlx-audio runtime).
+# narrate (chunked Qwen read-aloud CLI; reuses Murmur's bundled MLX runtime).
 # Opt-in by detection: only wire it where that runtime actually exists, so the
 # script + nvim keymap stay dormant on machines without Murmur. The narrate
 # script checks for this same path at runtime; gating the symlink here keeps it

@@ -217,14 +217,16 @@ Inline blame is shown automatically on every line with author, date, summary, an
 Two engines, both driven from visual mode:
 
 - `<leader>dr` — read selection with macOS `say` (instant, robotic).
-- `<leader>dR` — read selection with a natural Kokoro voice via the `narrate`
-  CLI.
+- `<leader>dR` — read selection with Qwen's Aiden voice via the `narrate` CLI.
+- `<leader>dP` — pause or resume the active reader.
 - `<leader>ds` — stop either engine.
 
 `narrate` reuses the [Murmur](https://www.murmurtts.com/) app's bundled
-`mlx-audio` runtime and model cache, so Murmur must stay installed. Override the
-voice with the `NARRATE_VOICE` env var (default `af_heart`); usable from any
-shell as `echo "hello" | narrate`.
+`mlx-audio` runtime and model cache, so Murmur must stay installed. It loads
+Qwen once, automatically splits long prose at paragraph and sentence
+boundaries, and queues the generated chunks through `afplay`. Override the
+voice with the `NARRATE_VOICE` env var (default `Aiden`); usable from any shell
+as `echo "hello" | narrate`.
 
 ## Markdown (`<leader>m`)
 
