@@ -7,6 +7,7 @@ input=$(cat)
 current_dir=$(echo "$input" | jq -r '.workspace.current_dir')
 model=$(echo "$input" | jq -r '.model.display_name')
 effort=$(echo "$input" | jq -r '.effort.level // empty')
+ctx_pct=$(echo "$input" | jq -r '.context_window.used_percentage // empty')
 
 # Colors (dimmed for statusline)
 CYAN='\033[2;36m'
@@ -80,5 +81,21 @@ fi
 
 # Model (and effort, when the model supports it) at the end
 output+=" ${DIM}(${model}${effort:+ · ${effort}})${RESET}"
+
+# Context-window usage badge (degrades to nothing if the field is absent,
+# e.g. before the first API response of a session)
+if [ -n "$ctx_pct" ]; then
+    ctx_pct_int=$(printf '%.0f' "$ctx_pct" 2>/dev/null)
+    if [ -n "$ctx_pct_int" ]; then
+        if [ "$ctx_pct_int" -ge 80 ]; then
+            ctx_color="$RED"
+        elif [ "$ctx_pct_int" -ge 50 ]; then
+            ctx_color="$YELLOW"
+        else
+            ctx_color="$DIM"
+        fi
+        output+=" ${ctx_color}ctx ${ctx_pct_int}%${RESET}"
+    fi
+fi
 
 printf "%b" "$output"
