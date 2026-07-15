@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  awake — persistent counterpart to the interactive `awake` alias in zshrc
+  (`alias awake="caffeinate -i"`). A LaunchAgent runs `caffeinate -i` at login
+  so the Mac never idle-sleeps, surviving reboots without a terminal open.
+
+  RunAtLoad starts it at login; KeepAlive relaunches it if it ever exits (or is
+  killed), so the keep-awake stays in force. To pause it for this session:
+    launchctl bootout gui/$(id -u)/com.rmh.awake
+  and to bring it back:
+    launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.rmh.awake.plist
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.rmh.awake</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/bin/caffeinate</string>
+    <string>-i</string>
+  </array>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>ProcessType</key>
+  <string>Background</string>
+</dict>
+</plist>

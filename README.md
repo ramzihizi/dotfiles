@@ -157,6 +157,7 @@ dotfiles/
 │   ├── nvim/              # Neovim (LazyVim) config
 │   ├── karabiner/         # Karabiner keyboard config
 │   ├── pi/                # Pi coding agent keybindings, extensions, and themes
+│   ├── launchd/           # macOS LaunchAgents (e.g. awake = caffeinate at login)
 │   └── tmux/              # Tmux config
 ├── zshrc                  # Shell configuration
 ├── gitconfig              # Git settings

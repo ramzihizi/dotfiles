@@ -337,6 +337,30 @@ fi
 mkdir -p "$HOME/.local/bin"
 link_file "$DOTFILES_DIR/config/bin/theme" "$HOME/.local/bin/theme"
 
+# awake — persistent keep-awake LaunchAgent (the login-time counterpart to the
+# interactive `awake` alias in zshrc). Symlink the plist into ~/Library/
+# LaunchAgents and (re)load it so `caffeinate -i` runs at every login. The plist
+# calls caffeinate by absolute path, so a plain symlink is enough — no template.
+mkdir -p "$HOME/Library/LaunchAgents"
+awake_plist="$HOME/Library/LaunchAgents/com.rmh.awake.plist"
+link_file "$DOTFILES_DIR/config/launchd/com.rmh.awake.plist" "$awake_plist"
+if ! $DRY_RUN; then
+  # bootout first so plist edits take effect on re-bootstrap; `|| true` keeps
+  # `set -e` happy whether or not the job is already registered.
+  launchctl bootout "gui/$(id -u)/com.rmh.awake" 2>/dev/null || true
+  launchctl bootstrap "gui/$(id -u)" "$awake_plist" 2>/dev/null || true
+  echo "    loaded launchd agent: com.rmh.awake (caffeinate -i)"
+fi
+
+# SwiftBar — scriptable menu bar. Link the repo's plugin tree into ~/.config and
+# point SwiftBar at it, so the `awake` indicator/toggle plugin is version-owned
+# here. Plugin filenames encode their refresh interval (e.g. awake.10s.sh).
+link_dir "$DOTFILES_DIR/config/swiftbar" "$HOME/.config/swiftbar"
+if ! $DRY_RUN; then
+  chmod +x "$DOTFILES_DIR"/config/swiftbar/plugins/*.sh 2>/dev/null || true
+  defaults write com.ameba.SwiftBar PluginDirectory "$HOME/.config/swiftbar/plugins" 2>/dev/null || true
+fi
+
 # ============ Runtime Installers ============
 # Install NVM if not present
 if [[ ! -d "$HOME/.nvm" ]]; then
