@@ -5,7 +5,7 @@ input=$(cat)
 
 # Extract current directory
 current_dir=$(echo "$input" | jq -r '.workspace.current_dir')
-model=$(echo "$input" | jq -r '.model.display_name')
+model=$(echo "$input" | jq -r '.model.display_name' | sed -E 's/[[:space:]]*\([^()]*context\)$//')
 effort=$(echo "$input" | jq -r '.effort.level // empty')
 ctx_pct=$(echo "$input" | jq -r '.context_window.used_percentage // empty')
 
@@ -82,8 +82,8 @@ fi
 # Model (and effort, when the model supports it) at the end
 output+=" ${DIM}(${model}${effort:+ · ${effort}})${RESET}"
 
-# Context-window usage badge (degrades to nothing if the field is absent,
-# e.g. before the first API response of a session)
+# Context-window usage as a progress bar (degrades to nothing if the field
+# is absent, e.g. before the first API response of a session)
 if [ -n "$ctx_pct" ]; then
     ctx_pct_int=$(printf '%.0f' "$ctx_pct" 2>/dev/null)
     if [ -n "$ctx_pct_int" ]; then
@@ -94,7 +94,17 @@ if [ -n "$ctx_pct" ]; then
         else
             ctx_color="$DIM"
         fi
-        output+=" ${ctx_color}ctx ${ctx_pct_int}%${RESET}"
+
+        bar_width=10
+        filled=$(( ctx_pct_int * bar_width / 100 ))
+        [ "$filled" -gt "$bar_width" ] && filled=$bar_width
+        empty=$(( bar_width - filled ))
+
+        bar=""
+        for ((i = 0; i < filled; i++)); do bar+="█"; done
+        for ((i = 0; i < empty; i++)); do bar+="░"; done
+
+        output+=" ${ctx_color}[${bar}] ${ctx_pct_int}%${RESET}"
     fi
 fi
 
