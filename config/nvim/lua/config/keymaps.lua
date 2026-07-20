@@ -32,15 +32,13 @@ local function define(text)
 end
 
 local speech_job
-local narrate_job
-local narrate_pid
 local tts_paused = false
 
 -- Reflect read-aloud state on the statusline (the lualine indicator in
 -- plugins/lualine.lua reads vim.g.tts_active / vim.g.tts_kind) and force an
 -- immediate redraw so it appears/clears without lualine's refresh-interval lag.
 local function update_tts_status(kind)
-  vim.g.tts_active = speech_job ~= nil or narrate_job ~= nil
+  vim.g.tts_active = speech_job ~= nil
   vim.g.tts_kind = vim.g.tts_active and kind or nil
   if not vim.g.tts_active then
     tts_paused = false -- nothing playing can't be paused
@@ -55,42 +53,25 @@ local function stop_speech()
   -- Resume first: a SIGSTOP'd (paused) process ignores SIGTERM until it
   -- continues, so un-pause before killing or a paused reader won't die.
   vim.fn.system({ "/usr/bin/pkill", "-CONT", "-x", "say" })
-  vim.fn.system({ "/usr/bin/pkill", "-CONT", "-x", "afplay" })
-  if narrate_pid then
-    vim.fn.system({ "/bin/kill", "-CONT", tostring(narrate_pid) })
-  end
 
   if speech_job then
     vim.fn.jobstop(speech_job)
     speech_job = nil
   end
 
-  if narrate_job then
-    vim.fn.jobstop(narrate_job)
-    narrate_job = nil
-    narrate_pid = nil
-  end
-
   vim.fn.system({ "/usr/bin/pkill", "-x", "say" })
-  vim.fn.system({ "/usr/bin/pkill", "-x", "afplay" })
   update_tts_status()
 end
 
--- Pause / resume the active reader. `say` plays audio itself; the narrate
--- wrapper execs its Python reader, which prepares chunks while afplay plays
--- them. Signal both so generation and the audible chunk pause together.
+-- Pause / resume the `say` reader. `say` plays audio itself, so SIGSTOP/SIGCONT
+-- on the process pauses and resumes the audible speech.
 local function toggle_pause_speech()
-  if not (speech_job or narrate_job) then
+  if not speech_job then
     vim.notify("Nothing is reading", vim.log.levels.WARN)
     return
   end
   local signal = tts_paused and "-CONT" or "-STOP"
-  if narrate_pid then
-    vim.fn.system({ "/bin/kill", signal, tostring(narrate_pid) })
-    vim.fn.system({ "/usr/bin/pkill", signal, "-x", "afplay" })
-  else
-    vim.fn.system({ "/usr/bin/pkill", signal, "-x", "say" })
-  end
+  vim.fn.system({ "/usr/bin/pkill", signal, "-x", "say" })
   tts_paused = not tts_paused
   vim.g.tts_paused = tts_paused
   pcall(function()
@@ -154,78 +135,9 @@ vim.keymap.set("x", "<leader>dw", function()
   define(visual_selection())
 end, { desc = "Define Selection" })
 
-local function narrate(text)
-  text = vim.trim(clean_for_speech(text))
-  if text == "" then
-    vim.notify("No text selected", vim.log.levels.WARN)
-    return
-  end
-
-  stop_speech()
-
-  local bin = vim.fn.expand("~/.local/bin/narrate")
-  if vim.fn.executable(bin) == 0 then
-    vim.notify("narrate not found at " .. bin, vim.log.levels.ERROR)
-    return
-  end
-
-  local stderr = {}
-  local job_id
-  job_id = vim.fn.jobstart({ bin }, {
-    stderr_buffered = true,
-    on_stderr = function(_, data)
-      for _, line in ipairs(data or {}) do
-        if line ~= "" then
-          stderr[#stderr + 1] = line
-        end
-      end
-    end,
-    on_exit = function(id, code)
-      if narrate_job == id then
-        narrate_job = nil
-        narrate_pid = nil
-        update_tts_status()
-      end
-      -- Codes >= 128 mean killed by a signal (143 = SIGTERM, 137 = SIGKILL,
-      -- 130 = SIGINT) — that's an intentional <leader>ds stop, not a failure.
-      -- The script's genuine errors all `exit 1`, so only surface codes < 128.
-      if code ~= 0 and code < 128 then
-        local msg = vim.trim(table.concat(stderr, "\n"))
-        vim.notify(
-          "narrate failed" .. (msg ~= "" and ":\n" .. msg or " (exit " .. code .. ")"),
-          vim.log.levels.ERROR,
-          { title = "narrate" }
-        )
-      end
-    end,
-  })
-
-  narrate_job = job_id
-  if narrate_job <= 0 then
-    narrate_job = nil
-    vim.notify("Could not start narrate", vim.log.levels.ERROR)
-    return
-  end
-  narrate_pid = vim.fn.jobpid(narrate_job)
-
-  update_tts_status("Qwen")
-  vim.notify("🔊 Narrating…", vim.log.levels.INFO, { title = "narrate" })
-  vim.fn.chansend(narrate_job, text)
-  vim.fn.chanclose(narrate_job, "stdin")
-end
-
 vim.keymap.set("x", "<leader>dr", function()
   speak(visual_selection())
 end, { desc = "Read Selection" })
-
--- Qwen read-aloud: only bind when the narrate CLI is actually installed
--- (bootstrap symlinks it only on machines with Murmur's runtime). Keeps the
--- mapping absent elsewhere instead of binding a key that just errors.
-if vim.fn.executable(vim.fn.expand("~/.local/bin/narrate")) == 1 then
-  vim.keymap.set("x", "<leader>dR", function()
-    narrate(visual_selection())
-  end, { desc = "Read Selection (Qwen)" })
-end
 
 vim.keymap.set("n", "<leader>ds", stop_speech, { desc = "Stop Reading" })
 vim.keymap.set("n", "<leader>dP", toggle_pause_speech, { desc = "Pause/Resume Reading" })

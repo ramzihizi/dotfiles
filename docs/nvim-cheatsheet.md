@@ -214,19 +214,11 @@ Inline blame is shown automatically on every line with author, date, summary, an
 
 ## Read aloud (text-to-speech)
 
-Two engines, both driven from visual mode:
+Driven from visual mode, using macOS `say`:
 
 - `<leader>dr` — read selection with macOS `say` (instant, robotic).
-- `<leader>dR` — read selection with Qwen's Aiden voice via the `narrate` CLI.
-- `<leader>dP` — pause or resume the active reader.
-- `<leader>ds` — stop either engine.
-
-`narrate` reuses the [Murmur](https://www.murmurtts.com/) app's bundled
-`mlx-audio` runtime and model cache, so Murmur must stay installed. It loads
-Qwen once, automatically splits long prose at paragraph and sentence
-boundaries, and queues the generated chunks through `afplay`. Override the
-voice with the `NARRATE_VOICE` env var (default `Aiden`); usable from any shell
-as `echo "hello" | narrate`.
+- `<leader>dP` — pause or resume the reader.
+- `<leader>ds` — stop reading.
 
 ## Markdown (`<leader>m`)
 

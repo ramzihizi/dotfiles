@@ -1,8 +1,8 @@
--- Transient read-aloud indicator: shows 🔊 with the engine (Qwen / say) while
--- narration is active, switching to ⏸ when paused. State is published by the
--- speak()/narrate()/toggle_pause_speech() functions in config/keymaps.lua via
--- vim.g.tts_active / vim.g.tts_kind / vim.g.tts_paused, which also force a
--- lualine refresh so the indicator appears, flips, and clears promptly.
+-- Transient read-aloud indicator: shows 🔊 with the engine name while `say` is
+-- reading, switching to ⏸ when paused. State is published by the speak() /
+-- toggle_pause_speech() functions in config/keymaps.lua via vim.g.tts_active /
+-- vim.g.tts_kind / vim.g.tts_paused, which also force a lualine refresh so the
+-- indicator appears, flips, and clears promptly.
 return {
   "nvim-lualine/lualine.nvim",
   opts = function(_, opts)
