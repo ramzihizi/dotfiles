@@ -324,3 +324,39 @@ ln -sf ~/dotfiles/gitignore_global ~/.gitignore_global
 # Reload shell
 exec zsh -l
 ```
+
+### Audio "renderer error" / no sound in any browser
+
+Symptom: audio/video stops playing in **every** browser at once. Chromium apps
+(Brave, Chrome) show "Audio renderer error. Please restart your computer.";
+Safari/YouTube shows "If playback doesn't begin shortly, try restarting your
+device." It is system-wide (Core Audio), not a browser bug — uninstalling or
+reconfiguring a browser will not help.
+
+Root cause seen here (2026-07-19): the old `narrate` read-aloud feature played
+TTS chunks through `afplay` and tore them down abruptly — `SIGSTOP` on pause,
+and an orphaned/killed `afplay` child on stop. Freezing or hard-killing a
+process that owns the Core Audio render callback corrupts the output engine;
+over many sessions it accumulated until `AudioQueueStart` failed for every audio
+client. `narrate` was removed (commit `43da377`), so that trigger is gone — but
+the same wedge can recur from any app that mishandles Core Audio.
+
+Diagnose (confirms it is the OS audio stack, not the browser):
+
+```bash
+afplay /System/Library/Sounds/Glass.aiff; echo "exit=$?"
+```
+
+`Error: AudioQueueStart failed` / `exit=1` means the Core Audio output engine is
+wedged. `exit=0` with an audible chime means audio is fine — look elsewhere
+(network, the specific tab).
+
+Fix:
+
+```bash
+# 1. Restart just the audio daemon (launchd relaunches it instantly, ~1s blip).
+sudo killall coreaudiod
+# 2. Re-test with afplay. If it STILL fails, the wedge is below what a daemon
+#    restart clears — reboot. That is the only reliable fix, and it is exactly
+#    what the browser dialogs are (bluntly) telling you to do.
+```
