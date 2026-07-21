@@ -338,8 +338,14 @@ TTS chunks through `afplay` and tore them down abruptly — `SIGSTOP` on pause,
 and an orphaned/killed `afplay` child on stop. Freezing or hard-killing a
 process that owns the Core Audio render callback corrupts the output engine;
 over many sessions it accumulated until `AudioQueueStart` failed for every audio
-client. `narrate` was removed (commit `43da377`), so that trigger is gone — but
-the same wedge can recur from any app that mishandles Core Audio.
+client. `narrate` was removed (commit `43da377`), so that trigger is gone.
+
+It recurred on 2026-07-20 from the macOS `say` read-aloud that was kept when
+`narrate` was removed: it paused with `SIGSTOP` and hard-killed `say` the same
+way, wedging Core Audio again (a `killall coreaudiod` did not clear it — only a
+reboot did). All Neovim read-aloud has now been removed entirely as the
+permanent fix, so nothing in this config drives `say`/`afplay` anymore. The same
+wedge can still recur from any *other* app that mishandles Core Audio.
 
 Diagnose (confirms it is the OS audio stack, not the browser):
 

@@ -31,102 +31,6 @@ local function define(text)
   vim.ui.open("dict://" .. vim.uri_encode(text, "rfc3986"))
 end
 
-local speech_job
-local tts_paused = false
-
--- Reflect read-aloud state on the statusline (the lualine indicator in
--- plugins/lualine.lua reads vim.g.tts_active / vim.g.tts_kind) and force an
--- immediate redraw so it appears/clears without lualine's refresh-interval lag.
-local function update_tts_status(kind)
-  vim.g.tts_active = speech_job ~= nil
-  vim.g.tts_kind = vim.g.tts_active and kind or nil
-  if not vim.g.tts_active then
-    tts_paused = false -- nothing playing can't be paused
-  end
-  vim.g.tts_paused = tts_paused
-  pcall(function()
-    require("lualine").refresh()
-  end)
-end
-
-local function stop_speech()
-  -- Resume first: a SIGSTOP'd (paused) process ignores SIGTERM until it
-  -- continues, so un-pause before killing or a paused reader won't die.
-  vim.fn.system({ "/usr/bin/pkill", "-CONT", "-x", "say" })
-
-  if speech_job then
-    vim.fn.jobstop(speech_job)
-    speech_job = nil
-  end
-
-  vim.fn.system({ "/usr/bin/pkill", "-x", "say" })
-  update_tts_status()
-end
-
--- Pause / resume the `say` reader. `say` plays audio itself, so SIGSTOP/SIGCONT
--- on the process pauses and resumes the audible speech.
-local function toggle_pause_speech()
-  if not speech_job then
-    vim.notify("Nothing is reading", vim.log.levels.WARN)
-    return
-  end
-  local signal = tts_paused and "-CONT" or "-STOP"
-  vim.fn.system({ "/usr/bin/pkill", signal, "-x", "say" })
-  tts_paused = not tts_paused
-  vim.g.tts_paused = tts_paused
-  pcall(function()
-    require("lualine").refresh()
-  end)
-  vim.notify(tts_paused and "⏸ Paused" or "▶ Resumed", vim.log.levels.INFO, { title = vim.g.tts_kind or "tts" })
-end
-
--- Strip Markdown so TTS reads words, not punctuation. Removes emphasis/code
--- markers (* ` ~~), unwraps [label](url) -> label, and drops line-start heading
--- (#), blockquote (>) and list-bullet (-, +) markers. Leaves prose, hyphenated
--- words and snake_case untouched.
-local function clean_for_speech(text)
-  text = text or ""
-  text = text:gsub("!?%[([^%]]*)%]%([^)]*%)", "%1") -- images/links -> label
-  text = text:gsub("`+", "") -- inline/fenced code backticks
-  text = text:gsub("%*+", "") -- bold/italic asterisks
-  text = text:gsub("~~", "") -- strikethrough
-  text = text:gsub("/+", " ") -- slashes -> space ("and/or" reads "and or", not "slash")
-  text = text:gsub("^%s*#+%s*", "") -- heading marker, first line
-  text = text:gsub("\n%s*#+%s*", "\n") -- heading markers, later lines
-  text = text:gsub("^%s*>+%s*", "") -- blockquote, first line
-  text = text:gsub("\n%s*>+%s*", "\n") -- blockquote, later lines
-  text = text:gsub("^%s*[-+]%s+", "") -- list bullet, first line
-  text = text:gsub("\n%s*[-+]%s+", "\n") -- list bullets, later lines
-  return text
-end
-
-local function speak(text)
-  text = vim.trim(clean_for_speech(text))
-  if text == "" then
-    vim.notify("No text selected", vim.log.levels.WARN)
-    return
-  end
-
-  stop_speech()
-  speech_job = vim.fn.jobstart({ "/usr/bin/say" }, {
-    on_exit = function()
-      speech_job = nil
-      update_tts_status()
-    end,
-  })
-
-  if speech_job <= 0 then
-    speech_job = nil
-    vim.notify("Could not start /usr/bin/say", vim.log.levels.ERROR)
-    return
-  end
-
-  update_tts_status("say")
-  vim.notify("🔊 Reading…", vim.log.levels.INFO, { title = "say" })
-  vim.fn.chansend(speech_job, text)
-  vim.fn.chanclose(speech_job, "stdin")
-end
-
 vim.keymap.set("n", "<leader>dw", function()
   define(vim.fn.expand("<cword>"))
 end, { desc = "Define Word" })
@@ -134,13 +38,6 @@ end, { desc = "Define Word" })
 vim.keymap.set("x", "<leader>dw", function()
   define(visual_selection())
 end, { desc = "Define Selection" })
-
-vim.keymap.set("x", "<leader>dr", function()
-  speak(visual_selection())
-end, { desc = "Read Selection" })
-
-vim.keymap.set("n", "<leader>ds", stop_speech, { desc = "Stop Reading" })
-vim.keymap.set("n", "<leader>dP", toggle_pause_speech, { desc = "Pause/Resume Reading" })
 
 local function mdview()
   local file = vim.fn.expand("%:p")
