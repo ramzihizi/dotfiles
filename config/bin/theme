@@ -42,7 +42,9 @@ auto_switch = false
 # background-opacity-cells = false (painted cells render opaque, full color).
 background = "reset"
 panel_bg = "#282828"
-accent = "#fabd2f"
+# Accent pinned to "hacker green" regardless of theme (keep in sync with the
+# tokyo-night branch). Change both branches together to re-theme the accent.
+accent = "#00FF00"
 EOF
       ;;
     tokyo-night) cat <<'EOF'
@@ -55,9 +57,9 @@ auto_switch = false
 # background-opacity-cells = false (painted cells render opaque, full color).
 background = "reset"
 panel_bg = "#1f2335"
-# Match Neovim's lualine NORMAL background (tokyonight-night blue) so the
-# herdr active tab and the nvim mode indicator read as the same color.
-accent = "#7aa2f7"
+# Accent pinned to "hacker green" regardless of theme (keep in sync with the
+# gruvbox branch). No longer tracks the theme, so it won't match nvim's lualine.
+accent = "#00FF00"
 EOF
       ;;
   esac

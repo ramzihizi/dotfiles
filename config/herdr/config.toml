@@ -50,9 +50,8 @@ auto_switch = false
 # background-opacity-cells = false (painted cells render opaque, full color).
 background = "reset"
 panel_bg = "#1f2335"
-# Match Neovim's lualine NORMAL background (tokyonight-night blue) so the
-# herdr active tab and the nvim mode indicator read as the same color.
-accent = "#7aa2f7"
+# Accent pinned to "hacker green" regardless of theme (managed by `theme`).
+accent = "#00FF00"
 # <<< theme-switcher <<<
 
 [terminal]
