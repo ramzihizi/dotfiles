@@ -4,11 +4,26 @@ font-family = Dank Mono
 # font-family = Comic Code Ligatures   # kept for machines that have Comic Code installed
 font-size = 14
 
-# Cursor: teal #1abc9c, non-blinking (matches kitty/wezterm).
-cursor-color = #1abc9c
+# Cursor: hacker green #00FF00, non-blinking. (Was teal #1abc9c; kitty/wezterm
+# still use teal.) The cursor-trail shader below inherits this color.
+cursor-color = #00FF00
 cursor-text = #161819
 cursor-style = block
 cursor-style-blink = false
+
+# Kitty-style trailing cursor. Ghostty has no built-in cursor trail as of 1.3.x
+# (a first-party animated cursor is planned but unshipped), so a custom GLSL
+# shader draws a comet trail between the cursor's previous and current cell. The
+# trail color follows cursor-color (#00FF00) automatically. Tunables (DURATION,
+# trail length, easing) live at the top of the shader; source + license are in
+# its header. Vendored from github.com/sahaj-b/ghostty-cursor-shaders (MIT).
+#   custom-shader-animation = always keeps the trail animating (and completing)
+#   even when the window is unfocused or idle. Cost: the GPU runs the shader
+#   continuously — switch to `true` to animate only on activity and save power.
+# Path is resolved relative to this config file. Reload with cmd+shift+, (new
+# windows pick it up automatically).
+custom-shader = shaders/cursor_tail.glsl
+custom-shader-animation = always
 
 # Colorscheme is switchable at runtime with the `theme` command
 # (gruvbox <-> tokyo-night), which repoints theme-active.conf. The theme name,
