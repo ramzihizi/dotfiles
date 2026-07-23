@@ -17,8 +17,8 @@ onboarding = false
 # `theme` toggle leaves a diff here (ghostty + nvim leave none). Commit your
 # preferred default; `git checkout config/herdr/config.toml` drops a scratch flip.
 #
-# background is "reset" so panes show the terminal's translucent default bg
-# (ghostty background-opacity 0.45); panel_bg keeps the sidebar a solid step
+# Panes show the terminal's translucent default bg (ghostty background-opacity
+# 0.50); panel_bg keeps the sidebar a solid step
 # lighter so the chrome stays distinguishable. accent is herdr's single
 # highlight token (active tab, agent label, focused pane border) — kept bright
 # so the focused tab is easy to track while juggling many sessions.
@@ -46,9 +46,12 @@ name = "tokyo-night"
 auto_switch = false
 
 [theme.custom]
-# background "reset" = translucent panes; pairs with ghostty's
-# background-opacity-cells = false (painted cells render opaque, full color).
-background = "reset"
+# Only panel_bg and accent are valid here (herdr 0.7.5); panel_bg also accepts
+# "reset". A `background` key was set here until 2026-07-22 but herdr never
+# recognised it ("unknown config key theme.custom.background"), so it was a
+# no-op — translucent panes come from the terminal default, not this key.
+# Pairs with ghostty's background-opacity-cells = false (painted cells render
+# opaque, full color).
 panel_bg = "#1f2335"
 # Accent pinned to "hacker green" regardless of theme (managed by `theme`).
 accent = "#00FF00"
@@ -276,16 +279,19 @@ position = "top-left"
 # Match the herdr toasts above (default was "bottom-center").
 position = "top-left"
 
-# Play sounds when agents change state in background workspaces
+# Play sounds when agents change state in background workspaces.
+#
+# Sound stays ON, but the custom "powerup.mp3" override was dropped 2026-07-22 —
+# herdr now uses its own built-in notification sound. request_path/done_path/path
+# are optional overrides; with none set, herdr falls back to the default.
+#
+# NB (Core Audio): this does NOT reduce wedge risk. See the "Audio 'renderer
+# error' / no sound in any browser" section in README.md — the wedge comes from
+# audio playback being torn down abruptly, and herdr uses the same playback path
+# for its default sound as it did for the custom mp3. If the wedge recurs, set
+# enabled = false to rule herdr out; if it recurs even then, herdr is cleared.
 [ui.sound]
 enabled = true
-# Both channels use "powerup.mp3", an original synthesized sci-fi chime (rising
-# glide into a bright shimmering bell — a Halo/game "objective" feel): the
-# needs-attention alert AND the finished alert. mp3 is the only format herdr
-# accepts. Relative paths resolve from this config file's directory.
-request_path = "sounds/powerup.mp3" # agent needs your input
-done_path = "sounds/powerup.mp3"    # agent finished its turn
-# path = "sounds/notification.mp3"  # alt: a single mp3 for all sound notifications
 
 # Per-agent overrides: default | on | off
 # By default, droid is muted.

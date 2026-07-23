@@ -38,9 +38,8 @@ name = "gruvbox"
 auto_switch = false
 
 [theme.custom]
-# background "reset" = translucent panes; pairs with ghostty's
+# Only panel_bg and accent are valid here (herdr 0.7.5). Pairs with ghostty's
 # background-opacity-cells = false (painted cells render opaque, full color).
-background = "reset"
 panel_bg = "#282828"
 # Accent pinned to "hacker green" regardless of theme (keep in sync with the
 # tokyo-night branch). Change both branches together to re-theme the accent.
@@ -53,9 +52,8 @@ name = "tokyo-night"
 auto_switch = false
 
 [theme.custom]
-# background "reset" = translucent panes; pairs with ghostty's
+# Only panel_bg and accent are valid here (herdr 0.7.5). Pairs with ghostty's
 # background-opacity-cells = false (painted cells render opaque, full color).
-background = "reset"
 panel_bg = "#1f2335"
 # Accent pinned to "hacker green" regardless of theme (keep in sync with the
 # gruvbox branch). No longer tracks the theme, so it won't match nvim's lualine.
