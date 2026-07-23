@@ -27,12 +27,14 @@ cursor-style-blink = false
 #   cursor_tail.glsl          — subtle kitty-style comet trail
 #   cursor_blaze.glsl         — fiery yellow→red smear on jumps
 #   sonic_boom_cursor.glsl    — green shockwave on cursor-shape change (vim modes)
+#   cursor_smear.glsl         — solid green hexagonal smear on movement (kitty/Neovide)
 #   cursor_smear_rainbow.glsl — rainbow plasma smear on movement
 #   cursor_warp.glsl          — smooth Neovide smear, long tapered green trail (active)
 #
 # custom-shader = shaders/cursor_tail.glsl
 # custom-shader = shaders/cursor_blaze.glsl
 # custom-shader = shaders/sonic_boom_cursor.glsl
+# custom-shader = shaders/cursor_smear.glsl
 # custom-shader = shaders/cursor_smear_rainbow.glsl
 custom-shader = shaders/cursor_warp.glsl
 custom-shader-animation = always

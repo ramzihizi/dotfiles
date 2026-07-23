@@ -5,10 +5,16 @@
 // Vendored from https://github.com/sahaj-b/ghostty-cursor-shaders
 //   (cursor_warp.glsl), MIT License.
 //
-// Tuned for a smooth Neovide-style smear (the settled-on config): DURATION 0.45,
-// TRAIL_SIZE 0.8 (head leads, tail catches up), THRESHOLD_MIN_DISTANCE 0.1 (trails
-// on moves including typing), FADE on (tapered trail), EaseOutCirc easing. Follows
+// Tuned for a smooth Neovide-style smear (the settled-on config): TRAIL_SIZE 0.8
+// (head leads, tail catches up), THRESHOLD_MIN_DISTANCE 0.1 (trails on moves
+// including typing), FADE on (tapered trail), EaseOutCirc easing. Follows
 // cursor-color (green). Retune any of these in the CONFIGURATION block below.
+//
+// Duration is move-size aware (typing feel borrowed from cursor_smear): small
+// typing-scale moves use a snappy DURATION_TYPING (0.30) so per-character smears
+// keep up with fast typing and don't linger, while big jumps (word motions,
+// scrolls, mouse) keep the smooth lingering DURATION_JUMP (0.45). The two cross-
+// fade between TYPING_BLEND_MIN and TYPING_BLEND_MAX (measured in cursor heights).
 
 // sRGB -> Linear conversion (needed because Ghostty passes sRGB values but the shader pipeline operates in linear color space)
 vec3 sRGBToLinear(vec3 c) {
@@ -17,7 +23,14 @@ vec3 sRGBToLinear(vec3 c) {
 
 // --- CONFIGURATION ---
 vec4 TRAIL_COLOR = vec4(sRGBToLinear(iCurrentCursorColor.rgb), iCurrentCursorColor.a); // for custom color: vec4(0.2, 0.6, 1.0, 0.5); (wrap in sRGBToLinear for correct brightness)
-const float DURATION = 0.45; // total animation time
+// Duration scales with move size so typing feels snappy (like cursor_smear) while
+// jumps keep the smooth lingering warp. Small "typing-scale" moves use
+// DURATION_TYPING; large "jump" moves use DURATION_JUMP; distances between the two
+// blend thresholds (measured in cursor heights) cross-fade smoothly.
+const float DURATION_JUMP = 0.45;   // total animation time for big jumps (word motions, scrolls, mouse)
+const float DURATION_TYPING = 0.30; // snappier duration for typing-scale moves (borrowed from cursor_smear)
+const float TYPING_BLEND_MIN = 1.0; // move distance (cursor heights) at/below which the typing duration is used
+const float TYPING_BLEND_MAX = 3.5; // move distance (cursor heights) at/above which the full jump duration is used
 const float TRAIL_SIZE = 0.8; // 0.0 = all corners move together. 1.0 = max smear (leading corners jump instantly)
 const float THRESHOLD_MIN_DISTANCE = 0.1; // min distance to show trail (units of cursor height); small so it trails on moves including typing
 const float BLUR = 1.0; // blur size in pixels (for antialiasing)
@@ -182,7 +195,13 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
     
     float lineLength = distance(centerCC, centerCP);
     float minDist = currentCursor.w * THRESHOLD_MIN_DISTANCE;
-    
+
+    // Blend duration by move size: snappy for typing-scale moves, smooth for jumps.
+    // Distance is measured in cursor heights (currentCursor.w) so it's font-size independent.
+    float distInHeights = lineLength / currentCursor.w;
+    float DURATION = mix(DURATION_TYPING, DURATION_JUMP,
+                         smoothstep(TYPING_BLEND_MIN, TYPING_BLEND_MAX, distInHeights));
+
     vec4 newColor = vec4(fragColor);
 
     float baseProgress = iTime - iTimeCursorChange;
@@ -228,9 +247,9 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
         vec2 cp_br = vec2(cp_new_right_x, cp_new_bottom_y);
 
         // calculating durations for every corner
-        const float DURATION_TRAIL = DURATION;
-        const float DURATION_LEAD = DURATION * (1.0 - TRAIL_SIZE);
-        const float DURATION_SIDE = (DURATION_LEAD + DURATION_TRAIL) / 2.0;
+        float DURATION_TRAIL = DURATION;
+        float DURATION_LEAD = DURATION * (1.0 - TRAIL_SIZE);
+        float DURATION_SIDE = (DURATION_LEAD + DURATION_TRAIL) / 2.0;
 
         vec2 moveVec = centerCC - centerCP;
         vec2 s = sign(moveVec);
