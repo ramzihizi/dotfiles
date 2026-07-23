@@ -17,9 +17,12 @@ cursor-style-blink = false
 # runs to the end of its line — so the active custom-shader line must be the bare
 # path with NO "# ..." after it, or the shader silently fails to load. Per-shader
 # tunables (DURATION, sizes, colors) live at the top of each .glsl file.
-#   custom-shader-animation = always keeps effects animating (and completing)
-#   even when the window is unfocused or idle. Cost: the GPU runs continuously —
-#   switch to `true` to animate only on activity and save power.
+#   custom-shader-animation = true animates only on activity (cursor moves), so
+#   the GPU idles when nothing's happening — this is the power-saving choice and
+#   is plenty for cursor_warp (it only needs to react to cursor movement).
+#   Switch to `always` to keep effects animating even when the window is unfocused
+#   or idle — needed only for self-animating shaders, at the cost of the GPU
+#   running continuously (measurably warmer laptop, e.g. while watching video).
 # Paths are relative to this config file. A custom-shader change needs a full
 # Ghostty relaunch (cmd+shift+, reload does not reliably re-load shaders).
 #
@@ -37,7 +40,7 @@ cursor-style-blink = false
 # custom-shader = shaders/cursor_smear.glsl
 # custom-shader = shaders/cursor_smear_rainbow.glsl
 custom-shader = shaders/cursor_warp.glsl
-custom-shader-animation = always
+custom-shader-animation = true
 
 # Colorscheme is switchable at runtime with the `theme` command
 # (gruvbox <-> tokyo-night), which repoints theme-active.conf. The theme name,
