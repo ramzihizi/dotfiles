@@ -8,8 +8,10 @@
 // Vendored from https://github.com/KroneCorylus/ghostty-shader-playground
 //   (public/shaders/cursor_smear.glsl).
 //
-// Wire up in ../config via `custom-shader = shaders/cursor_smear.glsl`
-// + `custom-shader-animation = always`. DURATION below controls trail lifetime.
+// Active shader, wired in ../config via `custom-shader = shaders/cursor_smear.glsl`.
+// Paired with `custom-shader-animation = true` (not `always`) — this shader only
+// animates in response to cursor movement, so it needs no idle animation, and
+// `always` pins the GPU continuously. DURATION below controls trail lifetime.
 
 // Cursor trail shader that creates a hexagonal trailing effect
 //
