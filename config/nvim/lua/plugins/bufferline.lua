@@ -9,8 +9,7 @@
 -- Colors go through bufferline's OWN `highlights` config: bufferline re-applies
 -- its groups on every ColorScheme via `config.update_highlights()`, which
 -- re-merges this table over freshly-derived defaults — so these survive theme
--- reloads (a raw nvim_set_hl override would be wiped). Pairs with the dim in
--- config/autocmds.lua, which no longer re-sources the colorscheme on focus.
+-- reloads (a raw nvim_set_hl override would be wiped).
 -- Palette is chosen from the active colorscheme: herdr (tokyonight) / wezterm
 -- (gruvbox).
 return {
