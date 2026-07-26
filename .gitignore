@@ -28,6 +28,9 @@ claude/settings.local.json
 
 # Codex: track only stable hand-authored config (hooks.json, herdr-agent-state.sh).
 # Never the volatile/secret runtime state, even if copied into codex/ by mistake.
+# hooks.json is symlinked to ~/.codex/hooks.json, so integrations (Orca) rewrite
+# it in place and leave .bak copies behind — those are never dotfiles.
+codex/*.bak
 codex/auth.json
 codex/history.jsonl
 codex/config.toml

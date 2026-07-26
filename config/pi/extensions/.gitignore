@@ -2,3 +2,9 @@
 # (reinstalling/updating herdr overwrites it). Tracking it causes churn and
 # cross-machine conflicts, so keep it out of the repo.
 herdr-agent-state.ts
+
+# Same deal for the Orca Pi integration: every file it drops here is marked
+# `// @orca-managed-pi-extension` and is rewritten whenever Orca updates. Orca
+# owns them; the repo just provides the directory that bootstrap symlinks to
+# ~/.pi/agent/extensions.
+orca-*.ts
