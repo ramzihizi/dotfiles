@@ -12,22 +12,28 @@ local config = wezterm.config_builder()
 
 -- ============ Appearance (ported from kitty) ============
 
--- Theme: "Gruvbox Dark (Gogh)" — the EXACT name of the built-in scheme
--- (bg #282828, fg #ebdbb2, which the cursor/selection overrides below assume).
--- A bare "Gruvbox Dark" is not a built-in name, so wezterm logged "scheme not
--- found" and silently fell back to its default; the manual color overrides
--- below hid the regression. "GruvboxDark" is an identical no-spaces alias.
--- Warm/amber on purpose so wezterm+tmux stays visually distinct from the
--- ghostty+herdr environment (which runs Gruvbox Dark Hard, bg #1d2021).
-config.color_scheme = "Gruvbox Dark (Gogh)"
+-- Theme: Rosé Pine Moon (bg #232136) — cool purple, so wezterm+tmux stays
+-- visually distinct from the ghostty+herdr environment (Gruvbox Dark Hard,
+-- bg #1d2021). Some overrides in `config.colors` below are still gruvbox
+-- leftovers from the previous scheme (selection, brights); they're warm
+-- against Moon's cool base but deliberate — see the note there.
+-- Scheme names must match wezterm's built-in list EXACTLY: the old value here
+-- was once a bare "Gruvbox Dark", which is not a real name, so wezterm logged
+-- "scheme not found", silently fell back to its default, and the manual color
+-- overrides below hid the regression. Check the name if colors look off.
+-- config.color_scheme = "Gruvbox Dark (Gogh)"
+config.color_scheme = "rose-pine-moon"
 
--- Font: Comic Code Ligatures (primary). The Nerd Font fallbacks below still
--- carry the tmux-status / prompt icons that Comic Code lacks — same reason the
--- old SF Mono setup kept them (previous config preserved, commented out, below).
+-- Font: BlexMono Nerd Font Mono (primary) — same primary as ghostty
+-- (config/ghostty/config:1), also at size 13, so both terminals read identically.
+-- Blex carries the tmux-status / prompt icons on its own; the "Mono" variant
+-- forces icons to single-cell width. Monaspice covers tokyo-night-tmux's
+-- U+1FBF0+ segmented digits, which Blex lacks. Comic Code stays last as an
+-- opt-in: it has no icon glyphs, so it can never be primary without tofu.
 config.font = wezterm.font_with_fallback({
-	"Comic Code Ligatures",
 	"BlexMono Nerd Font Mono",
 	"MonaspiceNe Nerd Font Mono",
+	"Comic Code Ligatures",
 })
 
 -- Previous font: SF Mono (Apple's monospace, installed at /Library/Fonts/SF-Mono-*.otf).
@@ -47,13 +53,18 @@ config.font = wezterm.font_with_fallback({
 -- })
 config.font_size = 13
 
--- Cursor + selection: gruvbox yellow cursor, warm-grey selection (non-blinking).
--- Yellow #b57614 reads as gruvbox, not the old teal; selection uses bg2 #504945
--- so highlighted text stays on-theme instead of teal/blue.
+-- Cursor + selection: hacker-green cursor, warm-grey selection (non-blinking).
+-- #00FF00 deliberately matches herdr's accent (config/herdr/config.toml), so the
+-- cursor and the active-tab/focused-pane highlight read as one colour across the
+-- whole environment. It is NOT from the Rosé Pine palette — that is the point: it
+-- sits outside the scheme so it never blends into it. (The previous gruvbox ochre
+-- #b57614 vanished against Moon's dark purple base; Moon's own gold #f6c177 works
+-- too if the green ever gets tiring.)
+-- `colors` wins over `color_scheme` per-key, so these override Moon's defaults.
 config.colors = {
-	cursor_bg = "#b57614",
-	cursor_border = "#b57614",
-	cursor_fg = "#282828", -- text under cursor = background color (Gruvbox Dark bg)
+	cursor_bg = "#00FF00",
+	cursor_border = "#00FF00",
+	cursor_fg = "#232136", -- text under cursor = background color (Rosé Pine Moon base)
 	selection_bg = "#504945", -- gruvbox bg2 (warm grey)
 	selection_fg = "#ebdbb2", -- gruvbox fg
 	-- Warm down the scheme's bright yellow: Gruvbox Dark's brights[4] is #fabd2f,
@@ -74,10 +85,15 @@ config.colors = {
 config.default_cursor_style = "SteadyBlock"
 config.cursor_blink_rate = 0
 
--- Window: 0.9 opacity, no title bar (keep resize), small padding.
-config.window_background_opacity = 0.9
--- No blur: keep what's behind wezterm sharp/readable, not frosted.
-config.macos_window_background_blur = 0
+-- Window: 0.8 opacity, no title bar (keep resize), small padding.
+config.window_background_opacity = 0.8
+-- Frosted glass: heavy blur so what's behind the window is present but unreadable.
+-- Deliberate trade-off — blur + sub-1.0 opacity mute painted background cells, so
+-- herdr's #00FF00 accent (active tab, focused pane border) reads softer here than
+-- in ghostty. WezTerm has no equivalent of ghostty's `background-opacity-cells =
+-- false` (config/ghostty/config:68), which is what keeps that accent fully bright
+-- there. The cursor is pinned to the same green and stays sharp regardless.
+config.macos_window_background_blur = 50
 -- Keep the macOS window shadow off even at full opacity; WezTerm already
 -- disables it automatically below 1.0 opacity.
 config.window_decorations = "RESIZE | MACOS_FORCE_DISABLE_SHADOW"
@@ -145,7 +161,10 @@ config.keys = {
 local function adjust_opacity(delta)
 	return wezterm.action_callback(function(window)
 		local o = window:get_config_overrides() or {}
-		o.window_background_opacity = math.max(0.1, math.min(1.0, (o.window_background_opacity or 0.9) + delta))
+		-- Fallback must track config.window_background_opacity above: on the first
+		-- keypress there is no override yet, so a stale default made the opacity
+		-- jump instead of step.
+		o.window_background_opacity = math.max(0.1, math.min(1.0, (o.window_background_opacity or 0.8) + delta))
 		window:set_config_overrides(o)
 	end)
 end

@@ -1,8 +1,8 @@
-font-family = Dank Mono
-# font-family = BlexMono Nerd Font Mono
+font-family = BlexMono Nerd Font Mono
+# font-family = Dank Mono
 # font-family = JetBrainsMono Nerd Font Mono
 # font-family = Comic Code Ligatures   # kept for machines that have Comic Code installed
-font-size = 14
+font-size = 13
 
 # Cursor: hacker green #00FF00, non-blinking. (Was teal #1abc9c; kitty/wezterm
 # still use teal.) The cursor-trail shader below inherits this color.
